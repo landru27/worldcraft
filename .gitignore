@@ -3,6 +3,7 @@
 *.dll
 *.so
 *.dylib
+worldcraft
 
 # Test binary, build with `go test -c`
 *.test
