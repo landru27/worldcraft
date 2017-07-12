@@ -140,8 +140,8 @@ type wcnbt struct {
 // for them
 //
 type wcregion struct {
-	X                  int
-	Z                  int
+	RX                 int
+	RZ                 int
 	ChunkDataLocations [1024]wcchunkdatalocation
 	ChunkTimestamps    [1024]int32
 	Chunks             []wcchunk
@@ -203,6 +203,8 @@ func (wccdl *wcchunkdatalocation) setOffset(value int) {
 // convenience and to support debug output
 //
 type wcchunk struct {
+	IX              int
+	IZ              int
 	CX              int
 	CZ              int
 	Length          uint32
@@ -370,7 +372,7 @@ func main() {
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// save the net effect of all edits to new region file(s)
 	for _, elem := range Regions {
-		SaveRegion(elem.X, elem.Z)
+		SaveRegion(elem.RX, elem.RZ)
 	}
 
 	os.Exit(0)
@@ -383,7 +385,7 @@ func EditBlock(blk *wcblock) {
 	var editRegion *wcregion
 
 	editRegion = PickRegion(blk.X, blk.Z)
-	fmt.Printf("EditBlock : will use region %d, %d\n", editRegion.X, editRegion.Z)
+	fmt.Printf("EditBlock : will use region %d, %d\n", editRegion.RX, editRegion.RZ)
 
 	editRegion.applyBlockEdit(blk)
 }
@@ -392,7 +394,7 @@ func EditEntity(ent *wcentity) {
 	var editRegion *wcregion
 
 	editRegion = PickRegion(ent.X, ent.Z)
-	fmt.Printf("EditEntity : will use region %d, %d\n", editRegion.X, editRegion.Z)
+	fmt.Printf("EditEntity : will use region %d, %d\n", editRegion.RX, editRegion.RZ)
 
 	editRegion.applyEntityEdit(ent)
 }
@@ -401,7 +403,7 @@ func EditTileEntity(tnt *wctileentity) {
 	var editRegion *wcregion
 
 	editRegion = PickRegion(tnt.X, tnt.Z)
-	fmt.Printf("EditTileEntity : will use region %d, %d\n", editRegion.X, editRegion.Z)
+	fmt.Printf("EditTileEntity : will use region %d, %d\n", editRegion.RX, editRegion.RZ)
 
 	editRegion.applyTileEntityEdit(tnt)
 }
@@ -422,7 +424,7 @@ func PickRegion(wx, wz int) (rgn *wcregion) {
 	// check to see if the indicated region is already loaded
 	rgn = nil
 	for _, elem := range Regions {
-		if (elem.X == rx) && (elem.Z == rz) {
+		if (elem.RX == rx) && (elem.RZ == rz) {
 			rgn = &elem
 			break
 		}
@@ -453,7 +455,7 @@ func LoadRegion(rx, rz int) (rgn *wcregion, e error) {
 	panicOnErr(err)
 
 	// instantiate a new region object
-	newrgn := wcregion{X: rx, Z: rz}
+	newrgn := wcregion{RX: rx, RZ: rz}
 
 	// slice the filedata to read the header blocks, and store into our 1024-element arrays for holding this information
 	rChunkDataLocations := bytes.NewReader(bufFile[0:4096])
@@ -467,12 +469,15 @@ func LoadRegion(rx, rz int) (rgn *wcregion, e error) {
 	// iterate over the 1024 possible chuncks in this region, looking for chunkdata to read
 	for indx := 0; indx < 1024; indx++ {
 		// calculate the in-region chunk coordinates from the serial chunk index
-		cx := indx % 32
-		cz := int(indx / 32)
+		ix := indx % 32
+		iz := int(indx / 32)
+		// and the world-coordinates
+		cx := ix + (rx * 32)
+		cz := iz + (rz * 32)
 
 		// instantiate a new chunk object; we do this even if there will be no data to read, so that we stay in
 		// alignment with the serial chunk index when we later scan through chunks to write out to file
-		newchnk := wcchunk{CX: cx, CZ: cz}
+		newchnk := wcchunk{IX: ix, IZ: iz, CX: cx, CZ: cz}
 
 		// the Minecraft specs don't seem to indicate this, but we deduce that a chunk is only a defined chunk if
 		// it has a non-zero data offset, data-block count, and timestamp
@@ -503,7 +508,7 @@ func LoadRegion(rx, rz int) (rgn *wcregion, e error) {
 					// utility; until then, it's premature optimization
 					//
 					if cmpres != 2 {
-						panic(fmt.Errorf("\n\n\nnot ZLib compression!  chunk %d, %d\n\n\n", cx, cz))
+						panic(fmt.Errorf("\n\n\nnot ZLib compression!  chunk %d, %d\n\n\n", ix, iz))
 					}
 
 					newchnk.Length = length
@@ -537,7 +542,7 @@ func LoadRegion(rx, rz int) (rgn *wcregion, e error) {
 					// likely due to subtle but inconsequential differences in the ZLib compression
 					// library implementation
 					//
-					// newchnk.ChunkData, err = ReadNBTData(rdrTemp, TAG_NULL, (fmt.Sprintf("chunk %d, %d", cx, cz)))
+					// newchnk.ChunkData, err = ReadNBTData(rdrTemp, TAG_NULL, (fmt.Sprintf("chunk %d, %d", ix, iz)))
 				}
 			}
 		}
@@ -552,7 +557,7 @@ func LoadRegion(rx, rz int) (rgn *wcregion, e error) {
 	// find the newly-added region in our global array of regions, so that we can return a pointer to that instance
 	// of the region, instead of the temporary object instantiated inside this function
 	for _, elem := range Regions {
-		if (elem.X == rx) && (elem.Z == rz) {
+		if (elem.RX == rx) && (elem.RZ == rz) {
 			rgn = &elem
 			break
 		}
@@ -577,7 +582,7 @@ func SaveRegion(rx, rz int) (e error) {
 	// regions might be loaded in any order; find the region we want by scanning the array of regions for an x, z match
 	var rgn wcregion
 	for _, elem := range Regions {
-		if (elem.X == rx) && (elem.Z == rz) {
+		if (elem.RX == rx) && (elem.RZ == rz) {
 			fmt.Printf("SaveRegion found region for : %d, %d\n", rx, rz)
 			rgn = elem
 			break
@@ -595,11 +600,11 @@ func SaveRegion(rx, rz int) (e error) {
 		var bufChunkData bytes.Buffer
 
 		// sanity check to make sure we are dealing with the correct chunk
-		if (rgn.Chunks[indx].CX != indx % 32) {
-			panic(fmt.Errorf("\n\n\nunexpected CX coordinate; region %d, %d;  indx %d;  chunk %d, %d\n\n\n", rx, rz, indx, rgn.Chunks[indx].CX, rgn.Chunks[indx].CZ))
+		if (rgn.Chunks[indx].IX != indx % 32) {
+			panic(fmt.Errorf("\n\n\nunexpected IX coordinate; region %d, %d;  indx %d;  chunk %d, %d\n\n\n", rx, rz, indx, rgn.Chunks[indx].IX, rgn.Chunks[indx].IZ))
 		}
-		if (rgn.Chunks[indx].CZ != int(indx / 32)) {
-			panic(fmt.Errorf("\n\n\nunexpected CY coordinate; region %d, %d;  indx %d;  chunk %d, %d\n\n\n", rx, rz, indx, rgn.Chunks[indx].CX, rgn.Chunks[indx].CZ))
+		if (rgn.Chunks[indx].IZ != int(indx / 32)) {
+			panic(fmt.Errorf("\n\n\nunexpected IZ coordinate; region %d, %d;  indx %d;  chunk %d, %d\n\n\n", rx, rz, indx, rgn.Chunks[indx].IX, rgn.Chunks[indx].IZ))
 		}
 
 		// instantiate a buffer for the compressed NBT data -- what we want to actually write to file
