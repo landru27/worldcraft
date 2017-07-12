@@ -13,6 +13,7 @@ import (
 	"io"
 	"io/ioutil"
 	"math"
+	"regexp"
 	"os"
 	"time"
 )
@@ -256,7 +257,9 @@ var fileEdits *string
 var BlockEdits []wcblock
 var EntityEdits []wcentity
 var TileEntityEdits []wctileentity
+
 var Regions []wcregion
+var DataPaths map[string]*wcnbt
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // main execution point
@@ -272,6 +275,7 @@ func main() {
 	EntityEdits = make([]wcentity, 0, 1024)
 	TileEntityEdits = make([]wctileentity, 0, 1024)
 	Regions = make([]wcregion, 0, 4)
+	DataPaths = make(map[string]*wcnbt, 65536)
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// define the available command-line arguments
@@ -544,6 +548,10 @@ func LoadRegion(rx, rz int) (rgn *wcregion, e error) {
 					// library implementation
 					//
 					// newchnk.ChunkData, err = ReadNBTData(rdrTemp, TAG_NULL, (fmt.Sprintf("chunk %d, %d", ix, iz)))
+
+					// build up a list of paths, for later use addressing edits to particular data structures
+					stemdatapath := fmt.Sprintf("/rx%d/rz%d/cx%d/cz%d", rx, rz, cx, cz)
+					BuildDataPaths(&newchnk.ChunkData, stemdatapath)
 				}
 			}
 		}
@@ -869,7 +877,7 @@ func ReadNBTData(r *bytes.Reader, t NBTTAG_Type, debug string) (rtrnwcnbt wcnbt,
 
 	case TAG_Compound:
 		// the Data of a TAG_Compound NBT item is a collection of fully-formed NBT items
-		rtrnwcnbt.Data = make(map[string]wcnbt)
+		rtrnwcnbt.Data = make([]wcnbt, 0)
 		rtrnwcnbt.Size = 0
 
 		var nbt wcnbt
@@ -890,8 +898,9 @@ func ReadNBTData(r *bytes.Reader, t NBTTAG_Type, debug string) (rtrnwcnbt wcnbt,
 			rtrnwcnbt.Size++
 
 			// the Data of a TAG_Compound NBT item is a collection of fully-formed NBT items
-			refA := rtrnwcnbt.Data.(map[string]wcnbt)
-			refA[nbt.Name] = nbt
+			tmparr := rtrnwcnbt.Data.([]wcnbt)
+			tmparr = append(tmparr, nbt)
+			rtrnwcnbt.Data = tmparr
 		}
 
 	default:
@@ -1003,14 +1012,14 @@ func WriteNBTData(buf *bytes.Buffer, srcwcnbt *wcnbt) (err error) {
 
 		arrlen := len(srcwcnbt.Data.([]wcnbt))
 		for indx := 0; indx < int(arrlen); indx++ {
-			tmpwcnbt := srcwcnbt.Data.([]wcnbt)[indx]
-			err = WriteNBTData(buf, &tmpwcnbt)
+			elem := srcwcnbt.Data.([]wcnbt)[indx]
+			err = WriteNBTData(buf, &elem)
 			panicOnErr(err)
 		}
 
 	case TAG_Compound:
-		for _, v := range srcwcnbt.Data.(map[string]wcnbt) {
-			err = WriteNBTData(buf, &v)
+		for _, elem := range srcwcnbt.Data.([]wcnbt) {
+			err = WriteNBTData(buf, &elem)
 			panicOnErr(err)
 		}
 		// we used the TAG_End at the end of a collection of TAG_Compound elements to break out of the reading loop;
@@ -1023,6 +1032,74 @@ func WriteNBTData(buf *bytes.Buffer, srcwcnbt *wcnbt) (err error) {
 	}
 
 	return err
+}
+
+func BuildDataPaths(data *wcnbt, datapath string) {
+	// TAG_End marks the end of a branch in the data hierarchy
+	if data.Type == TAG_End {
+		return
+	}
+
+	// if we reach this point with an NBTTAG bearing our internal NULL-type TAG or nil data,
+	// something went wrong somewhere, so we abend
+	if data.Type == TAG_NULL {
+		panic(fmt.Errorf("\n\n\nattempted to build datapath for a TAG type NULL!\n\n\n"))
+	}
+
+	if data.Data == nil {
+		panic(fmt.Errorf("\n\n\nattempted to build datapath for a TAG data of nil!\n\n\n"))
+	}
+
+	// if the Name of this NBTTAG is "LISTELEM", then it is an element of a TAG_List
+	if data.Name != "LISTELEM" {
+		if len(data.Name) > 0 {
+			datapath = datapath + data.Name
+		}
+	}
+	//fmt.Printf("datapath : %s\n", datapath)
+	DataPaths[datapath] = data
+
+	switch data.Type {
+	case TAG_Byte:
+		re := regexp.MustCompile(`/Sections/\d+/Y$`)
+		if re.FindStringIndex(datapath) != nil {
+			yval := data.Data.(byte)
+			datapath = datapath + "/value/" + fmt.Sprintf("%d", yval)
+			DataPaths[datapath] = nil
+			//fmt.Printf("datapath = %s\n", datapath)
+		}
+
+	case TAG_Short:
+	case TAG_Int:
+	case TAG_Long:
+	case TAG_Float:
+	case TAG_Double:
+	case TAG_String:
+	case TAG_Byte_Array:
+	case TAG_Int_Array:
+	case TAG_Long_Array:
+
+	case TAG_List:
+		datapath = datapath + "/"
+
+		arrlen := len(data.Data.([]wcnbt))
+		for indx := 0; indx < int(arrlen); indx++ {
+			listpath := fmt.Sprintf("%s%d", datapath, indx)
+			ptr := &data.Data.([]wcnbt)[indx]
+			BuildDataPaths(ptr, listpath)
+		}
+
+	case TAG_Compound:
+		datapath = datapath + "/"
+
+		for indx := range data.Data.([]wcnbt) {
+			ptr := &data.Data.([]wcnbt)[indx]
+			BuildDataPaths(ptr, datapath)
+		}
+
+	default:
+		panic(fmt.Errorf("\n\n\nBuildDataPaths : TAG type unkown! [%d]\n\n\n", data.Type))
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
