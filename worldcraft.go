@@ -155,6 +155,35 @@ type wcregion struct {
 // the fidelity of NBT reading and writing
 //
 func (wcr *wcregion) applyBlockEdit(blk *wcblock) {
+	rx := int(math.Floor(float64(blk.X) / 512.0))
+	rz := int(math.Floor(float64(blk.Z) / 512.0))
+	fmt.Printf("rx, rz : %d, %d\n", rx, rz)
+
+	cx := int(math.Floor(float64(blk.X) /  16.0))
+	cy := int(                   blk.Y  /  16   )
+	cz := int(math.Floor(float64(blk.Z) /  16.0))
+	fmt.Printf("cx, cy, cz : %d, %d, %d\n", cx, cy, cz)
+
+	datapathBlocks := fmt.Sprintf("/rx%d/rz%d/cx%d/cz%d/Level/Sections/%d/Blocks", rx, rz, cx, cz, cy)
+	dataBlocks := DataPaths[datapathBlocks]
+
+	if dataBlocks == nil {
+		fmt.Printf("DataPath not loaded : %s; skipping BlockEdit for %d, %d, %d\n", datapathBlocks, blk.X, blk.Y, blk.Z)
+		return
+	}
+
+	ix := blk.X - (cx * 16)
+	iy := blk.Y       % 16
+	iz := blk.Z - (cz * 16)
+	indxBlocks := (iy * 256) + (ix * 16) + iz
+	fmt.Printf("ix, iy, iz, indxBlocks : %d, %d, %d, %d\n", ix, iy, iz, indxBlocks)
+
+	valuBytes := make([]byte, 2)
+	binary.BigEndian.PutUint16(valuBytes, blk.ID)
+//	valuAddtnl := valuBytes[0]
+	valuBlocks := valuBytes[1]
+
+	dataBlocks.Data.([]byte)[indxBlocks] = valuBlocks
 }
 
 func (wcr *wcregion) applyEntityEdit(blk *wcentity) {
@@ -221,7 +250,7 @@ type wcblock struct {
 	Y    int
 	X    int
 	Z    int
-	ID   int
+	ID   uint16
 	Data int
 }
 
