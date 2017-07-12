@@ -124,6 +124,7 @@ type wcnbt struct {
 // Worldcrft datatypes
 //
 // these model Minecraft data, with a focus on region files, since Worldcraft is a utility for editing region files
+//
 
 // a region is located in the Minecraft world on a horizontal x (west-to-east), z (north-to-south) grid; the x, z coordinates
 // are stored in the filename instead of in the file; we store them in our wcregion datatype, to maintain the association
@@ -901,14 +902,14 @@ func ReadNBTData(r *bytes.Reader, t NBTTAG_Type, debug string) (rtrnwcnbt wcnbt,
 }
 
 func WriteNBTData(buf *bytes.Buffer, srcwcnbt *wcnbt) (err error) {
-	// if we reach this point with an NBTTAG bearing our internal NULL-type TAG or nil data, something went wrong
-	// somewhere, so we abend
+	// if we reach this point with an NBTTAG bearing our internal NULL-type TAG or nil data,
+	// something went wrong somewhere, so we abend
 	if srcwcnbt.Type == TAG_NULL {
 		panic(fmt.Errorf("\n\n\nattempted to write a TAG type NULL!\n\n\n"))
 	}
 
 	if srcwcnbt.Data == nil {
-		panic(fmt.Errorf("\n\n\nattempted to write a TAG name of nil!\n\n\n"))
+		panic(fmt.Errorf("\n\n\nattempted to write a TAG data of nil!\n\n\n"))
 	}
 
 	// if the Name of this NBTTAG is "LISTELEM", then it is an element of a TAG_List, and we store only the payload; the
