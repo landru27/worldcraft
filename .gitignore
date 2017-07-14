@@ -4,6 +4,10 @@
 *.so
 *.dylib
 worldcraft
+blueprint2edits
+
+# output files
+r.*.mca*
 
 # Test binary, build with `go test -c`
 *.test

@@ -1,0 +1,56 @@
+{
+    "edits" : [
+        {
+            "type" : "block",
+            "info" : { "x"  : 8, "y"  : 8, "z"  : 8, "id" : 1 }
+        },
+        {
+            "type" : "block",
+            "info" : { "x"  : 9, "y"  : 9, "z"  : 9, "id" : 1 }
+        },
+        {
+            "type" : "block",
+            "info" : { "x"  : 10, "y"  : 10, "z"  : 10, "id" : 2 }
+        },
+        {
+            "type" : "block",
+            "info" : { "x"  : 11, "y"  : 11, "z"  : 11, "id" : 2 }
+        },
+        {
+            "type" : "block",
+            "info" : { "x"  : 12, "y"  : 12, "z"  : 12, "id" : 5 }
+        },
+        {
+            "type" : "block",
+            "info" : { "x"  : 13, "y"  : 13, "z"  : 13, "id" : 2 }
+        },
+        {
+            "type" : "block",
+            "info" : { "x"  : 14, "y"  : 14, "z"  : 14, "id" : 5 }
+        },
+        {
+            "type" : "block",
+            "info" : { "x"  : 15, "y"  : 15, "z"  : 15, "id" : 5 }
+        },
+        {
+            "type" : "block",
+            "info" : { "x"  : 16, "y"  : 16, "z"  : 16, "id" : 1 }
+        },
+        {
+            "type" : "block",
+            "info" : { "x"  : 40, "y"  : 40, "z"  : 40, "id" : 1 }
+        },
+        {
+            "type" : "block",
+            "info" : { "x"  : 41, "y"  : 41, "z"  : 41, "id" : 42 }
+        },
+        {
+            "type" : "block",
+            "info" : { "x"  : 42, "y"  : 42, "z"  : 42, "id" : 42 }
+        },
+        {
+            "type" : "block",
+            "info" : { "x"  : 43, "y"  : 43, "z"  : 43, "id" : 1 }
+        }
+    ]
+}
