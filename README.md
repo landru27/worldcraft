@@ -24,7 +24,7 @@ cp -ip /path/to/your/minecraft/saves/bravenewworld/region/r.0.0.mca  ./r.0.0.mca
 
 mkdir testworldA
 mkdir testworldB
-cp -ip r.0.0.mca--bravenewworld--orig testworldA/
+cp -ip r.0.0.mca--bravenewworld--orig testworldA/r.0.0.mca
 
 ./worldcraft -edits just-load-and-save-r0.0.json -world ./testworldA
 cp -ip  r.0.0.mca.1500003174  ./testworldB/r.0.0.mca
@@ -38,12 +38,17 @@ The exact filename of the files produced by `worldcraft` will differ; they will 
 
 
 #### more complete usage
+To see how `worldcraft` and `blueprint2edits` work together, you can use the included 'blueprint' file, and issue commands like the following; again, you need to have already initiated the world in Minecraft; moreover, you need to visit that world and select a suitable 'anchor' point for the structure you are going in import.
 ```bash
 cp -ip /path/to/your/minecraft/saves/bravenewworld/region/r.0.0.mca  ./r.0.0.mca--bravenewworld--orig
 
-# select a location for the structure; you specify the lower, northern, western corner; default is 0, 0, 0
-# the following puts the tower in the middle of region 0, 0 and flush with the ground in a Superflat world
+# select a location for the structure; you specify the lower, northern, western corner;
+# the default is 0, 0, 0;  the following puts the tower in the middle of region 0, 0 and
+# flush with the ground in a Superflat world
+
 cat blueprint.small-tower | ./blueprint2edits -X 250 -Y 3 -Z 250 > a-small-tower.json
 ./worldcraft -edits a-small-tower.json -world /path/to/your/minecraft/saves/bravenewworld/region
-cp -ip r.0.0.mca.1500004112 /path/to/your/minecraft/saves/bravenewworld/region
+cp -ip r.0.0.mca.1500004112 /path/to/your/minecraft/saves/bravenewworld/region/r.0.0.mca
 ```
+
+If you compare the resulting structure within Minecraft to the blueprint file, you will see that each layer is described by a 2x2 grid, starting with the bottom layer.  Punctuation, letters, and numbers stand for individual blocks; see the source code in blueprint2edits.go for a legend.  Whitespace separates symbols that are on the same line; a layer ends at a line with "--" anywhere on the line (after stripping comments, which are denoted by "##").
