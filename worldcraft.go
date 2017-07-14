@@ -305,6 +305,7 @@ var timeExec time.Time
 
 var pathWorld *string
 var fileEdits *string
+var flagJSOND *bool
 
 var BlockEdits []wcblock
 var EntityEdits []wcentity
@@ -347,6 +348,7 @@ func main() {
 	// define the available command-line arguments
 	pathWorld = flag.String("world", "UNDEFINED", "a directory containing a collection of Minecraft region files")
 	fileEdits = flag.String("edits", "UNDEFINED", "a file containing a set of edits to make to the specified Minecraft world")
+	flagJSOND = flag.Bool("json", false, "a flag to enable dumping the chunkdata to JSON")
 	flag.Parse()
 
 	// report to the user what values will be used
@@ -684,6 +686,14 @@ func SaveRegion(rx, rz int) (e error) {
 		}
 		if (rgn.Chunks[indx].IZ != int(indx / 32)) {
 			panic(fmt.Errorf("\n\n\nunexpected IZ coordinate; region %d, %d;  indx %d;  chunk %d, %d\n\n\n", rx, rz, indx, rgn.Chunks[indx].IX, rgn.Chunks[indx].IZ))
+		}
+
+		// optionally output the chunkdata to JSON, for various sorts of external analysis
+		if *flagJSOND == true {
+			var bufJSON []byte
+			bufJSON, err = json.MarshalIndent(&rgn.Chunks[indx].ChunkData, "", "  ")
+			panicOnErr(err)
+			os.Stdout.Write(bufJSON)
 		}
 
 		// instantiate a buffer for the compressed NBT data -- what we want to actually write to file
