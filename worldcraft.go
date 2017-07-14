@@ -13,8 +13,8 @@ import (
 	"io"
 	"io/ioutil"
 	"math"
-	"regexp"
 	"os"
+	"regexp"
 	"time"
 )
 
@@ -157,18 +157,17 @@ type wcregion struct {
 func (wcr *wcregion) applyBlockEdit(blk *wcblock) {
 	rx := int(math.Floor(float64(blk.X) / 512.0))
 	rz := int(math.Floor(float64(blk.Z) / 512.0))
-	fmt.Printf("rx, rz : %d, %d\n", rx, rz)
+	//fmt.Printf("rx, rz : %d, %d\n", rx, rz)
 
 	cx := int(math.Floor(float64(blk.X) /  16.0))
 	cy := int(                   blk.Y  /  16   )
 	cz := int(math.Floor(float64(blk.Z) /  16.0))
-	fmt.Printf("cx, cy, cz : %d, %d, %d\n", cx, cy, cz)
+	//fmt.Printf("cx, cy, cz : %d, %d, %d\n", cx, cy, cz)
 
 	datapathBlocks := fmt.Sprintf("/rx%d/rz%d/cx%d/cz%d/Level/Sections/%d/Blocks", rx, rz, cx, cz, cy)
 	dataBlocks := DataPaths[datapathBlocks]
 
 	if dataBlocks == nil {
-		fmt.Printf("DataPath not loaded : %s; skipping BlockEdit for %d, %d, %d\n", datapathBlocks, blk.X, blk.Y, blk.Z)
 		return
 	}
 
@@ -176,7 +175,7 @@ func (wcr *wcregion) applyBlockEdit(blk *wcblock) {
 	iy := blk.Y       % 16
 	iz := blk.Z - (cz * 16)
 	indxBlocks := (iy * 256) + (ix * 16) + iz
-	fmt.Printf("ix, iy, iz, indxBlocks : %d, %d, %d, %d\n", ix, iy, iz, indxBlocks)
+	//fmt.Printf("ix, iy, iz, indxBlocks : %d, %d, %d, %d\n", ix, iy, iz, indxBlocks)
 
 	valuBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(valuBytes, blk.ID)
@@ -247,26 +246,26 @@ type wcchunk struct {
 // work on the actual editing capability proceeds
 //
 type wcblock struct {
-	Y    int
 	X    int
+	Y    int
 	Z    int
 	ID   uint16
-	Data int
+	Data byte
 }
 
 type wcentity struct {
-	Y          int
 	X          int
+	Y          int
 	Z          int
-	ID         int
+	ID         uint16
 	attributes map[string]interface{}
 }
 
 type wctileentity struct {
-	Y          int
 	X          int
+	Y          int
 	Z          int
-	ID         int
+	ID         uint16
 	attributes map[string]interface{}
 }
 
@@ -300,11 +299,11 @@ func main() {
 	// define global variables
 	timeExec = time.Now()
 
-	BlockEdits = make([]wcblock, 0, 1024)
-	EntityEdits = make([]wcentity, 0, 1024)
-	TileEntityEdits = make([]wctileentity, 0, 1024)
-	Regions = make([]wcregion, 0, 4)
-	DataPaths = make(map[string]*wcnbt, 65536)
+	BlockEdits = make([]wcblock, 0, 0)
+	EntityEdits = make([]wcentity, 0, 0)
+	TileEntityEdits = make([]wctileentity, 0, 0)
+	Regions = make([]wcregion, 0, 0)
+	DataPaths = make(map[string]*wcnbt, 0)
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// define the available command-line arguments
@@ -419,8 +418,6 @@ func EditBlock(blk *wcblock) {
 	var editRegion *wcregion
 
 	editRegion = PickRegion(blk.X, blk.Z)
-	fmt.Printf("EditBlock : will use region %d, %d\n", editRegion.RX, editRegion.RZ)
-
 	editRegion.applyBlockEdit(blk)
 }
 
@@ -428,8 +425,6 @@ func EditEntity(ent *wcentity) {
 	var editRegion *wcregion
 
 	editRegion = PickRegion(ent.X, ent.Z)
-	fmt.Printf("EditEntity : will use region %d, %d\n", editRegion.RX, editRegion.RZ)
-
 	editRegion.applyEntityEdit(ent)
 }
 
@@ -437,8 +432,6 @@ func EditTileEntity(tnt *wctileentity) {
 	var editRegion *wcregion
 
 	editRegion = PickRegion(tnt.X, tnt.Z)
-	fmt.Printf("EditTileEntity : will use region %d, %d\n", editRegion.RX, editRegion.RZ)
-
 	editRegion.applyTileEntityEdit(tnt)
 }
 
