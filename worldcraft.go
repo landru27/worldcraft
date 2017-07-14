@@ -743,7 +743,6 @@ func SaveRegion(rx, rz int) (e error) {
 	for indx := 0; indx < 1024; indx++ {
 		// skip over chunks that are not defined by data
 		if len(bufChunkDataSet[indx].Bytes()) == 0 {
-			fmt.Printf("zero-length zlib buffer for chunk %d\n", indx)
 			continue
 		}
 

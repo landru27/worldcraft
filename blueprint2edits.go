@@ -160,12 +160,16 @@ func defineGlobalVariables() {
 		`.`:  blueprintblock{`.`,    0,  0 },    // air
 		`#`:  blueprintblock{`#`,   98,  0 },    // stone bricks
 		`=`:  blueprintblock{`=`,  139,  0 },    // stone fence
+		`-`:  blueprintblock{`-`,  188,  0 },    // spruce fence
 		`*`:  blueprintblock{`*`,    3,  0 },    // dirt
 		`+`:  blueprintblock{`+`,   60,  0 },    // tilled dirt
 		`~`:  blueprintblock{`~`,    9,  0 },    // water
 		`"`:  blueprintblock{`"`,   12,  0 },    // sand
 		`%`:  blueprintblock{`%`,   13,  0 },    // gravel
 		`&`:  blueprintblock{`&`,   82,  0 },    // clay
+
+		`,`:  blueprintblock{`/`,   59,  0 },    // wheat, just planted
+		`/`:  blueprintblock{`/`,   59,  5 },    // wheat, ripe with seeds
 
 		`1`:  blueprintblock{`1`,  109,  2 },    // stone brick steps, with steps facing (approachable from) north
 		`2`:  blueprintblock{`2`,  109,  1 },    // stone brick steps, with steps facing (approachable from) east
@@ -201,7 +205,8 @@ func defineGlobalVariables() {
 
 		`Y`:  blueprintblock{`Y`,   89,  0 },    // glowstone
 
-		`D`:  blueprintblock{`D`,    0,  0 },    // spruce door              --  two-block object
+		`D`:  blueprintblock{`D`,  193,  3 },    // spruce door, bottom      --  two-block object
+		`d`:  blueprintblock{`d`,  193,  8 },    // spruce door, top         --  two-block object
 		`B`:  blueprintblock{`B`,    0,  0 },    // bed                      --  two-block object
 		`b`:  blueprintblock{`b`, 8193,  0 },    // head of bed placeholder
 		`C`:  blueprintblock{`C`,    0,  0 },    // chest                    --  needs a tile entity for full definition
