@@ -140,7 +140,7 @@ func main() {
 	allBlockEdits["edits"] = BlockEdits
 
 	var bufJSON []byte
-	bufJSON, err = json.Marshal(allBlockEdits)
+	bufJSON, err = json.MarshalIndent(allBlockEdits, "", "  ")
 	os.Stdout.Write(bufJSON)
 
 	os.Exit(0)
