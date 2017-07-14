@@ -168,6 +168,7 @@ func (wcr *wcregion) applyBlockEdit(blk *wcblock) {
 	dataBlocks := DataPaths[datapathBlocks]
 
 	if dataBlocks == nil {
+		qtyBlockEditsSkipped++
 		return
 	}
 
@@ -183,6 +184,8 @@ func (wcr *wcregion) applyBlockEdit(blk *wcblock) {
 	valuBlocks := valuBytes[1]
 
 	dataBlocks.Data.([]byte)[indxBlocks] = valuBlocks
+
+	qtyBlockEdits++
 }
 
 func (wcr *wcregion) applyEntityEdit(blk *wcentity) {
@@ -289,6 +292,13 @@ var TileEntityEdits []wctileentity
 var Regions []wcregion
 var DataPaths map[string]*wcnbt
 
+var qtyBlockEdits int
+var qtyBlockEditsSkipped int
+var qtyEntityEdits int
+var qtyEntityEditsSkipped int
+var qtyTileEntityEdits int
+var qtyTileEntityEditsSkipped int
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // main execution point
 //
@@ -305,6 +315,13 @@ func main() {
 	Regions = make([]wcregion, 0, 0)
 	DataPaths = make(map[string]*wcnbt, 0)
 
+	qtyBlockEdits = 0
+	qtyBlockEditsSkipped = 0
+	qtyEntityEdits = 0
+	qtyEntityEditsSkipped = 0
+	qtyTileEntityEdits = 0
+	qtyTileEntityEditsSkipped = 0
+
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// define the available command-line arguments
 	pathWorld = flag.String("world", "UNDEFINED", "a directory containing a collection of Minecraft region files")
@@ -318,6 +335,7 @@ func main() {
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// read in the edits file, and parse as generic JSON
+
 	var bufEdits []byte
 	var jsonEdits interface{}
 
@@ -330,6 +348,7 @@ func main() {
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// scan through the JSON looking for recognizable objects;
 	// assign such objects to the appropriate datatype
+
 	m := jsonEdits.(map[string]interface{})
 	for k, v := range m {
 
@@ -387,26 +406,34 @@ func main() {
 			fmt.Println("edits file entry is not a map of strings : ", k)
 		}
 	}
+	fmt.Printf("\n")
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// apply edits gatherd from input
+
 	for _, elem := range BlockEdits {
 		EditBlock(&elem)
 	}
+	fmt.Printf("blocks edits applied and skipped :  %5d,  %5d\n", qtyBlockEdits, qtyBlockEditsSkipped)
 
 	for _, elem := range EntityEdits {
 		EditEntity(&elem)
 	}
+	fmt.Printf("blocks edits applied and skipped :  %5d,  %5d\n", qtyEntityEdits, qtyEntityEditsSkipped)
 
 	for _, elem := range TileEntityEdits {
 		EditTileEntity(&elem)
 	}
+	fmt.Printf("blocks edits applied and skipped :  %5d,  %5d\n", qtyTileEntityEdits, qtyTileEntityEditsSkipped)
+	fmt.Printf("\n")
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// save the net effect of all edits to new region file(s)
+
 	for _, elem := range Regions {
 		SaveRegion(elem.RX, elem.RZ)
 	}
+	fmt.Printf("\n")
 
 	os.Exit(0)
 }
