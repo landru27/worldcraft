@@ -167,7 +167,15 @@ func (wcr *wcregion) applyBlockEdit(blk *wcblock) {
 	datapathBlocks := fmt.Sprintf("/rx%d/rz%d/cx%d/cz%d/Level/Sections/%d/Blocks", rx, rz, cx, cz, cy)
 	dataBlocks := DataPaths[datapathBlocks]
 
+	datapathBlockData := fmt.Sprintf("/rx%d/rz%d/cx%d/cz%d/Level/Sections/%d/Data", rx, rz, cx, cz, cy)
+	dataBlockData := DataPaths[datapathBlockData]
+
 	if dataBlocks == nil {
+		qtyBlockEditsSkipped++
+		return
+	}
+
+	if dataBlockData == nil {
 		qtyBlockEditsSkipped++
 		return
 	}
@@ -175,7 +183,7 @@ func (wcr *wcregion) applyBlockEdit(blk *wcblock) {
 	ix := blk.X - (cx * 16)
 	iy := blk.Y       % 16
 	iz := blk.Z - (cz * 16)
-	indxBlocks := (iy * 256) + (ix * 16) + iz
+	indxBlocks := (iy * 256) + (iz * 16) + ix
 	//fmt.Printf("ix, iy, iz, indxBlocks : %d, %d, %d, %d\n", ix, iy, iz, indxBlocks)
 
 	valuBytes := make([]byte, 2)
@@ -184,6 +192,19 @@ func (wcr *wcregion) applyBlockEdit(blk *wcblock) {
 	valuBlocks := valuBytes[1]
 
 	dataBlocks.Data.([]byte)[indxBlocks] = valuBlocks
+
+	indxBlockData := int(indxBlocks / 2)
+	currDataValue := dataBlockData.Data.([]byte)[indxBlockData]
+	var keepNybble, valuNybble byte
+	if (indxBlocks % 2) == 0 {
+		keepNybble = currDataValue & 0xF0
+		valuNybble = blk.Data
+	} else {
+		keepNybble = currDataValue & 0x0F
+		valuNybble = blk.Data << 4
+	}
+	dataBlockData.Data.([]byte)[indxBlockData] = keepNybble + valuNybble
+	//fmt.Printf("cx, cy, cz, ix, iy, iz;    ID;    DataA, DataB = Data  :  %d, %d, %d, %d, %d, %d;    %d;    %d, %d = %d\n", cx, cy, cz, ix, iy, iz, valuBlocks, keepNybble, valuNybble, (keepNybble + valuNybble))
 
 	qtyBlockEdits++
 }
