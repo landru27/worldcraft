@@ -1,5 +1,7 @@
-##  sheep    color: 0 = white   7 = gray   8 = light gray   15 = black
-    { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 33, "Data": [
+{ "Entities": [
+  { "Name": "sheep",
+    "Base": {
+      "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 33, "Data": [
         { "Type": 8, "List": 0, "Name": "id", "Size": 15, "Data": "minecraft:sheep" },
         { "Type": 4, "List": 0, "Name": "UUIDMost", "Size": 0, "Data": 0 },
         { "Type": 4, "List": 0, "Name": "UUIDLeast", "Size": 0, "Data": 0 },
@@ -70,10 +72,10 @@
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
-            { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] } ] } ] }
-
-##  cow
-    { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 31, "Data": [
+            { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] } ] } ] } },
+  { "Name": "cow",
+    "Base": {
+      "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 31, "Data": [
         { "Type": 8, "List": 0, "Name": "id", "Size": 13, "Data": "minecraft:cow" },
         { "Type": 4, "List": 0, "Name": "UUIDMost", "Size": 0, "Data": 0 },
         { "Type": 4, "List": 0, "Name": "UUIDLeast", "Size": 0, "Data": 0 },
@@ -142,10 +144,10 @@
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
-            { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] } ] } ] }
-
-##  chicken
-    { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 33, "Data": [
+            { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] } ] } ] } },
+  { "Name": "chicken",
+    "Base": {
+      "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 33, "Data": [
         { "Type": 8, "List": 0, "Name": "id", "Size": 17, "Data": "minecraft:chicken" },
         { "Type": 4, "List": 0, "Name": "UUIDMost", "Size": 0, "Data": 0 },
         { "Type": 4, "List": 0, "Name": "UUIDLeast", "Size": 0, "Data": 0 },
@@ -216,10 +218,10 @@
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
-            { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] } ] } ] }
-
-##  pig
-    { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 32, "Data": [
+            { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] } ] } ] } },
+  { "Name": "pig",
+    "Base": {
+      "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 32, "Data": [
         { "Type": 8, "List": 0, "Name": "id", "Size": 13, "Data": "minecraft:pig" },
         { "Type": 4, "List": 0, "Name": "UUIDMost", "Size": 0, "Data": 0 },
         { "Type": 4, "List": 0, "Name": "UUIDLeast", "Size": 0, "Data": 0 },
@@ -289,5 +291,4 @@
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
-            { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] } ] } ] }
-
+            { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] } ] } ] } } ] }
