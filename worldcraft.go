@@ -202,6 +202,7 @@ type wcedit struct {
 //
 var timeExec time.Time
 
+var flagDebug *bool
 var pathWorld *string
 var fileEdits *string
 var flagJSOND *bool
@@ -211,7 +212,6 @@ var EntityEdits []wcentity
 var TileEntityEdits []wctileentity
 
 var Regions []wcregion
-//var DataPaths map[string]*NBT
 
 var qtyBlockEdits int
 var qtyBlockEditsSkipped int
@@ -245,6 +245,7 @@ func main() {
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// define the available command-line arguments
+	flagDebug = flag.Bool("debug", false, "a flag to enable verbosity while reading chunkdata")
 	pathWorld = flag.String("world", "UNDEFINED", "a directory containing a collection of Minecraft region files")
 	fileEdits = flag.String("edits", "UNDEFINED", "a file containing a set of edits to make to the specified Minecraft world")
 	flagJSOND = flag.Bool("json", false, "a flag to enable dumping the chunkdata to JSON")
@@ -501,24 +502,15 @@ func LoadRegion(rx, rz int) (rgn *wcregion, e error) {
 					var bufTemp bytes.Buffer
 					io.Copy(&bufTemp, rChunkInfoZLib)
 
+					strDebug := ""
+					if *flagDebug {
+						strDebug = fmt.Sprintf("chunk %d, %d", ix, iz)
+					}
+
 					// parse the data out of Minecraft's NBT format into data structures we interact with
 					var rdrTemp *bytes.Reader
 					rdrTemp = bytes.NewReader(bufTemp.Bytes())
-					//newchnk.ChunkData, err = nbt.ReadNBTData(rdrTemp, TAG_NULL, "")
-
-					// this next line can be used in place of the above ReadNBTData() line, as a way to
-					// produce debug output; by producing this output and by processing both an orginal
-					// region file and then the output file that it produces (with some NOOP edit), we
-					// can validate the fidelity of this utility's ablity to read and write NBT;  in
-					// most cases, the output needs to be sort'd to be comparable, because we use a map[]
-					// to store TAG_Compound subitems; including the chunk identifier in the output keeps
-					// each chunck's data together in the sort, for a valid comparison
-					//
-					// tests show that the only differences are in the exact length of per-chunk data,
-					// likely due to subtle but inconsequential differences in the ZLib compression
-					// library implementation
-					//
-					newchnk.ChunkData, err = nbt.ReadNBTData(rdrTemp, nbt.TAG_NULL, (fmt.Sprintf("chunk %d, %d", ix, iz)))
+					newchnk.ChunkData, err = nbt.ReadNBTData(rdrTemp, nbt.TAG_NULL, strDebug)
 
 					// build up a list of paths, for later use addressing edits to particular data structures
 					stemdatapath := fmt.Sprintf("/rx%d/rz%d/cx%d/cz%d", rx, rz, cx, cz)
