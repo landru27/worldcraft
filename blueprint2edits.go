@@ -7,6 +7,9 @@ import (
 	"bufio"
 	"encoding/json"
 	"flag"
+	"fmt"
+	"io/ioutil"
+	"nbt"
 	"os"
 	"regexp"
 	"strings"
@@ -27,12 +30,34 @@ type blueprintblock struct {
 	Data   byte
 }
 
+type blueprintentity struct {
+	Symbol string
+	Name   string
+	Base   nbt.NBT
+}
+
 type wcblock struct {
 	X    int
 	Y    int
 	Z    int
 	ID   uint16
 	Data byte
+}
+
+type wcentity struct {
+	X    int
+	Y    int
+	Z    int
+	ID   uint16
+	Attr nbt.NBT
+}
+
+type wctileentity struct {
+	X    int
+	Y    int
+	Z    int
+	ID   uint16
+	Attr nbt.NBT
 }
 
 type wcedit struct {
@@ -68,6 +93,23 @@ func main() {
 	anchorY := flag.Int("Y", 0, "the lowest-layer coordinate where the blueprint will be rendered in the gameworld")
 	anchorZ := flag.Int("Z", 0, "the northernmost coordinate where the blueprint will be rendered in the gameworld")
 	flag.Parse()
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// read in the stock entities datafile
+	var bufEntities []byte
+	var jsonEntities map[string][]blueprintentity
+	var stockEntities []blueprintentity
+
+	bufEntities, err = ioutil.ReadFile("entities.json")
+	panicOnErr(err)
+
+	err = json.Unmarshal(bufEntities, &jsonEntities)
+	panicOnErr(err)
+
+	stockEntities = jsonEntities["Entities"]
+
+	fmt.Printf("sheep's name : %s\n", stockEntities[0].Name)
+	fmt.Printf("sheep's Minecraft name : %s\n", stockEntities[0].Base.Data.([]nbt.NBT)[0].Data)
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// read in the blueprint from stdin
