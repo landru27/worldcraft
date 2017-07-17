@@ -5,12 +5,13 @@ package main
 
 import (
 	"bufio"
+	"encoding/binary"
 	"encoding/json"
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"nbt"
 	"os"
+	"crypto/rand"
 	"regexp"
 	"strings"
 	"time"
@@ -31,7 +32,6 @@ type blueprintblock struct {
 }
 
 type blueprintentity struct {
-	Symbol string
 	Name   string
 	Base   nbt.NBT
 }
@@ -48,7 +48,6 @@ type wcentity struct {
 	X    int
 	Y    int
 	Z    int
-	ID   uint16
 	Attr nbt.NBT
 }
 
@@ -62,7 +61,7 @@ type wctileentity struct {
 
 type wcedit struct {
 	Type string
-	Info wcblock
+	Info interface{}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -71,6 +70,7 @@ type wcedit struct {
 var timeExec time.Time
 
 var BlockEdits []wcedit
+var EntityEdits []wcedit
 
 var blockValues map[string]blueprintblock
 
@@ -84,6 +84,7 @@ func main() {
 	// define global variables
 	timeExec = time.Now()
 	BlockEdits = make([]wcedit, 0, 0)
+	EntityEdits = make([]wcedit, 0, 0)
 
 	defineGlobalVariables()
 
@@ -107,9 +108,10 @@ func main() {
 	panicOnErr(err)
 
 	stockEntities = jsonEntities["Entities"]
-
-	fmt.Printf("sheep's name : %s\n", stockEntities[0].Name)
-	fmt.Printf("sheep's Minecraft name : %s\n", stockEntities[0].Base.Data.([]nbt.NBT)[0].Data)
+	stockEntitiesIndx := make(map[string]uint8, 0)
+	for indx, elem := range stockEntities {
+		stockEntitiesIndx[elem.Name] = uint8(indx)
+	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// read in the blueprint from stdin
@@ -161,8 +163,60 @@ func main() {
 
 			dx++
 
+			// internally, we use values greater than 8192 as instructional indicators
 			// skip placeholder markers
 			if blockValues[block].ID == 8193 {
+				continue
+			}
+
+			// Entities require a lot more information than blocks, so detect Entity
+			// instructions and populate the EntityEdits array accordingly
+			if (blockValues[block].ID > 8200) && (blockValues[block].ID < 8300) {
+				var indxEntity uint8
+				var entityInfo nbt.NBT
+				var entityCopy nbt.NBT
+
+				switch blockValues[block].Symbol {
+				case "s":
+					indxEntity = stockEntitiesIndx["sheep"]
+					entityInfo = stockEntities[indxEntity].Base
+
+				case "c":
+					indxEntity = stockEntitiesIndx["cow"]
+					entityInfo = stockEntities[indxEntity].Base
+
+				case "k":
+					indxEntity = stockEntitiesIndx["chicken"]
+					entityInfo = stockEntities[indxEntity].Base
+
+				case "p":
+					indxEntity = stockEntitiesIndx["pig"]
+					entityInfo = stockEntities[indxEntity].Base
+
+				}
+
+				var bufJSON []byte
+				bufJSON, err = json.Marshal(entityInfo)
+				panicOnErr(err)
+				err = json.Unmarshal(bufJSON, &entityCopy)
+
+				var uuid [16]byte
+				_, err = rand.Read(uuid[:])
+				panicOnErr(err)
+				uuid[8] = (uuid[8] | 0x40) & 0x7F
+				uuid[6] = (uuid[6] &  0xF) | (4 << 4)
+				uuidmost := int64(binary.BigEndian.Uint64(uuid[0:8]))
+				uuidlest := int64(binary.BigEndian.Uint64(uuid[8:16]))
+
+				entityCopy.Data.([]nbt.NBT)[1].Data = uuidmost
+				entityCopy.Data.([]nbt.NBT)[2].Data = uuidlest
+
+				entityCopy.Data.([]nbt.NBT)[3].Data.([]nbt.NBT)[0].Data = bx
+				entityCopy.Data.([]nbt.NBT)[3].Data.([]nbt.NBT)[1].Data = by
+				entityCopy.Data.([]nbt.NBT)[3].Data.([]nbt.NBT)[2].Data = bz
+
+				EntityEdits = append(EntityEdits, wcedit{"entity", wcentity{bx, by, bz, entityCopy}})
+
 				continue
 			}
 
@@ -178,11 +232,13 @@ func main() {
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// write out the resulting edits to stdout
 
-	allBlockEdits := make(map[string][]wcedit)
-	allBlockEdits["edits"] = BlockEdits
+	allEdits := make(map[string][]wcedit)
+
+	allEdits["edits"] = BlockEdits
+	allEdits["edits"] = append(allEdits["edits"], EntityEdits...)
 
 	var bufJSON []byte
-	bufJSON, err = json.MarshalIndent(allBlockEdits, "", "  ")
+	bufJSON, err = json.MarshalIndent(allEdits, "", "  ")
 	os.Stdout.Write(bufJSON)
 
 	os.Exit(0)
@@ -253,5 +309,10 @@ func defineGlobalVariables() {
 		`b`:  blueprintblock{`b`, 8193,  0 },    // head of bed placeholder
 		`C`:  blueprintblock{`C`,    0,  0 },    // chest                    --  needs a tile entity for full definition
 		`K`:  blueprintblock{`K`,    0,  0 },    // enchanting table         --  needs a tile entity for full definition
+
+		`s`:  blueprintblock{`s`, 8201,  0 },    // sheep
+		`c`:  blueprintblock{`c`, 8202,  0 },    // cow
+		`k`:  blueprintblock{`k`, 8203,  0 },    // chicken
+		`p`:  blueprintblock{`p`, 8204,  0 },    // pig
 	}
 }
