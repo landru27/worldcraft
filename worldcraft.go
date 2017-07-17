@@ -108,10 +108,31 @@ func (wcr *wcregion) applyBlockEdit(blk *wcblock) {
 	qtyBlockEdits++
 }
 
-func (wcr *wcregion) applyEntityEdit(blk *wcentity) {
+func (wcr *wcregion) applyEntityEdit(ent *wcentity) {
+	rx := int(math.Floor(float64(ent.X) / 512.0))
+	rz := int(math.Floor(float64(ent.Z) / 512.0))
+	//fmt.Printf("rx, rz : %d, %d\n", rx, rz)
+
+	cx := int(math.Floor(float64(ent.X) /  16.0))
+	cz := int(math.Floor(float64(ent.Z) /  16.0))
+	//fmt.Printf("cx, cz : %d, %d, %d\n", cx, cz)
+
+	datapathEntities := fmt.Sprintf("/rx%d/rz%d/cx%d/cz%d/Level/Entities", rx, rz, cx, cz)
+	dataEntities := nbt.DataPaths[datapathEntities]
+
+	if dataEntities == nil {
+		qtyEntityEditsSkipped++
+		return
+	}
+
+	dataEntities.List = nbt.TAG_Compound
+	dataEntities.Size++
+	dataEntities.Data = append(dataEntities.Data.([]nbt.NBT), ent.Attr)
+
+	qtyEntityEdits++
 }
 
-func (wcr *wcregion) applyTileEntityEdit(blk *wctileentity) {
+func (wcr *wcregion) applyTileEntityEdit(tnt *wctileentity) {
 }
 
 // a chunkdata descriptor indicates where within the region file the chuck data is found;  the offset is the (0-indexed)
@@ -177,24 +198,22 @@ type wcblock struct {
 }
 
 type wcentity struct {
-	X          int
-	Y          int
-	Z          int
-	ID         uint16
-	attributes map[string]interface{}
+	X    int
+	Y    int
+	Z    int
+	Attr nbt.NBT
 }
 
 type wctileentity struct {
-	X          int
-	Y          int
-	Z          int
-	ID         uint16
-	attributes map[string]interface{}
+	X    int
+	Y    int
+	Z    int
+	Attr nbt.NBT
 }
 
 type wcedit struct {
 	Type string
-	Info map[string]interface{}
+	Info interface{}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -309,6 +328,7 @@ func main() {
 					err = json.Unmarshal(bufEdit, &wcn)
 					panicOnErr(err)
 
+					wcn.Attr.Name = "LISTELEM"
 					EntityEdits = append(EntityEdits, wcn)
 
 				case `tileentity`:
