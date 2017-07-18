@@ -32,7 +32,7 @@ type blueprintblock struct {
 }
 
 type blueprintentity struct {
-	Name   string
+	Symbol string
 	Base   nbt.NBT
 }
 
@@ -73,6 +73,7 @@ var BlockEdits []wcedit
 var EntityEdits []wcedit
 
 var blockValues map[string]blueprintblock
+var stockEntities []blueprintentity
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // main execution point
@@ -99,7 +100,6 @@ func main() {
 	// read in the stock entities datafile
 	var bufEntities []byte
 	var jsonEntities map[string][]blueprintentity
-	var stockEntities []blueprintentity
 
 	bufEntities, err = ioutil.ReadFile("entities.json")
 	panicOnErr(err)
@@ -110,7 +110,7 @@ func main() {
 	stockEntities = jsonEntities["Entities"]
 	stockEntitiesIndx := make(map[string]uint8, 0)
 	for indx, elem := range stockEntities {
-		stockEntitiesIndx[elem.Name] = uint8(indx)
+		stockEntitiesIndx[elem.Symbol] = uint8(indx)
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -155,46 +155,42 @@ func main() {
 		}
 
 		// split the input line into its individual blueprint symbols
-		blocks := strings.Fields(linein)
-		for _, block := range blocks {
+		glyphs := strings.Fields(linein)
+		for _, glyph := range glyphs {
+			// track which world (block) coordinate we are dealing with, as we move
+			// from symbol to symbol on the blueprint
 			bx = ax + dx
 			by = ay + dy
 			bz = az + dz
 
 			dx++
 
-			// internally, we use values greater than 8192 as instructional indicators
+			// blocks in Minecraft can be modeled with very little data, but other objects
+			// require much more data; we use block IDs outside of the valid range for
+			// Minecraft blocks (0 - 4095) in order to mesh [a] the use of the blueprint to
+			// indicate positioning with [b] the need to supply additional data
+
+			// direct use of block IDs to place ordinary blocks
+			if blockValues[glyph].ID < 4096 {
+				BlockEdits = append(BlockEdits, wcedit{"block", wcblock{bx, by, bz, blockValues[glyph].ID, blockValues[glyph].Data}})
+			}
+
 			// skip placeholder markers
-			if blockValues[block].ID == 8193 {
+			if blockValues[glyph].ID == 8193 {
 				continue
 			}
 
-			// Entities require a lot more information than blocks, so detect Entity
-			// instructions and populate the EntityEdits array accordingly
-			if (blockValues[block].ID > 8200) && (blockValues[block].ID < 8300) {
+			// read an entity from the (array built from the) file of entity definitions
+			if blockValues[glyph].ID == 8201 {
 				var indxEntity uint8
 				var entityInfo nbt.NBT
 				var entityCopy nbt.NBT
 
-				switch blockValues[block].Symbol {
-				case "s":
-					indxEntity = stockEntitiesIndx["sheep"]
-					entityInfo = stockEntities[indxEntity].Base
+				indxEntity = stockEntitiesIndx[blockValues[glyph].Symbol]
+				entityInfo = stockEntities[indxEntity].Base
 
-				case "c":
-					indxEntity = stockEntitiesIndx["cow"]
-					entityInfo = stockEntities[indxEntity].Base
-
-				case "k":
-					indxEntity = stockEntitiesIndx["chicken"]
-					entityInfo = stockEntities[indxEntity].Base
-
-				case "p":
-					indxEntity = stockEntitiesIndx["pig"]
-					entityInfo = stockEntities[indxEntity].Base
-
-				}
-
+				// marshal and unmarshal the entity information as a way to make a deep copy;
+				// simple assignment assigns a pointer, and thus multiple identical entities
 				var bufJSON []byte
 				bufJSON, err = json.Marshal(entityInfo)
 				panicOnErr(err)
@@ -208,9 +204,11 @@ func main() {
 				uuidmost := int64(binary.BigEndian.Uint64(uuid[0:8]))
 				uuidlest := int64(binary.BigEndian.Uint64(uuid[8:16]))
 
+				// modify the (copy of the) base entity to have its own UUID
 				entityCopy.Data.([]nbt.NBT)[1].Data = uuidmost
 				entityCopy.Data.([]nbt.NBT)[2].Data = uuidlest
 
+				// modify the (copy of the) base entity to place it as indicated on the blueprint
 				entityCopy.Data.([]nbt.NBT)[3].Data.([]nbt.NBT)[0].Data = bx
 				entityCopy.Data.([]nbt.NBT)[3].Data.([]nbt.NBT)[1].Data = by
 				entityCopy.Data.([]nbt.NBT)[3].Data.([]nbt.NBT)[2].Data = bz
@@ -219,8 +217,6 @@ func main() {
 
 				continue
 			}
-
-			BlockEdits = append(BlockEdits, wcedit{"block", wcblock{bx, by, bz, blockValues[block].ID, blockValues[block].Data}})
 		}
 		dx = 0
 		dz++
@@ -311,8 +307,8 @@ func defineGlobalVariables() {
 		`K`:  blueprintblock{`K`,    0,  0 },    // enchanting table         --  needs a tile entity for full definition
 
 		`s`:  blueprintblock{`s`, 8201,  0 },    // sheep
-		`c`:  blueprintblock{`c`, 8202,  0 },    // cow
-		`k`:  blueprintblock{`k`, 8203,  0 },    // chicken
-		`p`:  blueprintblock{`p`, 8204,  0 },    // pig
+		`c`:  blueprintblock{`c`, 8201,  0 },    // cow
+		`k`:  blueprintblock{`k`, 8201,  0 },    // chicken
+		`p`:  blueprintblock{`p`, 8201,  0 },    // pig
 	}
 }

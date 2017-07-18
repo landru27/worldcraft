@@ -1,5 +1,5 @@
 { "Entities": [
-  { "Name": "sheep",
+  { "Symbol": "s",
     "Base": {
       "Type": 10, "List": 0, "Name": "", "Size": 33, "Data": [
         { "Type": 8, "List": 0, "Name": "id", "Size": 15, "Data": "minecraft:sheep" },
@@ -73,7 +73,7 @@
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] } ] } ] } },
-  { "Name": "cow",
+  { "Symbol": "c",
     "Base": {
       "Type": 10, "List": 0, "Name": "", "Size": 31, "Data": [
         { "Type": 8, "List": 0, "Name": "id", "Size": 13, "Data": "minecraft:cow" },
@@ -145,7 +145,7 @@
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] } ] } ] } },
-  { "Name": "chicken",
+  { "Symbol": "k",
     "Base": {
       "Type": 10, "List": 0, "Name": "", "Size": 33, "Data": [
         { "Type": 8, "List": 0, "Name": "id", "Size": 17, "Data": "minecraft:chicken" },
@@ -219,7 +219,7 @@
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] },
             { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 0, "Data": [] } ] } ] } },
-  { "Name": "pig",
+  { "Symbol": "p",
     "Base": {
       "Type": 10, "List": 0, "Name": "", "Size": 32, "Data": [
         { "Type": 8, "List": 0, "Name": "id", "Size": 13, "Data": "minecraft:pig" },
