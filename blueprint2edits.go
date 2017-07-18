@@ -290,21 +290,22 @@ func defineGlobalVariables() {
 		`g`:  blueprintblock{`g`,    1,  2 },    // polished granite
 		`O`:  blueprintblock{`O`,   49,  0 },    // obsidian
 
+		`D`:  blueprintblock{`D`,  193,  3 },    // spruce door, bottom      -\  two-block object
+		`d`:  blueprintblock{`d`,  193,  8 },    // spruce door, top         -/  two-block object
+		`B`:  blueprintblock{`B`,   26,  1 },    // foot of bed, head west   -\  two-block object
+		`b`:  blueprintblock{`b`,   26,  9 },    // head of bed, head west   -/  two-block object
+
+		`C`:  blueprintblock{`C`,   54,  3 },    // chest
 		`T`:  blueprintblock{`T`,   58,  0 },    // crafting table
-		`F`:  blueprintblock{`F`,    0,  0 },    // furnace                  --  needs a tile entity for full definition
+		`F`:  blueprintblock{`F`,   61,  3 },    // furnace
 		`V`:  blueprintblock{`V`,  145,  0 },    // anvil
+
 		`L`:  blueprintblock{`L`,   47,  0 },    // bookcase
-		`P`:  blueprintblock{`P`,    0,  0 },    // potion brewing stand     --  needs a tile entity for full definition
+		`K`:  blueprintblock{`K`,  116,  0 },    // enchanting table
+		`P`:  blueprintblock{`P`,  117,  0 },    // potion brewing stand
 		`W`:  blueprintblock{`W`,  118,  3 },    // cauldron for water for potions
 
 		`Y`:  blueprintblock{`Y`,   89,  0 },    // glowstone
-
-		`D`:  blueprintblock{`D`,  193,  3 },    // spruce door, bottom      --  two-block object
-		`d`:  blueprintblock{`d`,  193,  8 },    // spruce door, top         --  two-block object
-		`B`:  blueprintblock{`B`,    0,  0 },    // bed                      --  two-block object
-		`b`:  blueprintblock{`b`, 8193,  0 },    // head of bed placeholder
-		`C`:  blueprintblock{`C`,    0,  0 },    // chest                    --  needs a tile entity for full definition
-		`K`:  blueprintblock{`K`,    0,  0 },    // enchanting table         --  needs a tile entity for full definition
 
 		`s`:  blueprintblock{`s`, 8201,  0 },    // sheep
 		`c`:  blueprintblock{`c`, 8201,  0 },    // cow
