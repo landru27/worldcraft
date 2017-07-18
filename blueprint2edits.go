@@ -101,7 +101,7 @@ func main() {
 	var bufEntities []byte
 	var jsonEntities map[string][]blueprintentity
 
-	bufEntities, err = ioutil.ReadFile("entities.json")
+	bufEntities, err = ioutil.ReadFile("blueprint.entities.json")
 	panicOnErr(err)
 
 	err = json.Unmarshal(bufEntities, &jsonEntities)
