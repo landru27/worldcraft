@@ -63,6 +63,42 @@ func (wcr *wcregion) applyBlockEdit(blk *wcblock) {
 	cz := int(math.Floor(float64(blk.Z) /  16.0))
 	//fmt.Printf("cx, cy, cz : %d, %d, %d\n", cx, cy, cz)
 
+	// empty Sections of a chunk are not stored in the region file, but we might want to build into them anyway;
+	// thus, if a Section is not in the current data, we first add it as a Section filled with air; we also
+	// add any empty sections between this one and the first existing one below this one;  in theory, Minecraft
+	// supports missing Sections inbetween existing Sections, but Minecraft itself seems to define them anyway
+	// when the occassion arises
+	//
+	datapathSectionY := fmt.Sprintf("/rx%d/rz%d/cx%d/cz%d/Level/Sections/%d", rx, rz, cx, cz, cy)
+	if nbt.DataPaths[datapathSectionY] == nil {
+		for indx := 0; indx <= cy; indx++ {
+			datapathSectionY = fmt.Sprintf("/rx%d/rz%d/cx%d/cz%d/Level/Sections/%d", rx, rz, cx, cz, indx)
+			if nbt.DataPaths[datapathSectionY] == nil {
+				sectiondataA := nbt.NBT{nbt.TAG_Byte, 0, "Y", 0, byte(indx)}
+				sectiondataB := nbt.NBT{nbt.TAG_Byte_Array, 0, "Blocks", 4096, make([]byte, 4096)}
+				sectiondataC := nbt.NBT{nbt.TAG_Byte_Array, 0, "Data", 2048, make([]byte, 2048)}
+				sectiondataD := nbt.NBT{nbt.TAG_Byte_Array, 0, "SkyLight", 2048, make([]byte, 2048)}
+				sectiondataE := nbt.NBT{nbt.TAG_Byte_Array, 0, "BlockLight", 2048, make([]byte, 2048)}
+				sectiondata := []nbt.NBT{sectiondataA, sectiondataB, sectiondataC, sectiondataD, sectiondataE}
+				section := nbt.NBT{nbt.TAG_Compound, 0, "LISTELEM", 5, sectiondata}
+
+				datapathSections := fmt.Sprintf("/rx%d/rz%d/cx%d/cz%d/Level/Sections", rx, rz, cx, cz)
+				dataSections := nbt.DataPaths[datapathSections]
+				dataSections.Size++
+				dataSections.Data = append(dataSections.Data.([]nbt.NBT), section)
+
+				datapathSectionY = fmt.Sprintf("/rx%d/rz%d/cx%d/cz%d/Level/Sections/%d", rx, rz, cx, cz, indx)
+				nbt.DataPaths[datapathSectionY] = &dataSections.Data.([]nbt.NBT)[indx].Data.([]nbt.NBT)[0]
+
+				datapathSectionYBlocks := fmt.Sprintf("/rx%d/rz%d/cx%d/cz%d/Level/Sections/%d/Blocks", rx, rz, cx, cz, indx)
+				nbt.DataPaths[datapathSectionYBlocks] = &dataSections.Data.([]nbt.NBT)[indx].Data.([]nbt.NBT)[1]
+
+				datapathSectionYData := fmt.Sprintf("/rx%d/rz%d/cx%d/cz%d/Level/Sections/%d/Data", rx, rz, cx, cz, indx)
+				nbt.DataPaths[datapathSectionYData] = &dataSections.Data.([]nbt.NBT)[indx].Data.([]nbt.NBT)[2]
+			}
+		}
+	}
+
 	datapathBlocks := fmt.Sprintf("/rx%d/rz%d/cx%d/cz%d/Level/Sections/%d/Blocks", rx, rz, cx, cz, cy)
 	dataBlocks := nbt.DataPaths[datapathBlocks]
 
