@@ -15,13 +15,13 @@ These utilities are written for and have been tested with Minecraft v1.11.2
 
 ### usage summary
 
-Usage of worldcraft:
-    &nbsp;&nbsp;&nbsp;&nbsp; -X : the westernmost  coordinate where the blueprint will be rendered in the gameworld
-    &nbsp;&nbsp;&nbsp;&nbsp; -Y : the lowest-layer coordinate where the blueprint will be rendered in the gameworld
-    &nbsp;&nbsp;&nbsp;&nbsp; -Z : the northernmost coordinate where the blueprint will be rendered in the gameworld
-    &nbsp;&nbsp;&nbsp;&nbsp; -blueprint : a file containing a blueprint of edits to make to the specified Minecraft world (default "UNDEFINED")
-    &nbsp;&nbsp;&nbsp;&nbsp; -debug : a flag to enable verbose output, for bug diagnosis and to validate detailed functionality
-    &nbsp;&nbsp;&nbsp;&nbsp; -json  : a flag to enable dumping the chunkdata to JSON
+Usage of worldcraft:  
+    &nbsp;&nbsp;&nbsp;&nbsp; -X : the westernmost  coordinate where the blueprint will be rendered in the gameworld  
+    &nbsp;&nbsp;&nbsp;&nbsp; -Y : the lowest-layer coordinate where the blueprint will be rendered in the gameworld  
+    &nbsp;&nbsp;&nbsp;&nbsp; -Z : the northernmost coordinate where the blueprint will be rendered in the gameworld  
+    &nbsp;&nbsp;&nbsp;&nbsp; -blueprint : a file containing a blueprint of edits to make to the specified Minecraft world (default "UNDEFINED")  
+    &nbsp;&nbsp;&nbsp;&nbsp; -debug : a flag to enable verbose output, for bug diagnosis and to validate detailed functionality  
+    &nbsp;&nbsp;&nbsp;&nbsp; -json  : a flag to enable dumping the chunkdata to JSON  
     &nbsp;&nbsp;&nbsp;&nbsp; -world : a directory containing a collection of Minecraft region files (default "UNDEFINED")
 
 
