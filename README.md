@@ -2,53 +2,30 @@
 Mindcraft world editor, written as an exercise in learning golang
 
 
-### the utilities
+### a brief history
 
-**worldcraft**  reads a set of edits from a file, applies them to a Minecraft world, and generates edited region files
-**blueprint2edits**  reads a 'blueprint' of block edits, and generates an 'edits' input file for use with **worldcraft**
+**v0.4.0**  works correctly and has most of the target features, but is not very idiomatic Go, and not well-designed for a Go program.
+
+The **current** version, still under development, is in some ways a fresh start, in order to pursue what hopefully is a better design.  However, I am using several sizable chunks of logic from v0.4.0.  In particular, the NBT code is the same, although under v0.4.0 it was an import and currently it is a separate file within the `worldcraft` 'main' package.
+
+This version also combines functionality that existed as separate utilities previously.  There are pros and cons to separating functionality into different programs, and for the overall approach I used before, separate utilities made more sense.  With the current design, combining the associated functions makes for smoother usage, without sacrificing utility.
 
 These utilities are written for and have been tested with Minecraft v1.11.2
 
 
+### usage summary
+
+Usage of worldcraft:
+    &nbsp;&nbsp;&nbsp;&nbsp; -X : the westernmost  coordinate where the blueprint will be rendered in the gameworld
+    &nbsp;&nbsp;&nbsp;&nbsp; -Y : the lowest-layer coordinate where the blueprint will be rendered in the gameworld
+    &nbsp;&nbsp;&nbsp;&nbsp; -Z : the northernmost coordinate where the blueprint will be rendered in the gameworld
+    &nbsp;&nbsp;&nbsp;&nbsp; -blueprint : a file containing a blueprint of edits to make to the specified Minecraft world (default "UNDEFINED")
+    &nbsp;&nbsp;&nbsp;&nbsp; -debug : a flag to enable verbose output, for bug diagnosis and to validate detailed functionality
+    &nbsp;&nbsp;&nbsp;&nbsp; -json  : a flag to enable dumping the chunkdata to JSON
+    &nbsp;&nbsp;&nbsp;&nbsp; -world : a directory containing a collection of Minecraft region files (default "UNDEFINED")
+
+
 ### example usage
-#### basic usage
-To test the fidelity of `worldcraft`, you can transform an original Minecraft-generated region file with a NOP 'edits' file \[let's call the result 'A'\], then transform the result of that again \[to get 'B'\].  Files 'A' and 'B' should match, byte-for-byte.
 
-The reason for the first transformation is that Minecraft will generate chunks in a non-linear order, mainly (I think) because it's generating them as your avatar 'sees' them, which I assume includes ones you don't actually see yet but are near (such as the ones behind you when you first spawn, the ones off to the sides as you wander about, etc).  `worldcraft`, on the other hand, writes the chunks in their index-order.  So, even though it's not changing any content, it's reordering it.  But, 'A' and 'B' will be the same, because they are both written by `worldcraft`.
+_coming soon_
 
-In order for this to work, you need to use a NOP 'edits' file.  The included file `just-load-and-save-r0.0.json` will work fine for a Superflat world.  You can make one similar that references an air block close to the ground.  An empty 'edits' file won't work, because `worldcraft` loads region files only as needed; so a file with no edits at all won't load any region files.  Also, if you fire up Minecraft -- even to take a quick peek -- the file will change quite a bit, because entities will move around, food might grow, fire might burn things, etc.
-
-The commands for this would be something like the following (after you have initiated the world in Minecraft):
-```bash
-cp -ip /path/to/your/minecraft/saves/bravenewworld/region/r.0.0.mca  ./r.0.0.mca--bravenewworld--orig
-
-mkdir testworldA
-mkdir testworldB
-cp -ip r.0.0.mca--bravenewworld--orig testworldA/r.0.0.mca
-
-./worldcraft -edits just-load-and-save-r0.0.json -world ./testworldA
-cp -ip  r.0.0.mca.1500003174  ./testworldB/r.0.0.mca
-
-./worldcraft -edits just-load-and-save-r0.0.json -world ./testworldB
-
-md5sum  r.0.0.mca.1500003174  r.0.0.mca.1500003193
-```
-
-The exact filename of the files produced by `worldcraft` will differ; they will have the execution-time timestamp on the filename.  This prevents overwriting any original region files, and it makes it easy to collect a series of edited files.
-
-
-#### more complete usage
-To see how `worldcraft` and `blueprint2edits` work together, you can use the included 'blueprint' file, and issue commands like the following; again, you need to have already initiated the world in Minecraft; moreover, you need to visit that world and select a suitable 'anchor' point for the structure you are going in import.
-```bash
-cp -ip /path/to/your/minecraft/saves/bravenewworld/region/r.0.0.mca  ./r.0.0.mca--bravenewworld--orig
-
-# select a location for the structure; you specify the lower, northern, western corner;
-# the default is 0, 0, 0;  the following puts the tower in the middle of region 0, 0 and
-# flush with the ground in a Superflat world
-
-cat blueprint.small-tower | ./blueprint2edits -X 250 -Y 3 -Z 250 > a-small-tower.json
-./worldcraft -edits a-small-tower.json -world /path/to/your/minecraft/saves/bravenewworld/region
-cp -ip r.0.0.mca.1500004112 /path/to/your/minecraft/saves/bravenewworld/region/r.0.0.mca
-```
-
-If you compare the resulting structure within Minecraft to the blueprint file, you will see that each layer is described by a 2x2 grid, starting with the bottom layer.  Punctuation, letters, and numbers stand for individual blocks; see the source code in blueprint2edits.go for a legend.  Whitespace separates symbols that are on the same line; a layer ends at a line with "--" anywhere on the line (after stripping comments, which are denoted by "##").
