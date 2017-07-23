@@ -7,7 +7,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	//"encoding/json"
-	//"fmt"
+	"fmt"
 	//"reflect"
 	//"io"
 	//"regexp"
@@ -20,6 +20,10 @@ type MCWorld struct {
 	PathWorld string
 	Regions   []MCRegion
 	Chunks    []MCChunk
+}
+
+func (w *MCWorld) EditBlock(x int, y int, z int, id uint32, data uint8) () {
+	fmt.Printf("MCWorld.EditBlock : %v, %v, %v, %v, %v\n", x, y, z, id, data)
 }
 
 type MCRegion struct {
@@ -70,12 +74,12 @@ type MCChunk struct {
 }
 
 type Glyph struct {
-	Glyph string
-	Name  string
-	Type  string
-	ID    uint32
-	Data  uint8
-	Base  NBT
+	Glyph string    `json:"glyph"`
+	Type  string    `json:"type"`
+	Name  string    `json:"name"`
+	ID    uint32    `json:"id"`
+	Data  uint8     `json:"data"`
+	Base  NBT       `json:"base"`
 }
 
 type GlyphTag struct {
