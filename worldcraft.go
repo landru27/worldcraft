@@ -87,7 +87,7 @@ func main() {
 	fmt.Printf("build starts at : %d, %d, %d\n", *anchorX, *anchorY, *anchorZ)
 	fmt.Printf("\n")
 
-	world = MCWorld{PathWorld: *pathWorld}
+	world = MCWorld{FlagDebug: *flagDebug, FlagJSOND: *flagJSOND, PathWorld: *pathWorld}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// read in the definitions of Glyphs, so that the associated blueprint symbols can be interpretted as the Minecraft
