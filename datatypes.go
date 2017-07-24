@@ -28,7 +28,7 @@ type MCWorld struct {
 }
 
 func (w *MCWorld) EditBlock(x int, y int, z int, id uint32, data uint8) (err error) {
-	fmt.Printf("MCWorld.EditBlock : %v, %v, %v, %v, %v\n", x, y, z, id, data)
+	//fmt.Printf("MCWorld.EditBlock : %v, %v, %v, %v, %v\n", x, y, z, id, data)
 
 	//rgn, err := w.LoadRegion(x, y, z)
 	_, err = w.LoadRegion(x, y, z)
@@ -174,8 +174,15 @@ func (w *MCWorld) LoadRegion(x int, y int, z int) (rgn *MCRegion, err error) {
 	return nil, nil
 }
 
-func (w *MCWorld) SaveRegion(rx, rz int) (e error) {
-	var err error
+func (w *MCWorld) SaveAllEdits() (err error) {
+	for _, elem := range w.Regions {
+		w.SaveRegion(elem.RX, elem.RZ)
+	}
+
+	return
+}
+
+func (w *MCWorld) SaveRegion(rx, rz int) (err error) {
 	var filename string
 	var rgn MCRegion
 

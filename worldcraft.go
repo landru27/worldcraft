@@ -241,6 +241,10 @@ func main() {
 	err = scanner.Err()
 	panicOnErr(err)
 
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// save the net effect of all edits to new region file(s)
+	world.SaveAllEdits()
+
 	os.Exit(0)
 }
 
