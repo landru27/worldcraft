@@ -5,15 +5,10 @@ package main
 
 import (
 	"bufio"
-	//"bytes"
-	//"compress/zlib"
-	//"encoding/binary"
 	"encoding/json"
 	"flag"
 	"fmt"
-	//"io"
 	"io/ioutil"
-	//"math"
 	"os"
 	"regexp"
 	"strings"

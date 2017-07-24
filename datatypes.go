@@ -11,10 +11,8 @@ import (
 	"fmt"
 	"math"
 	"os"
-	//"reflect"
 	"io"
 	"io/ioutil"
-	//"regexp"
 )
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,10 +30,6 @@ func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err err
 
 	rgn, err := w.LoadRegion(x, y, z)
 	panicOnErr(err)
-
-	// lookup the region's coordinates
-	rx := rgn.RX
-	rz := rgn.RZ
 
 	// calculate the in-region chunk coordinates and chunkdata index
 	cx := int(math.Floor(float64(x) / 16.0))
