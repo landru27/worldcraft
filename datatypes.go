@@ -27,12 +27,97 @@ type MCWorld struct {
 	Regions   []MCRegion
 }
 
-func (w *MCWorld) EditBlock(x int, y int, z int, id uint32, data uint8) (err error) {
-	//fmt.Printf("MCWorld.EditBlock : %v, %v, %v, %v, %v\n", x, y, z, id, data)
+func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err error) {
+	var fqsn string
 
-	//rgn, err := w.LoadRegion(x, y, z)
-	_, err = w.LoadRegion(x, y, z)
+	rgn, err := w.LoadRegion(x, y, z)
 	panicOnErr(err)
+
+	// lookup the region's coordinates
+	rx := rgn.RX
+	rz := rgn.RZ
+
+	// calculate the in-region chunk coordinates and chunkdata index
+	cx := int(math.Floor(float64(x) / 16.0))
+	cy := int(                   y  / 16   )
+	cz := int(math.Floor(float64(z) / 16.0))
+	indxChunk := (cz * 32) + cx
+
+	// calculate the in-chunk block coordinates and blockdata index
+	ix := x - (cx * 16)
+	iy := y       % 16
+	iz := z - (cz * 16)
+	indxBlock := (iy * 256) + (iz * 16) + ix
+
+	// empty Sections of a chunk are not stored in the region file, but we might want to build into them anyway;
+	// thus, if a Section is not in the current data, we first add it as a Section filled with air; we also
+	// add any empty sections between this one and the first existing one below this one;  in theory, Minecraft
+	// supports missing Sections inbetween existing Sections, but Minecraft itself seems to define them anyway
+	// when the occassion arises
+	//
+	for indx := 0; indx <= cy; indx++ {
+		fqsn = fmt.Sprintf("Sections/%d/Y", indx)
+		if rgn.Chunks[indxChunk].ChunkDataRefs[fqsn] == nil {
+			sectiondataA := NBT{TAG_Byte, 0, "Y", 0, byte(indx)}
+			sectiondataB := NBT{TAG_Byte_Array, 0, "Blocks", 4096, make([]byte, 4096)}
+			sectiondataC := NBT{TAG_Byte_Array, 0, "Data", 2048, make([]byte, 2048)}
+			sectiondataD := NBT{TAG_Byte_Array, 0, "SkyLight", 2048, make([]byte, 2048)}
+			sectiondataE := NBT{TAG_Byte_Array, 0, "BlockLight", 2048, make([]byte, 2048)}
+			sectiondata := []NBT{sectiondataA, sectiondataB, sectiondataC, sectiondataD, sectiondataE}
+			section := NBT{TAG_Compound, 0, "LISTELEM", 5, sectiondata}
+
+			fqsn = fmt.Sprintf("Sections")
+			dataSections := rgn.Chunks[indxChunk].ChunkDataRefs[fqsn]
+			dataSections.Size++
+			dataSections.Data = append(dataSections.Data.([]NBT), section)
+
+			fqsn = fmt.Sprintf("Sections/%d/Y", indx)
+			rgn.Chunks[indxChunk].ChunkDataRefs[fqsn] = &dataSections.Data.([]NBT)[indx].Data.([]NBT)[0]
+
+			fqsn = fmt.Sprintf("Sections/%d/Blocks", indx)
+			rgn.Chunks[indxChunk].ChunkDataRefs[fqsn] = &dataSections.Data.([]NBT)[indx].Data.([]NBT)[1]
+
+			fqsn = fmt.Sprintf("Sections/%d/Data", indx)
+			rgn.Chunks[indxChunk].ChunkDataRefs[fqsn] = &dataSections.Data.([]NBT)[indx].Data.([]NBT)[2]
+		}
+	}
+
+	fqsn = fmt.Sprintf("Sections/%d/Blocks", cy)
+	dataBlocks := rgn.Chunks[indxChunk].ChunkDataRefs[fqsn]
+
+	fqsn = fmt.Sprintf("Sections/%d/Data", cy)
+	dataBlockData := rgn.Chunks[indxChunk].ChunkDataRefs[fqsn]
+
+	if dataBlocks == nil {
+		qtyBlockEditsSkipped++
+		return
+	}
+
+	if dataBlockData == nil {
+		qtyBlockEditsSkipped++
+		return
+	}
+
+	valuBytes := make([]byte, 2)
+	binary.BigEndian.PutUint16(valuBytes, id)
+//	valuAddtnl := valuBytes[0]
+	valuBlocks := valuBytes[1]
+
+	dataBlocks.Data.([]byte)[indxBlock] = valuBlocks
+
+	indxBlockData := int(indxBlock / 2)
+	currDataValue := dataBlockData.Data.([]byte)[indxBlockData]
+	var keepNybble, valuNybble byte
+	if (indxBlock % 2) == 0 {
+		keepNybble = currDataValue & 0xF0
+		valuNybble = data
+	} else {
+		keepNybble = currDataValue & 0x0F
+		valuNybble = data << 4
+	}
+	dataBlockData.Data.([]byte)[indxBlockData] = keepNybble + valuNybble
+
+	qtyBlockEdits++
 
 	return
 }
@@ -150,6 +235,7 @@ func (w *MCWorld) LoadRegion(x int, y int, z int) (rgn *MCRegion, err error) {
 					var rdrTemp *bytes.Reader
 					rdrTemp = bytes.NewReader(bufTemp.Bytes())
 					newchnk.ChunkData, err = ReadNBTData(rdrTemp, TAG_NULL, strDebug)
+					newchnk.BuildDataRefs()
 				}
 			}
 		}
@@ -198,7 +284,6 @@ func (w *MCWorld) SaveRegion(rx, rz int) (err error) {
 	// regions might be loaded in any order; find the region we want by scanning the array of regions for an x, z match
 	for _, elem := range w.Regions {
 		if (elem.RX == rx) && (elem.RZ == rz) {
-			fmt.Printf("SaveRegion found region for : %d, %d\n", rx, rz)
 			rgn = elem
 			break
 		}
@@ -361,13 +446,37 @@ type MCChunk struct {
 	Length          uint32
 	CompressionType byte
 	ChunkData       NBT
+	ChunkDataRefs   map[string]*NBT
+}
+
+func (c *MCChunk) BuildDataRefs() () {
+	if c.ChunkDataRefs != nil {
+		fmt.Printf("BuildDataRefs called again for the same chunk [%d, %d]\n", c.CX, c.CZ)
+		os.Exit(5)
+	}
+	c.ChunkDataRefs = make(map[string]*NBT, 0)
+
+	refLevl := c.ChunkData.Data.([]NBT)[0]
+
+	for indxA, elemLevl := range refLevl.Data.([]NBT) {
+		c.ChunkDataRefs[elemLevl.Name] = &refLevl.Data.([]NBT)[indxA]
+
+		if elemLevl.Name == "Sections" {
+			for indxB, arrySect := range elemLevl.Data.([]NBT) {
+				for indxC, elemSect := range arrySect.Data.([]NBT) {
+					fqsn := fmt.Sprintf("Sections/%d/%s", indxB, elemSect.Name)
+					c.ChunkDataRefs[fqsn] = &refLevl.Data.([]NBT)[indxA].Data.([]NBT)[indxB].Data.([]NBT)[indxC]
+				}
+			}
+		}
+	}
 }
 
 type Glyph struct {
 	Glyph string    `json:"glyph"`
 	Type  string    `json:"type"`
 	Name  string    `json:"name"`
-	ID    uint32    `json:"id"`
+	ID    uint16    `json:"id"`
 	Data  uint8     `json:"data"`
 	Base  NBT       `json:"base"`
 }
