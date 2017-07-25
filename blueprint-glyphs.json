@@ -201,9 +201,6 @@
     { "glyph": "ENCA", "type": "item",   "name": "golden_apple",              "id": 322, "data":  1 },
 
 
-    { "glyph": "s",    "type": "entity", "name": "sheep",                     "id":   0, "data":  0 },
-    { "glyph": "c",    "type": "entity", "name": "cow",                       "id":   0, "data":  0 },
-    { "glyph": "k",    "type": "entity", "name": "chicken",                   "id":   0, "data":  0 },
-    { "glyph": "p",    "type": "entity", "name": "pig",                       "id":   0, "data":  0 }
+    { "glyph": "E",    "type": "entity", "name": "entity_component",          "id":   0, "data":  0 }
   ]
 }
