@@ -76,7 +76,7 @@
                 { "Type": 6, "List": 0, "Name": "Base", "Size": 0, "Data": 0 },
                 { "Type": 8, "List": 0, "Name": "Name", "Size": 22, "Data": "generic.armorToughness" } ] } ] } ] } },
 
-  { "Name": "mob_breeder",
+  { "Name": "mob_anima",
     "Base": "entity_mob",
     "Data": {
       "Type": 10, "List": 0, "Name": "", "Size": 3, "Data": [
@@ -85,104 +85,97 @@
         { "Type": 3, "List": 0, "Name": "InLove", "Size": 0, "Data": 0 } ] } },
 
   { "Name": "mob_tame",
-    "Base": "mob_breeder",
+    "Base": "mob_anima",
     "Data": {
       "Type": 10, "List": 0, "Name": "", "Size": 2, "Data": [
         { "Type": 8, "List": 0, "Name": "OwnerUUID", "Size": 36, "Data": "cdce5f69-aa13-4658-a66b-3dcdaf414b5f" },
         { "Type": 1, "List": 0, "Name": "Sitting", "Size": 0, "Data": 0 } ] } },
 
 
-  { "Name": "sheep_white",
-    "Base": "mob_breeder",
+  { "Name": "sheep",
+    "Base": "mob_anima",
     "Data": {
       "Type": 10, "List": 0, "Name": "", "Size": 2, "Data": [
-        { "Type": 1, "List": 0, "Name": "Color", "Size": 0, "Data": 0 },
+        { "Type": 1, "List": 0, "Name": "Color", "Size": 0, "Data": 12 },
         { "Type": 1, "List": 0, "Name": "Sheared", "Size": 0, "Data": 0 } ] },
     "Info": [
-        { "MCName": "minecraft:sheep" },
-        { "MaxHealth": 8 },
-        { "MoveSpeed": 0.23 } ] },
-  { "Name": "sheep_lightgrey",
-    "Base": "mob_breeder",
-    "Data": {
-      "Type": 10, "List": 0, "Name": "", "Size": 2, "Data": [
-        { "Type": 1, "List": 0, "Name": "Color", "Size": 0, "Data": 8 },
-        { "Type": 1, "List": 0, "Name": "Sheared", "Size": 0, "Data": 0 } ] },
-    "Info": [
-        { "MCName": "minecraft:sheep" },
-        { "MaxHealth": 8 },
-        { "MoveSpeed": 0.23 } ] },
-  { "Name": "sheep_darkgrey",
-    "Base": "mob_breeder",
-    "Data": {
-      "Type": 10, "List": 0, "Name": "", "Size": 2, "Data": [
-        { "Type": 1, "List": 0, "Name": "Color", "Size": 0, "Data": 7 },
-        { "Type": 1, "List": 0, "Name": "Sheared", "Size": 0, "Data": 0 } ] },
-    "Info": [
-        { "MCName": "minecraft:sheep" },
-        { "MaxHealth": 8 },
-        { "MoveSpeed": 0.23 } ] },
-  { "Name": "sheep_black",
-    "Base": "mob_breeder",
-    "Data": {
-      "Type": 10, "List": 0, "Name": "", "Size": 2, "Data": [
-        { "Type": 1, "List": 0, "Name": "Color", "Size": 0, "Data": 15 },
-        { "Type": 1, "List": 0, "Name": "Sheared", "Size": 0, "Data": 0 } ] },
-    "Info": [
-        { "MCName": "minecraft:sheep" },
-        { "MaxHealth": 8 },
-        { "MoveSpeed": 0.23 } ] },
-
+        { "Attr": "MCName", "Valu": "minecraft:sheep" },
+        { "Attr": "MaxHealth", "Valu": 8 },
+        { "Attr": "MoveSpeed", "Valu": 0.23 } ] },
   { "Name": "cow",
-    "Base": "mob_breeder",
-    "Data": {
-      "Type": 10, "List": 0, "Name": "", "Size": 0, "Data": [] },
+    "Base": "mob_anima",
     "Info": [
-        { "MCName": "minecraft:cow" },
-        { "MaxHealth": 12 },
-        { "MoveSpeed": 0.2 } ] },
+        { "Attr": "MCName", "Valu": "minecraft:cow" },
+        { "Attr": "MaxHealth", "Valu": 12 },
+        { "Attr": "MoveSpeed", "Valu": 0.2 } ] },
   { "Name": "chicken",
-    "Base": "mob_breeder",
+    "Base": "mob_anima",
     "Data": {
       "Type": 10, "List": 0, "Name": "", "Size": 2, "Data": [
         { "Type": 3, "List": 0, "Name": "EggLayTime", "Size": 0, "Data": 8192 },
         { "Type": 1, "List": 0, "Name": "IsChickenJockey", "Size": 0, "Data": 0 } ] },
     "Info": [
-        { "MCName": "minecraft:chicken" },
-        { "MaxHealth": 4 },
-        { "MoveSpeed": 0.25 } ] },
+        { "Attr": "MCName", "Valu": "minecraft:chicken" },
+        { "Attr": "MaxHealth", "Valu": 4 },
+        { "Attr": "MoveSpeed", "Valu": 0.25 } ] },
   { "Name": "pig",
-    "Base": "mob_breeder",
+    "Base": "mob_anima",
     "Data": {
       "Type": 10, "List": 0, "Name": "", "Size": 1, "Data": [
         { "Type": 1, "List": 0, "Name": "Saddle", "Size": 0, "Data": 0 } ] },
     "Info": [
-        { "MCName": "minecraft:pig" },
-        { "MaxHealth": 10 },
-        { "MoveSpeed": 0.25 } ] },
+        { "Attr": "MCName", "Valu": "minecraft:pig" },
+        { "Attr": "MaxHealth", "Valu": 10 },
+        { "Attr": "MoveSpeed", "Valu": 0.25 } ] },
 
-
-  { "Name": "hannah",
+  { "Name": "cat",
     "Base": "mob_tame",
     "Data": {
       "Type": 10, "List": 0, "Name": "", "Size": 1, "Data": [
-        { "Type": 3, "List": 0, "Name": "CatType", "Size": 0, "Data": 1 } ] },
+        { "Type": 3, "List": 0, "Name": "CatType", "Size": 0, "Data": 0 } ] },
     "Info": [
-        { "MCName": "minecraft:ocelot" },
-        { "MaxHealth": 16 },
-        { "MoveSpeed": 0.4 },
-        { "CustomName": "Hannah" } ] },
+        { "Attr": "MCName", "Valu": "minecraft:ocelot" },
+        { "Attr": "MaxHealth", "Valu": 16 },
+        { "Attr": "MoveSpeed", "Valu": 0.4 } ] },
 
-  { "Name": "rolf",
+  { "Name": "dog",
     "Base": "mob_tame",
     "Data": {
       "Type": 10, "List": 0, "Name": "", "Size": 2, "Data": [
         { "Type": 1, "List": 0, "Name": "CollarColor", "Size": 0, "Data": 1 },
         { "Type": 1, "List": 0, "Name": "Angry", "Size": 0, "Data": 0 } ] },
     "Info": [
-        { "MCName": "minecraft:wolf" },
-        { "MaxHealth": 20 },
-        { "MoveSpeed": 0.3 },
-        { "CustomName": "Rolf" } ] }
+        { "Attr": "MCName", "Valu": "minecraft:wolf" },
+        { "Attr": "MaxHealth", "Valu": 20 },
+        { "Attr": "MoveSpeed", "Valu": 0.3 } ] },
+
+
+  { "Name": "sheep_white",
+    "Base": "sheep",
+    "Info": [
+        { "Attr": "SheepColor", "Valu": 0 } ] },
+  { "Name": "sheep_lightgrey",
+    "Base": "sheep",
+    "Info": [
+        { "Attr": "SheepColor", "Valu": 8 } ] },
+  { "Name": "sheep_darkgrey",
+    "Base": "sheep",
+    "Info": [
+        { "Attr": "SheepColor", "Valu": 7 } ] },
+  { "Name": "sheep_black",
+    "Base": "sheep",
+    "Info": [
+        { "Attr": "SheepColor", "Valu": 15 } ] },
+
+
+  { "Name": "hannah",
+    "Base": "cat",
+    "Info": [
+        { "Attr": "CustomName", "Valu": "Hannah" } ] },
+
+  { "Name": "rolf",
+    "Base": "mob_tame",
+    "Info": [
+        { "Attr": "CustomName", "Valu": "Rolf" } ] }
   ]
 }

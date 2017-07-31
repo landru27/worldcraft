@@ -476,15 +476,19 @@ type Glyph struct {
 }
 
 type GlyphTag struct {
-	Glyph Glyph
-	Tag   string
-	Items []Item
+	Glyph Glyph        `json:"glyph"`
+	Tag   string       `json:"tag"`
+	Data  NBT          `json:"data"`
 }
 
-type Item struct {
-	ID    string
-	Slot  uint8
-	Count uint8
-	Data  uint8
-	Tags  NBT
+type Atom struct {
+	Name  string       `json:"name"`
+	Base  string       `json:"base"`
+	Data  NBT          `json:"data"`
+	Info  AtomInfo     `json:"info"`
+}
+
+type AtomInfo struct {
+	Attr  string       `json:"attr"`
+	Valu  interface{}  `json:"valu"`
 }
