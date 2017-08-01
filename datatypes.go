@@ -476,7 +476,6 @@ type Glyph struct {
 }
 
 type GlyphTag struct {
-	Glyph Glyph        `json:"glyph"`
 	Tag   string       `json:"tag"`
 	Data  NBT          `json:"data"`
 }

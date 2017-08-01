@@ -191,6 +191,61 @@ func main() {
 		}
 
 		// == defines a glyph-tag
+		re = regexp.MustCompile(`==`)
+		if re.FindStringIndex(linein) != nil {
+			rem := regexp.MustCompile(`== +([a-z]+) +:((?: +[A-Za-z]{1,4}:[a-z0-9]+){1,9})`)
+			res := rem.FindStringSubmatch(linein)
+			tag := res[1]
+			elems := res[2]
+			fmt.Printf("tag, elems : %v, %v\n", tag, elems)
+
+			re = regexp.MustCompile(`^\s*$`)
+			rem = regexp.MustCompile(`^ +([A-Za-z]{1,4}):([a-z0-9]+)`)
+			for {
+				if re.FindStringIndex(elems) != nil { break }
+
+				res = rem.FindStringSubmatch(elems)
+				fmt.Printf("res : %v, %v\n", res[1], res[2])
+
+				if glyphs[glyphIndx[res[1]]].Type == "item" {
+					var indx uint8
+					var nbtG NBT
+					item := glyphs[glyphIndx[res[1]]]
+
+					if indx, ok := glyphTagIndx[tag]; ok {
+						nbtG = glyphTags[indx].Data
+					} else {
+						nbtG = NBT{TAG_List, TAG_Compound, "Items", 0, make([]NBT, 0)}
+
+						gt := GlyphTag{tag, nbtG}
+						glyphTags = append(glyphTags, gt)
+						glyphTagIndx[tag] = len(glyphTags) - 1
+					}
+
+					slot := nbtG.Size
+					idstr := "minecraft:" + item.Name
+					lenstr := uint32(len(idstr))
+
+					nbtA := NBT{TAG_Byte,   0, "Slot",   0,      slot}
+					nbtB := NBT{TAG_String, 0, "id",     lenstr, idstr}
+					nbtC := NBT{TAG_Byte,   0, "Count",  0,      res[2]}
+					nbtD := NBT{TAG_Short,  0, "Damage", 0,      item.Data}
+
+					nbtI := NBT{TAG_Compound, 0, "LISTELEM", 4, []NBT{nbtA, nbtB, nbtC, nbtD}}
+
+					tmparr := nbtG.Data.([]NBT)
+					tmparr = append(tmparr, nbtI)
+					nbtG.Data = tmparr
+					nbtG.Size++
+
+					glyphTags[indx].Data = nbtG
+				}
+
+				elems = rem.ReplaceAllLiteralString(elems, ``)
+			}
+		fmt.Printf("... %v\n", glyphTags)
+		}
+os.Exit(0)
 
 		// :: sets a glyph-tag for a glyph within the corresponding glyph line
 
