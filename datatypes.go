@@ -485,7 +485,7 @@ type Atom struct {
 	Name  string       `json:"name"`
 	Base  string       `json:"base"`
 	Data  NBT          `json:"data"`
-	Info  AtomInfo     `json:"info"`
+	Info  []AtomInfo   `json:"info"`
 }
 
 type AtomInfo struct {

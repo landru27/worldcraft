@@ -5,11 +5,13 @@ package main
 
 import (
 	"bufio"
+	"encoding/binary"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"crypto/rand"
 	"regexp"
 	"strings"
 	"time"
@@ -26,6 +28,9 @@ var glyphs []Glyph
 var glyphTags []GlyphTag
 var glyphIndx map[string]int
 var glyphTagIndx map[string]int
+
+var entityAtoms []Atom
+var entityAtomIndx map[string]int
 
 var qtyBlockEdits int
 var qtyBlockEditsSkipped int
@@ -48,6 +53,9 @@ func main() {
 	glyphTags = make([]GlyphTag, 0)
 	glyphIndx = make(map[string]int, 0)
 	glyphTagIndx = make(map[string]int, 0)
+
+	entityAtoms = make([]Atom, 0)
+	entityAtomIndx = make(map[string]int, 0)
 
 	qtyBlockEdits = 0
 	qtyBlockEditsSkipped = 0
@@ -98,6 +106,29 @@ func main() {
 	//debug
 	//fmt.Printf("glyphs array : %v\n", glyphs)
 	//fmt.Printf("glyphIndx array : %v\n", glyphIndx)
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// read in the definitions of Atoms, so that the associated blueprint symbols can be interpretted as the Minecraft
+	// objects that they are intended to represent
+	var bufJsonA []byte
+	var mapJsonA map[string][]Atom
+
+	bufJsonA, err = ioutil.ReadFile("blueprint-entities.json")
+	panicOnErr(err)
+
+	err = json.Unmarshal(bufJsonA, &mapJsonA)
+	panicOnErr(err)
+
+	// assign the data to an array, and build some maps for refering into that array by name
+	entityAtoms = mapJsonA["EntityAtoms"]
+	for indx, elem := range entityAtoms {
+		entityAtomIndx[elem.Name] = indx
+	}
+
+	//debug
+	//fmt.Printf("entityAtoms array : %v\n", entityAtoms)
+	//fmt.Printf("entityAtomIndx array : %v\n", entityAtomIndx)
+
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// read in the blueprint from stdin
@@ -185,40 +216,12 @@ func main() {
 
 			// glyphs that represent entities
 			if glyphs[indx].Type == "entity" {
-//				var indxEntity uint8
-//				var entityInfo nbt.NBT
-//				var entityCopy nbt.NBT
-//
-//				indxEntity = stockEntitiesIndx[blockValues[glyph].Symbol]
-//				entityInfo = stockEntities[indxEntity].Base
-//
-//				// marshal and unmarshal the entity information as a way to make a deep copy;
-//				// simple assignment assigns a pointer, and thus multiple identical entities
-//				var bufJSON []byte
-//				bufJSON, err = json.Marshal(entityInfo)
-//				panicOnErr(err)
-//				err = json.Unmarshal(bufJSON, &entityCopy)
-//
-//				var uuid [16]byte
-//				_, err = rand.Read(uuid[:])
-//				panicOnErr(err)
-//				uuid[8] = (uuid[8] | 0x40) & 0x7F
-//				uuid[6] = (uuid[6] &  0xF) | (4 << 4)
-//				uuidmost := int64(binary.BigEndian.Uint64(uuid[0:8]))
-//				uuidlest := int64(binary.BigEndian.Uint64(uuid[8:16]))
-//
-//				// modify the (copy of the) base entity to have its own UUID
-//				entityCopy.Data.([]nbt.NBT)[1].Data = uuidmost
-//				entityCopy.Data.([]nbt.NBT)[2].Data = uuidlest
-//
-//				// modify the (copy of the) base entity to place it as indicated on the blueprint
-//				entityCopy.Data.([]nbt.NBT)[3].Data.([]nbt.NBT)[0].Data = bx
-//				entityCopy.Data.([]nbt.NBT)[3].Data.([]nbt.NBT)[1].Data = by
-//				entityCopy.Data.([]nbt.NBT)[3].Data.([]nbt.NBT)[2].Data = bz
-//
-//				EntityEdits = append(EntityEdits, wcedit{"entity", wcentity{bx, by, bz, entityCopy}})
-//
-//				continue
+				entitymolecule := NBT{TAG_Compound, 0, "", 0, make([]NBT, 0)}
+				buildEntity(bx, by, bz, "name-from-blueprint", &entitymolecule)
+
+//				world.EditEntity(entitymolecule)
+
+				continue
 			}
 		}
 		dx = 0
@@ -234,6 +237,123 @@ func main() {
 
 	os.Exit(0)
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// data handling functions
+//
+func buildEntity(x int, y int, z int, top string, rslt *NBT) {
+	var stack []string
+	var next string
+	var base string
+
+	stack = make([]string, 0)
+	stack = append(stack, top)
+
+	next = top
+	for {
+		indx := entityAtomIndx[next]
+		base = entityAtoms[indx].Base
+		//fmt.Printf("buildEntity : trace : next, base : %s, %s\n", next, base)
+
+		if (base == "") { break }
+
+		stack = append(stack, base)
+		next = base
+	}
+
+	for {
+		if len(stack) == 0 { break }
+
+		next, stack = stack[len(stack)-1], stack[:len(stack)-1]
+		//fmt.Printf("buildEntity : add Data and Info : next : %s\n", next)
+
+		indx := entityAtomIndx[next]
+		if entityAtoms[indx].Data.Type != TAG_End {
+			//fmt.Printf("buildEntity : add Data : next : %s\n", next)
+
+			nbt := entityAtoms[indx].Data
+			arr := nbt.Data.([]NBT)
+			for _, elem := range arr {
+				tmparr := rslt.Data.([]NBT)
+				tmparr = append(tmparr, elem)
+				rslt.Data = tmparr
+
+				rslt.Size++
+			}
+		}
+
+		if entityAtoms[indx].Info != nil {
+			//fmt.Printf("buildEntity : add Info : next : %s\n", next)
+
+			for _, atom := range entityAtoms[indx].Info {
+				attr := atom.Attr
+				valu := atom.Valu
+
+				// the definition of a particular entity in Minecraft is all over the place;
+				// such data is even stored at various levels in the hierarchy, under at
+				// least three tagging schemes;  so we use local keywords to translate to
+				// key places where we might want to tweak the definition for particular
+				// entities being generated;  the mapping of those keywords happens here;
+				//
+				// we can rely on the array index values, because we constructed the entity
+				// data ourselves; after being in-game and saved back to file by Minecraft,
+				// there is no guarantee about the order of any entity data; thus, entity
+				// -editing- functionality would need to search for the places to make the
+				// edits; but here we are -generating- entities
+				//
+				switch attr {
+				case "MCName":
+					rslt.Data.([]NBT)[0].Size = uint32(len(valu.(string)))
+					rslt.Data.([]NBT)[0].Data = valu.(string)
+
+				case "MaxHealth":
+					rslt.Data.([]NBT)[28].Data.([]NBT)[0].Data.([]NBT)[0].Data = valu.(float64)
+
+				case "MoveSpeed":
+					rslt.Data.([]NBT)[28].Data.([]NBT)[1].Data.([]NBT)[0].Data = valu.(float64)
+
+				case "SheepColor":
+					rslt.Data.([]NBT)[32].Data = byte(valu.(float64))
+
+				case "CatType":
+					rslt.Data.([]NBT)[34].Data = int32(valu.(float64))
+
+				case "CollarColor":
+					rslt.Data.([]NBT)[34].Data = byte(valu.(float64))
+
+				case "CustomName":
+					customname := NBT{TAG_String, 0, "CustomName", uint32(len(valu.(string))), valu.(string)}
+					tmparr := rslt.Data.([]NBT)
+					tmparr = append(tmparr, customname)
+					rslt.Data = tmparr
+
+				default:
+					fmt.Printf("buildEntity : unsupported AtomInfo.Attr : %s\n", attr)
+					os.Exit(7)
+				}
+			}
+		}
+	}
+
+	// calculate a v4 UUID
+	var uuid [16]byte
+	_, err := rand.Read(uuid[:])
+	panicOnErr(err)
+	uuid[8] = (uuid[8] | 0x40) & 0x7F
+	uuid[6] = (uuid[6] &  0xF) | (4 << 4)
+	uuidmost := int64(binary.BigEndian.Uint64(uuid[0:8]))
+	uuidlest := int64(binary.BigEndian.Uint64(uuid[8:16]))
+
+	// modify the entity to have its own UUID
+	rslt.Data.([]NBT)[1].Data = uuidmost
+	rslt.Data.([]NBT)[2].Data = uuidlest
+
+	// modify the entity to place it as indicated on the blueprint
+	rslt.Data.([]NBT)[3].Data.([]NBT)[0].Data = x
+	rslt.Data.([]NBT)[3].Data.([]NBT)[1].Data = y
+	rslt.Data.([]NBT)[3].Data.([]NBT)[2].Data = z
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // utility functions

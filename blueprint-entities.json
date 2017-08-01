@@ -1,4 +1,4 @@
-{ "EntityComponents": [
+{ "EntityAtoms": [
   { "Name": "root_entity",
     "Base": "",
     "Data": {
@@ -171,6 +171,7 @@
   { "Name": "hannah",
     "Base": "cat",
     "Info": [
+        { "Attr": "CatType", "Valu": 2 },
         { "Attr": "CustomName", "Valu": "Hannah" } ] },
 
   { "Name": "rolf",
