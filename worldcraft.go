@@ -347,6 +347,12 @@ func buildEntity(top string, rslt *NBT) {
 		next = base
 	}
 
+	var nbta NBT
+	var nbts []NBT
+	var nbtc *NBT
+
+	nbts = make([]NBT, 0)
+
 	for {
 		if len(stack) == 0 { break }
 
@@ -357,15 +363,14 @@ func buildEntity(top string, rslt *NBT) {
 		if entityAtoms[indx].Data.Type != TAG_End {
 			//fmt.Printf("buildEntity : add Data : next : %s\n", next)
 
-			nbt := entityAtoms[indx].Data
-			arr := nbt.Data.([]NBT)
-			for _, elem := range arr {
-				tmparr := rslt.Data.([]NBT)
-				tmparr = append(tmparr, elem)
-				rslt.Data = tmparr
+			nbta = entityAtoms[indx].Data
+			for _, elem := range nbta.Data.([]NBT) {
+				nbtc, _ = elem.DeepCopy()
+				nbts = append(nbts, *nbtc)
 
 				rslt.Size++
 			}
+			rslt.Data = nbts
 		}
 
 		if entityAtoms[indx].Info != nil {

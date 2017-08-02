@@ -142,7 +142,7 @@ func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity NBT) (err error) {
 	nbtentity.Name = "LISTELEM"
 
 	//debug
-	fmt.Printf("EditEntity : %v\n", nbtentity)
+	//fmt.Printf("EditEntity : %v\n", nbtentity)
 
 	dataEntities.List = TAG_Compound
 	dataEntities.Size++

@@ -118,6 +118,58 @@ type NBT struct {
 	Data interface{}
 }
 
+func (src *NBT) DeepCopy () (rslt *NBT, err error) {
+	err = nil
+
+	dst := NBT{}
+
+	dst.Type = src.Type
+	dst.List = src.List
+	dst.Name = src.Name
+	dst.Size = src.Size
+
+	rt := reflect.TypeOf(src.Data)
+	rk := rt.Kind()
+
+	if (rk == reflect.Array) || (rk == reflect.Slice) {
+		listnbt := make([]NBT, len(src.Data.([]NBT)))
+
+		for indx, elem := range src.Data.([]NBT) {
+			nxt, _ := elem.DeepCopy()
+			listnbt[indx] = *nxt
+		}
+
+		dst.Data = listnbt
+	} else {
+		switch src.Type {
+		case TAG_End:
+			dst.Data = nil
+
+		case TAG_Byte:
+			dst.Data = src.Data.(byte)
+		case TAG_Short:
+			dst.Data = src.Data.(int16)
+		case TAG_Int:
+			dst.Data = src.Data.(int32)
+		case TAG_Long:
+			dst.Data = src.Data.(int64)
+		case TAG_Float:
+			dst.Data = src.Data.(float32)
+		case TAG_Double:
+			dst.Data = src.Data.(float64)
+		case TAG_String:
+			dst.Data = src.Data.(string)
+
+		default:
+			dst.Data = nil
+		}
+	}
+
+	rslt = &dst
+
+	return
+}
+
 func (nbt *NBT) UnmarshalJSON(b []byte) (err error) {
 	var n interface{}
 	//fmt.Printf("NBT.UnmarshalJSON : %s\n", b)
