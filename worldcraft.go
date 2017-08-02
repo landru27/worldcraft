@@ -133,7 +133,10 @@ func main() {
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// read in the blueprint from stdin
 	var linein string
+	var lineglyphtags []string
+
 	var re *regexp.Regexp
+	var rem *regexp.Regexp
 
 	var ax, ay, az int
 	var dx, dy, dz int
@@ -193,11 +196,10 @@ func main() {
 		// == defines a glyph-tag
 		re = regexp.MustCompile(`==`)
 		if re.FindStringIndex(linein) != nil {
-			rem := regexp.MustCompile(`== +([a-z]+) +:((?: +[A-Za-z]{1,4}:[a-z0-9]+){1,9})`)
+			rem = regexp.MustCompile(`== +([a-z]+) +:((?: +[A-Za-z]{1,4}:[a-z0-9]+){1,9})`)
 			res := rem.FindStringSubmatch(linein)
 			tag := res[1]
 			elems := res[2]
-			fmt.Printf("tag, elems : %v, %v\n", tag, elems)
 
 			re = regexp.MustCompile(`^\s*$`)
 			rem = regexp.MustCompile(`^ +([A-Za-z]{1,4}):([a-z0-9]+)`)
@@ -205,7 +207,6 @@ func main() {
 				if re.FindStringIndex(elems) != nil { break }
 
 				res = rem.FindStringSubmatch(elems)
-				fmt.Printf("res : %v, %v\n", res[1], res[2])
 
 				if glyphs[glyphIndx[res[1]]].Type == "item" {
 					var indx uint8
@@ -220,6 +221,7 @@ func main() {
 						gt := GlyphTag{tag, nbtG}
 						glyphTags = append(glyphTags, gt)
 						glyphTagIndx[tag] = len(glyphTags) - 1
+						indx = glyphTagIndx[tag]
 					}
 
 					slot := nbtG.Size
@@ -241,16 +243,33 @@ func main() {
 					glyphTags[indx].Data = nbtG
 				}
 
+				if glyphs[glyphIndx[res[1]]].Type == "entity" {
+
+					entitymolecule := NBT{TAG_Compound, 0, "", 0, make([]NBT, 0)}
+					buildEntity(res[2], &entitymolecule)
+
+					glyphTags = append(glyphTags, GlyphTag{tag, entitymolecule})
+					glyphTagIndx[tag] = len(glyphTags) - 1
+				}
+
 				elems = rem.ReplaceAllLiteralString(elems, ``)
 			}
-		fmt.Printf("... %v\n", glyphTags)
+		//fmt.Printf("... %v\n", glyphTags)
+
+		continue
 		}
-os.Exit(0)
 
 		// :: sets a glyph-tag for a glyph within the corresponding glyph line
+		re = regexp.MustCompile(`::`)
+		if re.FindStringIndex(linein) != nil {
+			rem = regexp.MustCompile(`:: +(.+)$`)
+			res := rem.FindStringSubmatch(linein)
+			lineglyphtags = strings.Fields(res[1])
+		}
 
 		// glyph line : split the input line into its individual blueprint symbols
 		gg := strings.Fields(linein)
+		gi := 0
 		for _, g := range gg {
 			// track which world (block) coordinate we are dealing with, as we move
 			// from symbol to symbol on the blueprint
@@ -271,10 +290,22 @@ os.Exit(0)
 
 			// glyphs that represent entities
 			if glyphs[indx].Type == "entity" {
-				entitymolecule := NBT{TAG_Compound, 0, "", 0, make([]NBT, 0)}
-				buildEntity(bx, by, bz, "name-from-blueprint", &entitymolecule)
+				var nbtentity NBT
 
-//				world.EditEntity(entitymolecule)
+				if glyphs[indx].Glyph == "E" {
+					if gi >= len(lineglyphtags) {
+						fmt.Printf("more glyphs requiring glyph-tags than glyph-tags listed [%s]\n", linein)
+						os.Exit(7)
+					}
+
+					nbtentity = glyphTags[glyphTagIndx[lineglyphtags[gi]]].Data
+					gi++
+				} else {
+					nbtentity = NBT{TAG_Compound, 0, "", 0, make([]NBT, 0)}
+					buildEntity(glyphs[indx].Name, &nbtentity)
+				}
+
+				world.EditEntity(bx, by, bz, nbtentity)
 
 				continue
 			}
@@ -296,7 +327,7 @@ os.Exit(0)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // data handling functions
 //
-func buildEntity(x int, y int, z int, top string, rslt *NBT) {
+func buildEntity(top string, rslt *NBT) {
 	var stack []string
 	var next string
 	var base string
@@ -361,6 +392,9 @@ func buildEntity(x int, y int, z int, top string, rslt *NBT) {
 					rslt.Data.([]NBT)[0].Size = uint32(len(valu.(string)))
 					rslt.Data.([]NBT)[0].Data = valu.(string)
 
+				case "Health":
+					rslt.Data.([]NBT)[14].Data = float32(valu.(float64))
+
 				case "MaxHealth":
 					rslt.Data.([]NBT)[28].Data.([]NBT)[0].Data.([]NBT)[0].Data = valu.(float64)
 
@@ -402,11 +436,6 @@ func buildEntity(x int, y int, z int, top string, rslt *NBT) {
 	// modify the entity to have its own UUID
 	rslt.Data.([]NBT)[1].Data = uuidmost
 	rslt.Data.([]NBT)[2].Data = uuidlest
-
-	// modify the entity to place it as indicated on the blueprint
-	rslt.Data.([]NBT)[3].Data.([]NBT)[0].Data = x
-	rslt.Data.([]NBT)[3].Data.([]NBT)[1].Data = y
-	rslt.Data.([]NBT)[3].Data.([]NBT)[2].Data = z
 }
 
 

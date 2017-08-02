@@ -101,12 +101,14 @@
     "Info": [
         { "Attr": "MCName", "Valu": "minecraft:sheep" },
         { "Attr": "MaxHealth", "Valu": 8 },
+        { "Attr": "Health", "Valu": 8 },
         { "Attr": "MoveSpeed", "Valu": 0.23 } ] },
   { "Name": "cow",
     "Base": "mob_anima",
     "Info": [
         { "Attr": "MCName", "Valu": "minecraft:cow" },
         { "Attr": "MaxHealth", "Valu": 12 },
+        { "Attr": "Health", "Valu": 12 },
         { "Attr": "MoveSpeed", "Valu": 0.2 } ] },
   { "Name": "chicken",
     "Base": "mob_anima",
@@ -117,6 +119,7 @@
     "Info": [
         { "Attr": "MCName", "Valu": "minecraft:chicken" },
         { "Attr": "MaxHealth", "Valu": 4 },
+        { "Attr": "Health", "Valu": 4 },
         { "Attr": "MoveSpeed", "Valu": 0.25 } ] },
   { "Name": "pig",
     "Base": "mob_anima",
@@ -126,6 +129,7 @@
     "Info": [
         { "Attr": "MCName", "Valu": "minecraft:pig" },
         { "Attr": "MaxHealth", "Valu": 10 },
+        { "Attr": "Health", "Valu": 10 },
         { "Attr": "MoveSpeed", "Valu": 0.25 } ] },
 
   { "Name": "cat",
@@ -136,6 +140,7 @@
     "Info": [
         { "Attr": "MCName", "Valu": "minecraft:ocelot" },
         { "Attr": "MaxHealth", "Valu": 16 },
+        { "Attr": "Health", "Valu": 16 },
         { "Attr": "MoveSpeed", "Valu": 0.4 } ] },
 
   { "Name": "dog",
@@ -147,6 +152,7 @@
     "Info": [
         { "Attr": "MCName", "Valu": "minecraft:wolf" },
         { "Attr": "MaxHealth", "Valu": 20 },
+        { "Attr": "Health", "Valu": 20 },
         { "Attr": "MoveSpeed", "Valu": 0.3 } ] },
 
 
@@ -175,7 +181,7 @@
         { "Attr": "CustomName", "Valu": "Hannah" } ] },
 
   { "Name": "rolf",
-    "Base": "mob_tame",
+    "Base": "dog",
     "Info": [
         { "Attr": "CustomName", "Valu": "Rolf" } ] }
   ]
