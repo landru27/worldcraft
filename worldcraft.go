@@ -134,9 +134,8 @@ func main() {
 	// read in the blueprint from stdin
 	var linein string
 	var lineglyphtags []string
-
-	var re *regexp.Regexp
-	var rem *regexp.Regexp
+	var match bool
+	var matches []string
 
 	var ax, ay, az int
 	var dx, dy, dz int
@@ -164,54 +163,36 @@ func main() {
 		linein = scanner.Text()
 
 		// strip off comments, marked by '##'
-		re = regexp.MustCompile(`##.*$`)
-		if re.FindStringIndex(linein) != nil {
-			linein = re.ReplaceAllLiteralString(linein, ``)
-		}
+		_, linein = regexpReplace(linein, `##.*$`, ``)
 
 		// strip off leading and trailing whitespace
-		re = regexp.MustCompile(`^\s+`)
-		if re.FindStringIndex(linein) != nil {
-			linein = re.ReplaceAllLiteralString(linein, ``)
-		}
-		re = regexp.MustCompile(`\s+$`)
-		if re.FindStringIndex(linein) != nil {
-			linein = re.ReplaceAllLiteralString(linein, ``)
-		}
+		_, linein = regexpReplace(linein, `^\s+`, ``)
+		_, linein = regexpReplace(linein, `\s+$`, ``)
 
 		// skip any blank lines
-		re = regexp.MustCompile(`^\s*$`)
-		if re.FindStringIndex(linein) != nil {
-			continue
-		}
+		if match = regexpMatch(linein, `^\s*$`); match { continue }
 
 		// respond to the end-of-layer marker; increment Y-offset and reset Z-offset
-		re = regexp.MustCompile(`--`)
-		if re.FindStringIndex(linein) != nil {
+		if match = regexpMatch(linein, `^ *--`); match {
 			dy++
 			dz = 0
 			continue
 		}
 
 		// == defines a glyph-tag
-		re = regexp.MustCompile(`==`)
-		if re.FindStringIndex(linein) != nil {
-			rem = regexp.MustCompile(`== +([a-z]+) +:((?: +[A-Za-z]{1,4}:[a-z0-9]+){1,9})`)
-			res := rem.FindStringSubmatch(linein)
-			tag := res[1]
-			elems := res[2]
+		if match, matches = regexpParse(linein, `^ *== +([a-z]+(?::[0-9]+)*) +:((?: +[A-Za-z]{1,4}:[a-z0-9]+){1,9})`); match {
+			tag := matches[1]
+			elems := matches[2]
 
-			re = regexp.MustCompile(`^\s*$`)
-			rem = regexp.MustCompile(`^ +([A-Za-z]{1,4}):([a-z0-9]+)`)
 			for {
-				if re.FindStringIndex(elems) != nil { break }
+				if match = regexpMatch(elems, `^\s*$`); match { break }
 
-				res = rem.FindStringSubmatch(elems)
+				_, matches = regexpParse(elems, `^ +([A-Za-z]{1,4}):([a-z0-9]+)`)
 
-				if glyphs[glyphIndx[res[1]]].Type == "item" {
+				if glyphs[glyphIndx[matches[1]]].Type == "item" {
 					var indx uint8
 					var nbtG NBT
-					item := glyphs[glyphIndx[res[1]]]
+					item := glyphs[glyphIndx[matches[1]]]
 
 					if indx, ok := glyphTagIndx[tag]; ok {
 						nbtG = glyphTags[indx].Data
@@ -230,7 +211,7 @@ func main() {
 
 					nbtA := NBT{TAG_Byte,   0, "Slot",   0,      slot}
 					nbtB := NBT{TAG_String, 0, "id",     lenstr, idstr}
-					nbtC := NBT{TAG_Byte,   0, "Count",  0,      res[2]}
+					nbtC := NBT{TAG_Byte,   0, "Count",  0,      matches[2]}
 					nbtD := NBT{TAG_Short,  0, "Damage", 0,      item.Data}
 
 					nbtI := NBT{TAG_Compound, 0, "LISTELEM", 4, []NBT{nbtA, nbtB, nbtC, nbtD}}
@@ -243,15 +224,15 @@ func main() {
 					glyphTags[indx].Data = nbtG
 				}
 
-				if glyphs[glyphIndx[res[1]]].Type == "entity" {
+				if glyphs[glyphIndx[matches[1]]].Type == "entity" {
 
-					nbtentity := buildEntity(res[2])
+					nbtentity := buildEntity(matches[2])
 
 					glyphTags = append(glyphTags, GlyphTag{tag, *nbtentity})
 					glyphTagIndx[tag] = len(glyphTags) - 1
 				}
 
-				elems = rem.ReplaceAllLiteralString(elems, ``)
+				_, elems = regexpReplace(elems, `^ +[A-Za-z]{1,4}:[a-z0-9]+`, ``)
 			}
 		//fmt.Printf("... %v\n", glyphTags)
 
@@ -259,11 +240,9 @@ func main() {
 		}
 
 		// :: sets a glyph-tag for a glyph within the corresponding glyph line
-		re = regexp.MustCompile(`::`)
-		if re.FindStringIndex(linein) != nil {
-			rem = regexp.MustCompile(`:: +(.+)$`)
-			res := rem.FindStringSubmatch(linein)
-			lineglyphtags = strings.Fields(res[1])
+		if match, matches = regexpParse(linein, ` *:: +(.+)$`); match {
+			lineglyphtags = strings.Fields(matches[1])
+			_, linein = regexpReplace(linein, ` *:: +.+$`, ``)
 		}
 
 		// glyph line : split the input line into its individual blueprint symbols
@@ -452,4 +431,48 @@ func panicOnErr(e error) {
 	if e != nil {
 		panic(e)
 	}
+}
+
+func regexpMatch (subject string, pattern string) (rtrn bool) {
+	rtrn = false
+
+	var re *regexp.Regexp
+
+	re = regexp.MustCompile(pattern)
+	if re.FindStringIndex(subject) != nil {
+		rtrn = true
+	}
+
+	return
+}
+
+
+func regexpReplace (subject string, pattern string, replace string) (rtrn bool, rslt string) {
+	rtrn = false
+	rslt = subject
+
+	var re *regexp.Regexp
+
+	re = regexp.MustCompile(pattern)
+	if re.FindStringIndex(subject) != nil {
+		rtrn = true
+		rslt = re.ReplaceAllLiteralString(subject, replace)
+	}
+
+	return
+}
+
+func regexpParse (subject string, pattern string) (rtrn bool, rslt []string) {
+	rtrn = false
+	rslt = nil
+
+	var re *regexp.Regexp
+
+	re = regexp.MustCompile(pattern)
+	if re.FindStringIndex(subject) != nil {
+		rtrn = true
+		rslt = re.FindStringSubmatch(subject)
+	}
+
+	return
 }
