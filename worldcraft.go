@@ -245,10 +245,9 @@ func main() {
 
 				if glyphs[glyphIndx[res[1]]].Type == "entity" {
 
-					entitymolecule := NBT{TAG_Compound, 0, "", 0, make([]NBT, 0)}
-					buildEntity(res[2], &entitymolecule)
+					nbtentity := buildEntity(res[2])
 
-					glyphTags = append(glyphTags, GlyphTag{tag, entitymolecule})
+					glyphTags = append(glyphTags, GlyphTag{tag, *nbtentity})
 					glyphTagIndx[tag] = len(glyphTags) - 1
 				}
 
@@ -290,7 +289,7 @@ func main() {
 
 			// glyphs that represent entities
 			if glyphs[indx].Type == "entity" {
-				var nbtentity NBT
+				var nbtentity *NBT
 
 				if glyphs[indx].Glyph == "E" {
 					if gi >= len(lineglyphtags) {
@@ -298,11 +297,10 @@ func main() {
 						os.Exit(7)
 					}
 
-					nbtentity = glyphTags[glyphTagIndx[lineglyphtags[gi]]].Data
+					nbtentity = &glyphTags[glyphTagIndx[lineglyphtags[gi]]].Data
 					gi++
 				} else {
-					nbtentity = NBT{TAG_Compound, 0, "", 0, make([]NBT, 0)}
-					buildEntity(glyphs[indx].Name, &nbtentity)
+					nbtentity = buildEntity(glyphs[indx].Name)
 				}
 
 				world.EditEntity(bx, by, bz, nbtentity)
@@ -327,7 +325,9 @@ func main() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // data handling functions
 //
-func buildEntity(top string, rslt *NBT) {
+func buildEntity(top string) (rslt *NBT) {
+	molecule := NBT{TAG_Compound, 0, "", 0, make([]NBT, 0)}
+
 	var stack []string
 	var next string
 	var base string
@@ -347,7 +347,6 @@ func buildEntity(top string, rslt *NBT) {
 		next = base
 	}
 
-	var nbta NBT
 	var nbts []NBT
 	var nbtc *NBT
 
@@ -363,14 +362,13 @@ func buildEntity(top string, rslt *NBT) {
 		if entityAtoms[indx].Data.Type != TAG_End {
 			//fmt.Printf("buildEntity : add Data : next : %s\n", next)
 
-			nbta = entityAtoms[indx].Data
-			for _, elem := range nbta.Data.([]NBT) {
+			for _, elem := range entityAtoms[indx].Data.Data.([]NBT) {
 				nbtc, _ = elem.DeepCopy()
 				nbts = append(nbts, *nbtc)
 
-				rslt.Size++
+				molecule.Size++
 			}
-			rslt.Data = nbts
+			molecule.Data = nbts
 		}
 
 		if entityAtoms[indx].Info != nil {
@@ -394,32 +392,32 @@ func buildEntity(top string, rslt *NBT) {
 				//
 				switch attr {
 				case "MCName":
-					rslt.Data.([]NBT)[0].Size = uint32(len(valu.(string)))
-					rslt.Data.([]NBT)[0].Data = valu.(string)
+					molecule.Data.([]NBT)[0].Size = uint32(len(valu.(string)))
+					molecule.Data.([]NBT)[0].Data = valu.(string)
 
 				case "Health":
-					rslt.Data.([]NBT)[14].Data = float32(valu.(float64))
+					molecule.Data.([]NBT)[14].Data = float32(valu.(float64))
 
 				case "MaxHealth":
-					rslt.Data.([]NBT)[28].Data.([]NBT)[0].Data.([]NBT)[0].Data = valu.(float64)
+					molecule.Data.([]NBT)[28].Data.([]NBT)[0].Data.([]NBT)[0].Data = valu.(float64)
 
 				case "MoveSpeed":
-					rslt.Data.([]NBT)[28].Data.([]NBT)[1].Data.([]NBT)[0].Data = valu.(float64)
+					molecule.Data.([]NBT)[28].Data.([]NBT)[1].Data.([]NBT)[0].Data = valu.(float64)
 
 				case "SheepColor":
-					rslt.Data.([]NBT)[32].Data = byte(valu.(float64))
+					molecule.Data.([]NBT)[32].Data = byte(valu.(float64))
 
 				case "CatType":
-					rslt.Data.([]NBT)[34].Data = int32(valu.(float64))
+					molecule.Data.([]NBT)[34].Data = int32(valu.(float64))
 
 				case "CollarColor":
-					rslt.Data.([]NBT)[34].Data = byte(valu.(float64))
+					molecule.Data.([]NBT)[34].Data = byte(valu.(float64))
 
 				case "CustomName":
 					customname := NBT{TAG_String, 0, "CustomName", uint32(len(valu.(string))), valu.(string)}
-					tmparr := rslt.Data.([]NBT)
+					tmparr := molecule.Data.([]NBT)
 					tmparr = append(tmparr, customname)
-					rslt.Data = tmparr
+					molecule.Data = tmparr
 
 				default:
 					fmt.Printf("buildEntity : unsupported AtomInfo.Attr : %s\n", attr)
@@ -439,8 +437,11 @@ func buildEntity(top string, rslt *NBT) {
 	uuidlest := int64(binary.BigEndian.Uint64(uuid[8:16]))
 
 	// modify the entity to have its own UUID
-	rslt.Data.([]NBT)[1].Data = uuidmost
-	rslt.Data.([]NBT)[2].Data = uuidlest
+	molecule.Data.([]NBT)[1].Data = uuidmost
+	molecule.Data.([]NBT)[2].Data = uuidlest
+
+	rslt = &molecule
+	return
 }
 
 

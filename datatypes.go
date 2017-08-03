@@ -116,7 +116,7 @@ func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err err
 	return
 }
 
-func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity NBT) (err error) {
+func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity *NBT) (err error) {
 
 	rgn, err := w.LoadRegion(x, y, z)
 	panicOnErr(err)
@@ -146,7 +146,7 @@ func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity NBT) (err error) {
 
 	dataEntities.List = TAG_Compound
 	dataEntities.Size++
-	dataEntities.Data = append(dataEntities.Data.([]NBT), nbtentity)
+	dataEntities.Data = append(dataEntities.Data.([]NBT), *nbtentity)
 
 	qtyEntityEdits++
 
