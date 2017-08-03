@@ -153,6 +153,43 @@ func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity *NBT) (err error) {
 	return
 }
 
+func (w *MCWorld) EditBlockEntity(x int, y int, z int, nbtentity *NBT) (err error) {
+
+	rgn, err := w.LoadRegion(x, y, z)
+	panicOnErr(err)
+
+	// calculate the in-region chunk coordinates and chunkdata index
+	cx := int(math.Floor(float64(x) / 16.0))
+	cz := int(math.Floor(float64(z) / 16.0))
+	indxChunk := (cz * 32) + cx
+
+	dataBlockEntities := rgn.Chunks[indxChunk].ChunkDataRefs["TileEntities"]
+
+	if dataBlockEntities == nil {
+		qtyBlockEntityEditsSkipped++
+		return
+	}
+
+	// modify the blockentity to give it a position in the Minecraft world
+	nbtentity.Data.([]NBT)[1].Data = float64(x)
+	nbtentity.Data.([]NBT)[2].Data = float64(y)
+	nbtentity.Data.([]NBT)[3].Data = float64(z)
+
+	// ensure that it is marked as a LISTELEM
+	nbtentity.Name = "LISTELEM"
+
+	//debug
+	//fmt.Printf("EditBlockEntity : %v\n", nbtentity)
+
+	dataBlockEntities.List = TAG_Compound
+	dataBlockEntities.Size++
+	dataBlockEntities.Data = append(dataBlockEntities.Data.([]NBT), *nbtentity)
+
+	qtyBlockEntityEdits++
+
+	return
+}
+
 func (w *MCWorld) LoadRegion(x int, y int, z int) (rgn *MCRegion, err error) {
 	rgn = nil
 	err = nil

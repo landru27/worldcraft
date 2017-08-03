@@ -36,8 +36,8 @@ var qtyBlockEdits int
 var qtyBlockEditsSkipped int
 var qtyEntityEdits int
 var qtyEntityEditsSkipped int
-var qtyTileEntityEdits int
-var qtyTileEntityEditsSkipped int
+var qtyBlockEntityEdits int
+var qtyBlockEntityEditsSkipped int
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // main execution point
@@ -61,8 +61,8 @@ func main() {
 	qtyBlockEditsSkipped = 0
 	qtyEntityEdits = 0
 	qtyEntityEditsSkipped = 0
-	qtyTileEntityEdits = 0
-	qtyTileEntityEditsSkipped = 0
+	qtyBlockEntityEdits = 0
+	qtyBlockEntityEditsSkipped = 0
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// define the available command-line arguments
@@ -261,6 +261,10 @@ func main() {
 			// glyphs that represent blocks
 			if glyphs[indx].Type == "block" {
 				world.EditBlock(bx, by, bz, glyphs[indx].ID, glyphs[indx].Data)
+
+				if glyphs[indx].Base != (NBT{}) {
+					world.EditBlockEntity(bx, by, bz, &glyphs[indx].Base)
+				}
 
 				continue
 			}

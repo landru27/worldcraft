@@ -44,14 +44,45 @@
     { "glyph": "B",    "type": "block",  "name": "foot of bed, head west",    "id":  26, "data":  1 },
     { "glyph": "b",    "type": "block",  "name": "head of bed, head west",    "id":  26, "data":  9 },
 
-    { "glyph": "C",    "type": "block",  "name": "chest",                     "id":  54, "data":  3 },
+    { "glyph": "C",    "type": "block",  "name": "chest",                     "id":  54, "data":  3, "base": {
+        "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 6, "Data": [
+          { "Type": 8, "List": 0, "Name": "id", "Size": 15, "Data": "minecraft:chest" },
+          { "Type": 3, "List": 0, "Name": "x", "Size": 0, "Data": 0 },
+          { "Type": 3, "List": 0, "Name": "y", "Size": 0, "Data": 0 },
+          { "Type": 3, "List": 0, "Name": "z", "Size": 0, "Data": 0 },
+          { "Type": 9, "List": 0, "Name": "Items", "Size": 0, "Data": [] },
+          { "Type": 8, "List": 0, "Name": "Lock", "Size": 0, "Data": "" } ] } },
     { "glyph": "T",    "type": "block",  "name": "crafting table",            "id":  58, "data":  0 },
-    { "glyph": "F",    "type": "block",  "name": "furnace",                   "id":  61, "data":  3 },
+    { "glyph": "F",    "type": "block",  "name": "furnace",                   "id":  61, "data":  3, "base": {
+        "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 9, "Data": [
+          { "Type": 8, "List": 0, "Name": "id", "Size": 17, "Data": "minecraft:furnace" },
+          { "Type": 3, "List": 0, "Name": "x", "Size": 0, "Data": 0 },
+          { "Type": 3, "List": 0, "Name": "y", "Size": 0, "Data": 0 },
+          { "Type": 3, "List": 0, "Name": "z", "Size": 0, "Data": 0 },
+          { "Type": 9, "List": 0, "Name": "Items", "Size": 0, "Data": [] },
+          { "Type": 2, "List": 0, "Name": "BurnTime", "Size": 0, "Data": 0 },
+          { "Type": 2, "List": 0, "Name": "CookTime", "Size": 0, "Data": 0 },
+          { "Type": 2, "List": 0, "Name": "CookTimeTotal", "Size": 0, "Data": 200 },
+          { "Type": 8, "List": 0, "Name": "Lock", "Size": 0, "Data": "" } ] } },
     { "glyph": "V",    "type": "block",  "name": "anvil",                     "id": 145, "data":  0 },
 
     { "glyph": "L",    "type": "block",  "name": "bookcase",                  "id":  47, "data":  0 },
-    { "glyph": "K",    "type": "block",  "name": "enchanting table",          "id": 116, "data":  0 },
-    { "glyph": "P",    "type": "block",  "name": "brewing stand",             "id": 117, "data":  0 },
+    { "glyph": "K",    "type": "block",  "name": "enchanting table",          "id": 116, "data":  0, "base": {
+        "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 4, "Data": [
+          { "Type": 8, "List": 0, "Name": "id", "Size": 26, "Data": "minecraft:enchanting_table" },
+          { "Type": 3, "List": 0, "Name": "x", "Size": 0, "Data": 0 },
+          { "Type": 3, "List": 0, "Name": "y", "Size": 0, "Data": 0 },
+          { "Type": 3, "List": 0, "Name": "z", "Size": 0, "Data": 0 } ] } },
+    { "glyph": "P",    "type": "block",  "name": "brewing stand",             "id": 117, "data":  0, "base": {
+        "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 8, "Data": [
+          { "Type": 8, "List": 0, "Name": "id", "Size": 23, "Data": "minecraft:brewing_stand" },
+          { "Type": 3, "List": 0, "Name": "x", "Size": 0, "Data": 0 },
+          { "Type": 3, "List": 0, "Name": "y", "Size": 0, "Data": 0 },
+          { "Type": 3, "List": 0, "Name": "z", "Size": 0, "Data": 0 },
+          { "Type": 9, "List": 0, "Name": "Items", "Size": 0, "Data": [] },
+          { "Type": 1, "List": 0, "Name": "Fuel", "Size": 0, "Data": 0 },
+          { "Type": 2, "List": 0, "Name": "BrewTime", "Size": 0, "Data": 0 },
+          { "Type": 8, "List": 0, "Name": "Lock", "Size": 0, "Data": "" } ] } },
     { "glyph": "W",    "type": "block",  "name": "brewing cauldron",          "id": 118, "data":  3 },
 
     { "glyph": "Y",    "type": "block",  "name": "glowstone",                 "id":  89, "data":  0 },
