@@ -5,13 +5,13 @@ package main
 
 import (
 	"bufio"
+	"crypto/rand"
 	"encoding/binary"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
-	"crypto/rand"
 	"regexp"
 	"strings"
 	"time"
@@ -129,7 +129,6 @@ func main() {
 	//fmt.Printf("entityAtoms array : %v\n", entityAtoms)
 	//fmt.Printf("entityAtomIndx array : %v\n", entityAtomIndx)
 
-
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// read in the blueprint from stdin
 	var linein string
@@ -209,10 +208,10 @@ func main() {
 					idstr := "minecraft:" + item.Name
 					lenstr := uint32(len(idstr))
 
-					nbtA := NBT{TAG_Byte,   0, "Slot",   0,      slot}
-					nbtB := NBT{TAG_String, 0, "id",     lenstr, idstr}
-					nbtC := NBT{TAG_Byte,   0, "Count",  0,      matches[2]}
-					nbtD := NBT{TAG_Short,  0, "Damage", 0,      item.Data}
+					nbtA := NBT{TAG_Byte, 0, "Slot", 0, slot}
+					nbtB := NBT{TAG_String, 0, "id", lenstr, idstr}
+					nbtC := NBT{TAG_Byte, 0, "Count", 0, matches[2]}
+					nbtD := NBT{TAG_Short, 0, "Damage", 0, item.Data}
 
 					nbtI := NBT{TAG_Compound, 0, "LISTELEM", 4, []NBT{nbtA, nbtB, nbtC, nbtD}}
 
@@ -234,9 +233,9 @@ func main() {
 
 				_, elems = regexpReplace(elems, `^ +[A-Za-z]{1,4}:[a-z0-9]+`, ``)
 			}
-		//fmt.Printf("... %v\n", glyphTags)
+			//fmt.Printf("... %v\n", glyphTags)
 
-		continue
+			continue
 		}
 
 		// :: sets a glyph-tag for a glyph within the corresponding glyph line
@@ -423,7 +422,6 @@ func buildEntity(top string) (rslt *NBT) {
 	return
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // utility functions
 //
@@ -433,7 +431,7 @@ func panicOnErr(e error) {
 	}
 }
 
-func regexpMatch (subject string, pattern string) (rtrn bool) {
+func regexpMatch(subject string, pattern string) (rtrn bool) {
 	rtrn = false
 
 	var re *regexp.Regexp
@@ -446,8 +444,7 @@ func regexpMatch (subject string, pattern string) (rtrn bool) {
 	return
 }
 
-
-func regexpReplace (subject string, pattern string, replace string) (rtrn bool, rslt string) {
+func regexpReplace(subject string, pattern string, replace string) (rtrn bool, rslt string) {
 	rtrn = false
 	rslt = subject
 
@@ -462,7 +459,7 @@ func regexpReplace (subject string, pattern string, replace string) (rtrn bool, 
 	return
 }
 
-func regexpParse (subject string, pattern string) (rtrn bool, rslt []string) {
+func regexpParse(subject string, pattern string) (rtrn bool, rslt []string) {
 	rtrn = false
 	rslt = nil
 

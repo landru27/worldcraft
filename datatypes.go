@@ -9,10 +9,10 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"math"
-	"os"
 	"io"
 	"io/ioutil"
+	"math"
+	"os"
 )
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -305,7 +305,7 @@ func (w *MCWorld) SaveRegion(rx, rz int) (err error) {
 
 	// open a new file for holding the edited region; we include a timestamp in the
 	// filename to avoid overwriting the original file and any edited files already made
-	filename = fmt.Sprintf("r.%d.%d.mca.%d", rx, rz, timeExec.Unix())    // add '%s/' and 'w.pathWorld' to create the new file next to the original
+	filename = fmt.Sprintf("r.%d.%d.mca.%d", rx, rz, timeExec.Unix()) // add '%s/' and 'w.pathWorld' to create the new file next to the original
 	fmt.Printf("SaveRegion filename is  : %s\n", filename)
 
 	fh, err := os.Create(filename)
@@ -480,7 +480,7 @@ type MCChunk struct {
 	ChunkDataRefs   map[string]*NBT
 }
 
-func (c *MCChunk) BuildDataRefs() () {
+func (c *MCChunk) BuildDataRefs() {
 	if c.ChunkDataRefs != nil {
 		fmt.Printf("BuildDataRefs called again for the same chunk [%d, %d]\n", c.CX, c.CZ)
 		os.Exit(5)
@@ -520,27 +520,27 @@ func (c *MCChunk) BuildDataRefs() () {
 }
 
 type Glyph struct {
-	Glyph string    `json:"glyph"`
-	Type  string    `json:"type"`
-	Name  string    `json:"name"`
-	ID    uint16    `json:"id"`
-	Data  uint8     `json:"data"`
-	Base  NBT       `json:"base"`
+	Glyph string `json:"glyph"`
+	Type  string `json:"type"`
+	Name  string `json:"name"`
+	ID    uint16 `json:"id"`
+	Data  uint8  `json:"data"`
+	Base  NBT    `json:"base"`
 }
 
 type GlyphTag struct {
-	Tag   string       `json:"tag"`
-	Data  NBT          `json:"data"`
+	Tag  string `json:"tag"`
+	Data NBT    `json:"data"`
 }
 
 type Atom struct {
-	Name  string       `json:"name"`
-	Base  string       `json:"base"`
-	Data  NBT          `json:"data"`
-	Info  []AtomInfo   `json:"info"`
+	Name string     `json:"name"`
+	Base string     `json:"base"`
+	Data NBT        `json:"data"`
+	Info []AtomInfo `json:"info"`
 }
 
 type AtomInfo struct {
-	Attr  string       `json:"attr"`
-	Valu  interface{}  `json:"valu"`
+	Attr string      `json:"attr"`
+	Valu interface{} `json:"valu"`
 }

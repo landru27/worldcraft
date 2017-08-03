@@ -37,20 +37,20 @@ import (
 type NBTTAG byte
 
 const (
-	TAG_End        NBTTAG = iota    //  0 : size: 0                 no payload, no name
-	TAG_Byte                        //  1 : size: 1                 signed  8-bit integer
-	TAG_Short                       //  2 : size: 2                 signed 16-bit integer
-	TAG_Int                         //  3 : size: 4                 signed 32-bit integer
-	TAG_Long                        //  4 : size: 8                 signed 64-bit integer
-	TAG_Float                       //  5 : size: 4                 IEEE 754-2008 32-bit floating point number
-	TAG_Double                      //  6 : size: 8                 IEEE 754-2008 64-bit floating point number
-	TAG_Byte_Array                  //  7 : size: 4 + 1*elem        size TAG_Int, then payload [size]byte
-	TAG_String                      //  8 : size: 2 + 4*elem        length TAG_Short, then payload (utf-8) string (of length length)
-	TAG_List                        //  9 : size: 1 + 4 + len*elem  tagID TAG_Byte, length TAG_Int, then payload [length]tagID
-	TAG_Compound                    // 10 : size: varies            { tagID TAG_Byte, name TAG_String, payload tagID }... TAG_End
-	TAG_Int_Array                   // 11 : size: 4 + 4*elem        size TAG_Int, then payload [size]TAG_Int
-	TAG_Long_Array                  // 12 : size: 4 + 8*elem        size TAG_Int, then payload [size]TAG_Long
-	TAG_NULL                        // 13 : local extension of the NBT spec, for indicating 'not yet known', or 'read data to determine', etc.
+	TAG_End        NBTTAG = iota //  0 : size: 0                 no payload, no name
+	TAG_Byte                     //  1 : size: 1                 signed  8-bit integer
+	TAG_Short                    //  2 : size: 2                 signed 16-bit integer
+	TAG_Int                      //  3 : size: 4                 signed 32-bit integer
+	TAG_Long                     //  4 : size: 8                 signed 64-bit integer
+	TAG_Float                    //  5 : size: 4                 IEEE 754-2008 32-bit floating point number
+	TAG_Double                   //  6 : size: 8                 IEEE 754-2008 64-bit floating point number
+	TAG_Byte_Array               //  7 : size: 4 + 1*elem        size TAG_Int, then payload [size]byte
+	TAG_String                   //  8 : size: 2 + 4*elem        length TAG_Short, then payload (utf-8) string (of length length)
+	TAG_List                     //  9 : size: 1 + 4 + len*elem  tagID TAG_Byte, length TAG_Int, then payload [length]tagID
+	TAG_Compound                 // 10 : size: varies            { tagID TAG_Byte, name TAG_String, payload tagID }... TAG_End
+	TAG_Int_Array                // 11 : size: 4 + 4*elem        size TAG_Int, then payload [size]TAG_Int
+	TAG_Long_Array               // 12 : size: 4 + 8*elem        size TAG_Int, then payload [size]TAG_Long
+	TAG_NULL                     // 13 : local extension of the NBT spec, for indicating 'not yet known', or 'read data to determine', etc.
 )
 
 var NBTTAGName = map[NBTTAG]string{
@@ -118,7 +118,7 @@ type NBT struct {
 	Data interface{}
 }
 
-func (src *NBT) DeepCopy () (rslt *NBT, err error) {
+func (src *NBT) DeepCopy() (rslt *NBT, err error) {
 	err = nil
 
 	dst := NBT{}
