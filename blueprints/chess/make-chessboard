@@ -1,0 +1,11 @@
+./worldcraft --blueprint blueprint.chessboard-tworanks        --world '/Users/awitt/Library/Application Support/minecraft/saves/X-17/region' -X 0 -Y 4 -Z 0
+./worldcraft --blueprint blueprint.chessboard-tworanks        --world '/Users/awitt/Library/Application Support/minecraft/saves/X-17/region' -X 0 -Y 4 -Z 28
+./worldcraft --blueprint blueprint.chessboard-tworanks        --world '/Users/awitt/Library/Application Support/minecraft/saves/X-17/region' -X 0 -Y 4 -Z 56
+./worldcraft --blueprint blueprint.chessboard-tworanks        --world '/Users/awitt/Library/Application Support/minecraft/saves/X-17/region' -X 0 -Y 4 -Z 84
+
+
+./worldcraft --blueprint blueprint.chesspieces-black-backrank --world '/Users/awitt/Library/Application Support/minecraft/saves/X-17/region' -X 0 -Y 8 -Z 0
+./worldcraft --blueprint blueprint.chesspieces-black-pawnrank --world '/Users/awitt/Library/Application Support/minecraft/saves/X-17/region' -X 0 -Y 8 -Z 14
+
+./worldcraft --blueprint blueprint.chesspieces-white-pawnrank --world '/Users/awitt/Library/Application Support/minecraft/saves/X-17/region' -X 0 -Y 8 -Z 84
+./worldcraft --blueprint blueprint.chesspieces-white-backrank --world '/Users/awitt/Library/Application Support/minecraft/saves/X-17/region' -X 0 -Y 8 -Z 98

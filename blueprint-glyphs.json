@@ -13,6 +13,9 @@
     { "glyph": "%",    "type": "block",  "name": "gravel",                    "id":  13, "data":  0 },
     { "glyph": "&",    "type": "block",  "name": "clay",                      "id":  82, "data":  0 },
 
+    { "glyph": "e",    "type": "block",  "name": "wool",                      "id":  35, "data":  0 },
+    { "glyph": "f",    "type": "block",  "name": "wool",                      "id":  35, "data":  7 },
+
     { "glyph": ",",    "type": "block",  "name": "wheat just planted",        "id":  59, "data":  0 },
     { "glyph": "/",    "type": "block",  "name": "wheat ripe with seeds",     "id":  59, "data":  5 },
 
