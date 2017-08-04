@@ -13,6 +13,7 @@ import (
 	"io/ioutil"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -189,7 +190,7 @@ func main() {
 				_, matches = regexpParse(elems, `^ +([A-Za-z]{1,4}):([a-z0-9]+)`)
 
 				if glyphs[glyphIndx[matches[1]]].Type == "item" {
-					var indx uint8
+					var indx int
 					var nbtG NBT
 					item := glyphs[glyphIndx[matches[1]]]
 
@@ -201,23 +202,25 @@ func main() {
 						gt := GlyphTag{tag, nbtG}
 						glyphTags = append(glyphTags, gt)
 						glyphTagIndx[tag] = len(glyphTags) - 1
-						indx = glyphTagIndx[tag]
 					}
+					indx = glyphTagIndx[tag]
 
 					slot := nbtG.Size
 					idstr := "minecraft:" + item.Name
 					lenstr := uint32(len(idstr))
 
-					nbtA := NBT{TAG_Byte, 0, "Slot", 0, slot}
+					qty, _ := strconv.Atoi(matches[2])
+
+					nbtA := NBT{TAG_Byte, 0, "Slot", 0, byte(slot)}
 					nbtB := NBT{TAG_String, 0, "id", lenstr, idstr}
-					nbtC := NBT{TAG_Byte, 0, "Count", 0, matches[2]}
-					nbtD := NBT{TAG_Short, 0, "Damage", 0, item.Data}
+					nbtC := NBT{TAG_Byte, 0, "Count", 0, byte(qty)}
+					nbtD := NBT{TAG_Short, 0, "Damage", 0, int16(item.Data)}
 
 					nbtI := NBT{TAG_Compound, 0, "LISTELEM", 4, []NBT{nbtA, nbtB, nbtC, nbtD}}
 
-					tmparr := nbtG.Data.([]NBT)
-					tmparr = append(tmparr, nbtI)
-					nbtG.Data = tmparr
+					tmps := nbtG.Data.([]NBT)
+					tmps = append(tmps, nbtI)
+					nbtG.Data = tmps
 					nbtG.Size++
 
 					glyphTags[indx].Data = nbtG
@@ -258,12 +261,21 @@ func main() {
 
 			indx := glyphIndx[g]
 
+			var nbtentity *NBT
+
 			// glyphs that represent blocks
 			if glyphs[indx].Type == "block" {
 				world.EditBlock(bx, by, bz, glyphs[indx].ID, glyphs[indx].Data)
 
 				if glyphs[indx].Base != (NBT{}) {
-					world.EditBlockEntity(bx, by, bz, &glyphs[indx].Base)
+					nbtentity, _ = glyphs[indx].Base.DeepCopy()
+
+					if gi < len(lineglyphtags) {
+						nbtentity.Data.([]NBT)[4] = glyphTags[glyphTagIndx[lineglyphtags[gi]]].Data
+						gi++
+					}
+
+					world.EditBlockEntity(bx, by, bz, nbtentity)
 				}
 
 				continue
@@ -271,7 +283,6 @@ func main() {
 
 			// glyphs that represent entities
 			if glyphs[indx].Type == "entity" {
-				var nbtentity *NBT
 
 				if glyphs[indx].Glyph == "E" {
 					if gi >= len(lineglyphtags) {
@@ -292,6 +303,8 @@ func main() {
 		}
 		dx = 0
 		dz++
+
+		lineglyphtags = nil
 	}
 
 	err = scanner.Err()
@@ -397,9 +410,9 @@ func buildEntity(top string) (rslt *NBT) {
 
 				case "CustomName":
 					customname := NBT{TAG_String, 0, "CustomName", uint32(len(valu.(string))), valu.(string)}
-					tmparr := molecule.Data.([]NBT)
-					tmparr = append(tmparr, customname)
-					molecule.Data = tmparr
+					tmps := molecule.Data.([]NBT)
+					tmps = append(tmps, customname)
+					molecule.Data = tmps
 
 				default:
 					fmt.Printf("buildEntity : unsupported AtomInfo.Attr : %s\n", attr)

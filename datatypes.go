@@ -171,9 +171,9 @@ func (w *MCWorld) EditBlockEntity(x int, y int, z int, nbtentity *NBT) (err erro
 	}
 
 	// modify the blockentity to give it a position in the Minecraft world
-	nbtentity.Data.([]NBT)[1].Data = float64(x)
-	nbtentity.Data.([]NBT)[2].Data = float64(y)
-	nbtentity.Data.([]NBT)[3].Data = float64(z)
+	nbtentity.Data.([]NBT)[1].Data = int32(x)
+	nbtentity.Data.([]NBT)[2].Data = int32(y)
+	nbtentity.Data.([]NBT)[3].Data = int32(z)
 
 	// ensure that it is marked as a LISTELEM
 	nbtentity.Name = "LISTELEM"
