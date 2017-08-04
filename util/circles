@@ -1,0 +1,267 @@
+#!/usr/bin/perl -w
+
+
+$| = 1;
+use strict;
+
+
+my(@layers);
+my(@linesin, $linein, $lineout);
+my($name, $nameline, $list, $lcpy, $layr, $linelayr);
+my($levl, $maxlevl);
+my($indx, $maxindx);
+my(%statue, $figure);
+
+
+my($useblock);
+
+$useblock = '';
+if ((defined($ARGV[0])) && ($ARGV[0] ne '')) { $useblock = $ARGV[0]; shift; }
+
+
+$layers[0] = <<'EOT';
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+EOT
+
+$layers[1] = <<'EOT';
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . # . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+EOT
+
+$layers[2] = <<'EOT';
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . # # . . . . .
+. . . . . # # . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+EOT
+
+$layers[3] = <<'EOT';
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . # . . . . .
+. . . . # # # . . . .
+. . . . . # . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+EOT
+
+$layers[4] = <<'EOT';
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . # # . . . . .
+. . . . # # # # . . . .
+. . . . # # # # . . . .
+. . . . . # # . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+EOT
+
+$layers[5] = <<'EOT';
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . # # # . . . .
+. . . # # # # # . . .
+. . . # # # # # . . .
+. . . # # # # # . . .
+. . . . # # # . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+EOT
+
+$layers[6] = <<'EOT';
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . # # . . . . .
+. . . . # # # # . . . .
+. . . # # # # # # . . .
+. . . # # # # # # . . .
+. . . . # # # # . . . .
+. . . . . # # . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+EOT
+
+$layers[7] = <<'EOT';
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . # # # . . . .
+. . . # # # # # . . .
+. . # # # # # # # . .
+. . # # # # # # # . .
+. . # # # # # # # . .
+. . . # # # # # . . .
+. . . . # # # . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+EOT
+
+$layers[8] = <<'EOT';
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+. . . . . # # . . . . .
+. . . # # # # # # . . .
+. . . # # # # # # . . .
+. . # # # # # # # # . .
+. . # # # # # # # # . .
+. . . # # # # # # . . .
+. . . # # # # # # . . .
+. . . . . # # . . . . .
+. . . . . . . . . . . .
+. . . . . . . . . . . .
+EOT
+
+$layers[9] = <<'EOT';
+. . . . . . . . . . .
+. . . . # # # . . . .
+. . # # # # # # # . .
+. . # # # # # # # . .
+. # # # # # # # # # .
+. # # # # # # # # # .
+. # # # # # # # # # .
+. . # # # # # # # . .
+. . # # # # # # # . .
+. . . . # # # . . . .
+. . . . . . . . . . .
+EOT
+
+$layers[10] = <<'EOT';
+. . . . . . . . . . . .
+. . . . # # # # . . . .
+. . # # # # # # # # . .
+. . # # # # # # # # . .
+. # # # # # # # # # # .
+. # # # # # # # # # # .
+. # # # # # # # # # # .
+. # # # # # # # # # # .
+. . # # # # # # # # . .
+. . # # # # # # # # . .
+. . . . # # # # . . . .
+. . . . . . . . . . . .
+EOT
+
+
+$maxlevl = 0;
+$maxindx = 0;
+
+
+@linesin = ();
+push(@linesin, "pawn   : 10 10 10 6 6 4 4 2 2 4 6 6 4 2");
+push(@linesin, "rook   : 10 10 10 10 8 8 8 6 6 6 6 6 10 10 10 10 10");
+push(@linesin, "knight : 10 10 10 8 8 8 6 6 6 6 10 10 10 10 10 4 4 4 4 4");
+push(@linesin, "bishop : 10 10 6 6 6 4 4 4 2 2 4 2 4 4 6 6 6 6 4 4 2 2");
+push(@linesin, "queen  : 10 10 6 8 4 6 2 4 4 2 2 2 2 4 2 6 4 8 4 4 6 6 8 8 8 6 4");
+push(@linesin, "king   : 10 10 10 6 6 8 8 4 4 6 6 4 4 4 4 6 6 8 8 8 8 6 6 4 2 2 6 6 2 2");
+
+foreach $linein (@linesin) {
+    $linein =~ /^([a-z]+) +: +([0-9 ]+)$/;
+    $name = $1;
+    $list = $2;
+
+    $nameline = $name . '-linein';
+    $statue{$nameline} = $linein;
+
+    $levl = 0;
+    open(FILEOUT, "> blueprint.$name");
+
+    while ($list =~ s/^ *([0-9]+) *//) {
+        $layr = $1;
+        $lineout = $layers[$layr];
+
+        if ($useblock ne '') { $lineout =~ s/#/$useblock/g; }
+
+        print(FILEOUT $lineout . "\n--\n\n");
+
+        $indx = 0;
+        foreach $linelayr (split(/\n/, $layers[$layr])) {
+            $statue{$name}[$levl][$indx] = $linelayr;
+            $indx++;
+        }
+        $indx--;
+        if ($indx > $maxindx) { $maxindx = $indx; }
+
+        $levl++;
+    }
+    $levl--;
+    if ($levl > $maxlevl) { $maxlevl = $levl; }
+
+    close(FILEOUT);
+}
+
+
+@linesin = ();
+push(@linesin, "pawnrank : pawn pawn pawn pawn pawn pawn pawn pawn");
+push(@linesin, "backrank : rook knight bishop queen king bishop knight rook");
+
+foreach $linein (@linesin) {
+    $linein =~ /^([a-z]+) : ([a-z ]+)$/;
+    $name = $1;
+    $list = $2;
+
+    open(FILEOUT, "> blueprint.$name");
+    foreach $levl (0 .. $maxlevl) {
+
+        foreach $indx (-1 .. ($maxindx + 1)) {
+
+            $lcpy = $list;
+            while ($lcpy =~ s/^ *([a-z]+) *//) {
+                $figure = $1;
+
+                if (($indx < 0) || ($indx > $maxindx)) {
+                    $lineout = '. . . . . . . . . . . .';
+                } elsif (! defined($statue{$figure}[$levl][$indx])) {
+                    $lineout = '. . . . . . . . . . . .';
+                } else {
+                    $lineout = $statue{$figure}[$levl][$indx];
+                    if ($useblock ne '') { $lineout =~ s/#/$useblock/g; }
+                }
+                print(FILEOUT '. ' . $lineout . ' . ');
+
+            }
+            print(FILEOUT "\n");
+
+        }
+
+        print(FILEOUT "--\n\n");
+    }
+    close(FILEOUT);
+}
