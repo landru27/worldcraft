@@ -1,5 +1,7 @@
 {
   "Glyphs": [
+    { "glyph": "X",    "type": "block",  "name": "none",                      "id":   0, "data":  0 },
+
     { "glyph": ".",    "type": "block",  "name": "air",                       "id":   0, "data":  0 },
     { "glyph": "#",    "type": "block",  "name": "stone bricks",              "id":  98, "data":  0 },
     { "glyph": "=",    "type": "block",  "name": "stone fence",               "id": 139, "data":  0 },
@@ -110,10 +112,10 @@
     { "glyph": "FNCs", "type": "item",   "name": "spruce_fence",              "id": 188, "data":  0 },
     { "glyph": "GATs", "type": "item",   "name": "spruce_fence_gate",         "id": 183, "data":  0 },
 
-    { "glyph": "WOLw", "type": "item",   "name": "white_wool",                "id":  35, "data":  0 },
-    { "glyph": "WOLg", "type": "item",   "name": "lightgrey_wool",            "id":  35, "data":  8 },
-    { "glyph": "WOLd", "type": "item",   "name": "darkgrey_wool",             "id":  35, "data":  7 },
-    { "glyph": "WOLb", "type": "item",   "name": "black_wool",                "id":  35, "data": 15 },
+    { "glyph": "WOLw", "type": "item",   "name": "wool",                      "id":  35, "data":  0 },
+    { "glyph": "WOLg", "type": "item",   "name": "wool",                      "id":  35, "data":  8 },
+    { "glyph": "WOLd", "type": "item",   "name": "wool",                      "id":  35, "data":  7 },
+    { "glyph": "WOLb", "type": "item",   "name": "wool",                      "id":  35, "data": 15 },
     { "glyph": "LTHR", "type": "item",   "name": "leather",                   "id": 334, "data":  0 },
     { "glyph": "FTHR", "type": "item",   "name": "feather",                   "id": 288, "data":  0 },
     { "glyph": "BONE", "type": "item",   "name": "bone",                      "id": 352, "data":  0 },

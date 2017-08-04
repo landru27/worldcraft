@@ -180,7 +180,7 @@ func main() {
 		}
 
 		// == defines a glyph-tag
-		if match, matches = regexpParse(linein, `^ *== +([a-z]+) +:((?: +[A-Za-z]{1,4}:[a-z0-9]+){1,9})`); match {
+		if match, matches = regexpParse(linein, `^ *== +([a-z]+) +:((?: +[-A-Za-z]{1,4}:[-a-z0-9]+){1,9})`); match {
 			var tagname string
 			var eleminfo string
 			var elemname string
@@ -192,9 +192,21 @@ func main() {
 			for {
 				if match = regexpMatch(eleminfo, `^\s*$`); match { break }
 
-				_, matches = regexpParse(eleminfo, `^ +([A-Za-z]{1,4}):([a-z0-9]+)`)
+				_, matches = regexpParse(eleminfo, `^ +([-A-Za-z]{1,4}):([-a-z0-9]+)`)
 				elemname = matches[1]
 				elemdata = matches[2]
+
+				if elemname == `----` && elemdata == `--` {
+					glyphTags[glyphTagIndx[tagname]].Indx++
+				}
+
+				if elemname == `ITEM` {
+					glyphTags[glyphTagIndx[tagname]].Indx++
+				}
+
+				if elemname == `POTN` {
+					glyphTags[glyphTagIndx[tagname]].Indx++
+				}
 
 				if glyphs[glyphIndx[elemname]].Type == "item" {
 					var indx int
@@ -206,13 +218,13 @@ func main() {
 					} else {
 						nbtG = NBT{TAG_List, TAG_Compound, "Items", 0, make([]NBT, 0)}
 
-						gt := GlyphTag{tagname, nbtG}
+						gt := GlyphTag{tagname, 0, nbtG}
 						glyphTags = append(glyphTags, gt)
 						glyphTagIndx[tagname] = len(glyphTags) - 1
 					}
 					indx = glyphTagIndx[tagname]
 
-					slot := nbtG.Size
+					slot := glyphTags[indx].Indx
 					idstr := "minecraft:" + item.Name
 					lenstr := uint32(len(idstr))
 
@@ -231,17 +243,19 @@ func main() {
 					nbtG.Size++
 
 					glyphTags[indx].Data = nbtG
+
+					glyphTags[indx].Indx++
 				}
 
 				if glyphs[glyphIndx[elemname]].Type == "entity" {
 
 					nbtentity := buildEntity(elemdata)
 
-					glyphTags = append(glyphTags, GlyphTag{tagname, *nbtentity})
+					glyphTags = append(glyphTags, GlyphTag{tagname, 0, *nbtentity})
 					glyphTagIndx[tagname] = len(glyphTags) - 1
 				}
 
-				_, eleminfo = regexpReplace(eleminfo, `^ +[A-Za-z]{1,4}:[a-z0-9]+`, ``)
+				_, eleminfo = regexpReplace(eleminfo, `^ +[-A-Za-z]{1,4}:[-a-z0-9]+`, ``)
 			}
 			//fmt.Printf("... %v\n", glyphTags)
 
@@ -273,6 +287,8 @@ func main() {
 
 			// glyphs that represent blocks
 			if glyphs[indx].Type == "block" {
+
+				if glyphs[indx].Name == "none" { continue }
 
 				databyte = glyphs[indx].Data
 

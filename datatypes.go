@@ -580,6 +580,7 @@ type Glyph struct {
 
 type GlyphTag struct {
 	Tag  string `json:"tag"`
+	Indx uint8  `json:"indx"`
 	Data NBT    `json:"data"`
 }
 
