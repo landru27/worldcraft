@@ -111,6 +111,19 @@ func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err err
 	}
 	dataBlockData.Data.([]byte)[indxBlockData] = keepNybble + valuNybble
 
+	dataHeightMap := rgn.Chunks[indxChunk].ChunkDataRefs["HeightMap"]
+	hx := x - (cx * 16)
+	hz := z - (cz * 16)
+	indxHeightMap := (hz * 16) + hx
+
+	hy := dataHeightMap.Data.([]int32)[indxHeightMap]
+	if int32(y) > hy {
+		dataHeightMap.Data.([]int32)[indxHeightMap] = int32(y)
+	}
+
+	dataLightPopulated := rgn.Chunks[indxChunk].ChunkDataRefs["LightPopulated"]
+	dataLightPopulated.Data = byte(0)
+
 	qtyBlockEdits++
 
 	return
