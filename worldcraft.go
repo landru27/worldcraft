@@ -268,22 +268,33 @@ func main() {
 
 			indx := glyphIndx[g]
 
+			var databyte byte
 			var nbtentity *NBT
 
 			// glyphs that represent blocks
 			if glyphs[indx].Type == "block" {
-				world.EditBlock(bx, by, bz, glyphs[indx].ID, glyphs[indx].Data)
+
+				databyte = glyphs[indx].Data
 
 				if glyphs[indx].Base != (NBT{}) {
 					nbtentity, _ = glyphs[indx].Base.DeepCopy()
 
 					if gi < len(lineglyphtags) {
-						nbtentity.Data.([]NBT)[4] = glyphTags[glyphTagIndx[lineglyphtags[gi]]].Data
+						lineglyphtag := lineglyphtags[gi]
+						if match, matches = regexpParse(lineglyphtag, `^([a-z]+):([0-9]+)$`); match {
+							lineglyphtag = matches[1]
+							i, _ := strconv.ParseUint(matches[2], 10, 8)
+							databyte = byte(i)
+						}
+
+						nbtentity.Data.([]NBT)[4] = glyphTags[glyphTagIndx[lineglyphtag]].Data
 						gi++
 					}
 
 					world.EditBlockEntity(bx, by, bz, nbtentity)
 				}
+
+				world.EditBlock(bx, by, bz, glyphs[indx].ID, databyte)
 
 				continue
 			}
