@@ -355,7 +355,10 @@ func (w *MCWorld) SaveRegion(rx, rz int) (err error) {
 
 	// open a new file for holding the edited region; we include a timestamp in the
 	// filename to avoid overwriting the original file and any edited files already made
-	filename = fmt.Sprintf("r.%d.%d.mca.%d", rx, rz, timeExec.Unix()) // add '%s/' and 'w.pathWorld' to create the new file next to the original
+	//filename = fmt.Sprintf("r.%d.%d.mca.%d", rx, rz, timeExec.Unix())
+
+        // open the original region file to overwrite it with our edits
+	filename = fmt.Sprintf("%s/r.%d.%d.mca", w.PathWorld, rx, rz)
 	fmt.Printf("SaveRegion filename is  : %s\n", filename)
 
 	fh, err := os.Create(filename)
