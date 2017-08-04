@@ -180,36 +180,43 @@ func main() {
 		}
 
 		// == defines a glyph-tag
-		if match, matches = regexpParse(linein, `^ *== +([a-z]+(?::[0-9]+)*) +:((?: +[A-Za-z]{1,4}:[a-z0-9]+){1,9})`); match {
-			tag := matches[1]
-			elems := matches[2]
+		if match, matches = regexpParse(linein, `^ *== +([a-z]+) +:((?: +[A-Za-z]{1,4}:[a-z0-9]+){1,9})`); match {
+			var tagname string
+			var eleminfo string
+			var elemname string
+			var elemdata string
+
+			tagname = matches[1]
+			eleminfo = matches[2]
 
 			for {
-				if match = regexpMatch(elems, `^\s*$`); match { break }
+				if match = regexpMatch(eleminfo, `^\s*$`); match { break }
 
-				_, matches = regexpParse(elems, `^ +([A-Za-z]{1,4}):([a-z0-9]+)`)
+				_, matches = regexpParse(eleminfo, `^ +([A-Za-z]{1,4}):([a-z0-9]+)`)
+				elemname = matches[1]
+				elemdata = matches[2]
 
-				if glyphs[glyphIndx[matches[1]]].Type == "item" {
+				if glyphs[glyphIndx[elemname]].Type == "item" {
 					var indx int
 					var nbtG NBT
-					item := glyphs[glyphIndx[matches[1]]]
+					item := glyphs[glyphIndx[elemname]]
 
-					if indx, ok := glyphTagIndx[tag]; ok {
+					if indx, ok := glyphTagIndx[tagname]; ok {
 						nbtG = glyphTags[indx].Data
 					} else {
 						nbtG = NBT{TAG_List, TAG_Compound, "Items", 0, make([]NBT, 0)}
 
-						gt := GlyphTag{tag, nbtG}
+						gt := GlyphTag{tagname, nbtG}
 						glyphTags = append(glyphTags, gt)
-						glyphTagIndx[tag] = len(glyphTags) - 1
+						glyphTagIndx[tagname] = len(glyphTags) - 1
 					}
-					indx = glyphTagIndx[tag]
+					indx = glyphTagIndx[tagname]
 
 					slot := nbtG.Size
 					idstr := "minecraft:" + item.Name
 					lenstr := uint32(len(idstr))
 
-					qty, _ := strconv.Atoi(matches[2])
+					qty, _ := strconv.Atoi(elemdata)
 
 					nbtA := NBT{TAG_Byte, 0, "Slot", 0, byte(slot)}
 					nbtB := NBT{TAG_String, 0, "id", lenstr, idstr}
@@ -226,15 +233,15 @@ func main() {
 					glyphTags[indx].Data = nbtG
 				}
 
-				if glyphs[glyphIndx[matches[1]]].Type == "entity" {
+				if glyphs[glyphIndx[elemname]].Type == "entity" {
 
-					nbtentity := buildEntity(matches[2])
+					nbtentity := buildEntity(elemdata)
 
-					glyphTags = append(glyphTags, GlyphTag{tag, *nbtentity})
-					glyphTagIndx[tag] = len(glyphTags) - 1
+					glyphTags = append(glyphTags, GlyphTag{tagname, *nbtentity})
+					glyphTagIndx[tagname] = len(glyphTags) - 1
 				}
 
-				_, elems = regexpReplace(elems, `^ +[A-Za-z]{1,4}:[a-z0-9]+`, ``)
+				_, eleminfo = regexpReplace(eleminfo, `^ +[A-Za-z]{1,4}:[a-z0-9]+`, ``)
 			}
 			//fmt.Printf("... %v\n", glyphTags)
 
