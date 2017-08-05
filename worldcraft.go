@@ -200,42 +200,50 @@ func main() {
 					glyphTags[glyphTagIndx[tagname]].Indx++
 				}
 
-				if elemname == `ITEM` {
-					glyphTags[glyphTagIndx[tagname]].Indx++
-				}
-
-				if elemname == `POTN` {
-					glyphTags[glyphTagIndx[tagname]].Indx++
-				}
-
 				if glyphs[glyphIndx[elemname]].Type == "item" {
 					var indx int
+					var nbtI NBT
 					var nbtG NBT
+
 					item := glyphs[glyphIndx[elemname]]
 
-					if indx, ok := glyphTagIndx[tagname]; ok {
+					if glyphs[glyphIndx[elemname]].Base != (NBT{}) {
+						indx = glyphTagIndx[tagname]
+
+						nbtP, _ := glyphs[glyphIndx[elemname]].Base.DeepCopy()
+
+						nbtI = *nbtP
+						nbtI.Data.([]NBT)[1].Data = byte(glyphTags[indx].Indx)
+
 						nbtG = glyphTags[indx].Data
 					} else {
-						nbtG = NBT{TAG_List, TAG_Compound, "Items", 0, make([]NBT, 0)}
 
-						gt := GlyphTag{tagname, 0, nbtG}
-						glyphTags = append(glyphTags, gt)
-						glyphTagIndx[tagname] = len(glyphTags) - 1
+						if _, okay := glyphTagIndx[tagname]; okay {
+							indx = glyphTagIndx[tagname]
+
+							nbtG = glyphTags[indx].Data
+						} else {
+							nbtG = NBT{TAG_List, TAG_Compound, "Items", 0, make([]NBT, 0)}
+
+							gt := GlyphTag{tagname, 0, nbtG}
+							glyphTags = append(glyphTags, gt)
+							glyphTagIndx[tagname] = len(glyphTags) - 1
+							indx = glyphTagIndx[tagname]
+						}
+
+						slot := glyphTags[indx].Indx
+						idstr := "minecraft:" + item.Name
+						lenstr := uint32(len(idstr))
+
+						qty, _ := strconv.Atoi(elemdata)
+
+						nbtA := NBT{TAG_String, 0, "id", lenstr, idstr}
+						nbtB := NBT{TAG_Byte, 0, "Slot", 0, byte(slot)}
+						nbtC := NBT{TAG_Byte, 0, "Count", 0, byte(qty)}
+						nbtD := NBT{TAG_Short, 0, "Damage", 0, int16(item.Data)}
+
+						nbtI = NBT{TAG_Compound, 0, "LISTELEM", 4, []NBT{nbtA, nbtB, nbtC, nbtD}}
 					}
-					indx = glyphTagIndx[tagname]
-
-					slot := glyphTags[indx].Indx
-					idstr := "minecraft:" + item.Name
-					lenstr := uint32(len(idstr))
-
-					qty, _ := strconv.Atoi(elemdata)
-
-					nbtA := NBT{TAG_Byte, 0, "Slot", 0, byte(slot)}
-					nbtB := NBT{TAG_String, 0, "id", lenstr, idstr}
-					nbtC := NBT{TAG_Byte, 0, "Count", 0, byte(qty)}
-					nbtD := NBT{TAG_Short, 0, "Damage", 0, int16(item.Data)}
-
-					nbtI := NBT{TAG_Compound, 0, "LISTELEM", 4, []NBT{nbtA, nbtB, nbtC, nbtD}}
 
 					tmps := nbtG.Data.([]NBT)
 					tmps = append(tmps, nbtI)

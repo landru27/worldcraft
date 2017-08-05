@@ -1,14 +1,12 @@
 ##  define the Entity glyphtags
 
-     ==  rrrroof   :  NTTY:ruff
-     ==  tibert    :  NTTY:tiberius
+     ==  rrrroof   :  NTTY:rolf
      ==  hhhhhh    :  NTTY:hannah
-     ==  gggggg    :  NTTY:gilbert
 
 
 ##  define the BlockEntity glyphtags
 
-     ==  chestempty      :  COBL:1   ----:--  ----:--  ----:--  ----:--  ----:--  ----:--  ----:--  ----:-- 
+     ==  chestempty      :  COBL:1   ----:--  ----:--  ----:--  ----:--  ----:--  ----:--  ----:--  ----:--
 
      ==  chestnaturala   :  SPLb:8   SPLo:8   SPLs:8   ----:--  ----:--  WOLw:16  WOLg:16  WOLd:16  WOLb:16
      ==  chestnaturala   :  LOGb:16  LOGo:16  LOGs:16  ----:--  ----:--  WOLw:16  WOLg:16  WOLd:16  WOLb:16
@@ -50,19 +48,19 @@
      ==  chestcrafteda   :  DORb:2   DORo:2   DORs:2   CHST:2   SHVL:1   SWRD:1   SADL:1   CPLT:1   TNTB:8
      ==  chestcrafteda   :  FNCb:8   FNCo:8   FNCs:8   FURN:2   BUKT:1   LBOW:1   ELYT:1   LEGG:1   ----:--
      ==  chestcraftedb   :  GATb:8   GATo:8   GATs:8   ----:--  FROD:1   ----:--  ----:--  BOOT:1   ----:--
-     ==  chestcraftedb   :  ----:--  ----:--  ----:--  PAPR:32  ARRW:32  ITEM:bA  ITEM:bB  SHLD:1   TRCH:32
-     ==  chestcraftedb   :  LADR:32  ----:--  ----:--  BOOK:16  ----:--  ITEM:pS  ITEM:cF  ----:--  FNST:1 
+     ==  chestcraftedb   :  ----:--  ----:--  ----:--  PAPR:32  ARRW:32  ITMb:1   ITMa:1   SHLD:1   TRCH:32
+     ==  chestcraftedb   :  LADR:32  ----:--  ----:--  BOOK:16  ----:--  ----:--  ----:--  ----:--  FNST:1
 
      ==  chestfurnanvil  :  COAL:32  COAL:32  COAL:32  ----:--  ----:--  ----:--  ----:--  ----:--  NAME:1
      ==  chestfurnanvil  :  COAL:32  COAL:32  COAL:32  ----:--  ----:--  ----:--  ----:--  ----:--  NAME:1
      ==  chestfurnanvil  :  COAL:32  COAL:32  COAL:32  ----:--  ----:--  ----:--  ----:--  ----:--  NAME:1
 
      ==  chestmagica     :  LPIS:16  BUKT:1   NWRT:16  ----:--  ----:--  ----:--  ----:--  NDRP:4   GLDA:2
-     ==  chestmagica     :  LPIS:16  BUKT:1   NWRT:16  PUFR:8   POTN:wb  POTN:wb  POTN:wb  ----:--  ----:--
-     ==  chestmagica     :  LPIS:16  BUKT:1   RDST:16  GLDC:8   POTN:vn  POTN:vn  POTN:vn  SUGR:16  ----:--
-     ==  chestmagicb     :  LPIS:16  BUKT:1   RDST:16  MGMC:8   POTN:fr  POTN:fr  POTN:fr  MSHb:16  ----:--
-     ==  chestmagicb     :  BLZR:4   BUKT:1   GLST:16  GLDM:8   POTN:he  POTN:he  POTN:he  SEYE:16  ----:--
-     ==  chestmagicb     :  BLZP:8   BUKT:1   GLST:16  GHST:2   BTTL:1   BTTL:1   BTTL:1   FRMT:16  POTN:nv
+     ==  chestmagica     :  LPIS:16  BUKT:1   NWRT:16  PUFR:8   PTNw:1   PTNw:1   PTNw:1   ----:--  ----:--
+     ==  chestmagica     :  LPIS:16  BUKT:1   RDST:16  GLDC:8   PTNn:1   PTNn:1   PTNn:1   SUGR:16  ----:--
+     ==  chestmagicb     :  LPIS:16  BUKT:1   RDST:16  MGMC:8   PTNf:1   PTNf:1   PTNf:1   MSHb:16  ----:--
+     ==  chestmagicb     :  BLZR:4   BUKT:1   GLST:16  GLDM:8   PTNh:1   PTNh:1   PTNh:1   SEYE:16  ----:--
+     ==  chestmagicb     :  BLZP:8   BUKT:1   GLST:16  GHST:2   BTTL:1   BTTL:1   BTTL:1   FRMT:16  PTNi:1
 
 
 ##  four layers of granite
@@ -816,13 +814,13 @@
      . . . . . . . . . . . . = = = = . = = = = . . . . . . . . . . . . . . . . .
      . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
      . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-     . . . . . . . . . . . . . . . . . . . . . s . s . s . s . z . z . z . z . .
+     . . . . . . . . . . . . . . . . . . . . . s . s . s . s . s . s . s . s . .
      . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
      . . . . . . . . / / / / . . . . . . . . . c . c . c . c . c . c . c . c . .
      . . . . . . . . / / / / . . . . . . . . . . . . . . . . . . . . . . . . . .
      . . . . . . . . . . . . . . . . . . . . . k . k . k . k . p . p . p . p . .
      . . . . . / / . . . . . . / / / / . . . . . . . . . . . . . . . . . . . . .
-     . . . . . / / . . . . . . / / / / . . . . E . . . E . . . E . . . E . . . .  ::  rrrroof  tibert  hhhhhh  gggggg
+     . . . . . / / . . . . . . / / / / . . . . E . . . . . . . E . . . . . . . .  ::  rrrroof  hhhhhh
      . . . . . / / . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
      . . . . . / / . . . . . . . . . . . / / . . . . . . . . . . . . . . . . . .
      . . . . . . . . . . . . . . . . . . / / . . . . . . . . . . . . . . . . . .

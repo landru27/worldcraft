@@ -57,7 +57,7 @@
           { "Type": 3, "List": 0, "Name": "z", "Size": 0, "Data": 0 },
           { "Type": 9, "List": 0, "Name": "Items", "Size": 0, "Data": [] },
           { "Type": 8, "List": 0, "Name": "Lock", "Size": 0, "Data": "" } ] } },
-    { "glyph": "T",    "type": "block",  "name": "crafting table",            "id":  58, "data":  0 },
+    { "glyph": "T",    "type": "block",  "name": "crafting_table",            "id":  58, "data":  0 },
     { "glyph": "F",    "type": "block",  "name": "furnace",                   "id":  61, "data":  3, "base": {
         "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 9, "Data": [
           { "Type": 8, "List": 0, "Name": "id", "Size": 17, "Data": "minecraft:furnace" },
@@ -105,7 +105,7 @@
     { "glyph": "PLKo", "type": "item",   "name": "planks",                    "id":   5, "data":  0 },
     { "glyph": "STPo", "type": "item",   "name": "oak_stairs",                "id":  53, "data":  0 },
     { "glyph": "DORo", "type": "item",   "name": "wooden_door",               "id": 324, "data":  0 },
-    { "glyph": "FNCo", "type": "item",   "name": "oak_fence",                 "id":  85, "data":  0 },
+    { "glyph": "FNCo", "type": "item",   "name": "fence",                     "id":  85, "data":  0 },
     { "glyph": "GATo", "type": "item",   "name": "fence_gate",                "id": 107, "data":  0 },
     { "glyph": "SPLs", "type": "item",   "name": "sapling",                   "id":   6, "data":  1 },
     { "glyph": "LOGs", "type": "item",   "name": "log",                       "id":  17, "data":  1 },
@@ -192,7 +192,7 @@
     { "glyph": "FURN", "type": "item",   "name": "furnace",                   "id":  61, "data":  0 },
     { "glyph": "HOEw", "type": "item",   "name": "wooden_hoe",                "id": 290, "data":  0 },
     { "glyph": "SHVL", "type": "item",   "name": "iron_shovel",               "id": 256, "data":  0 },
-    { "glyph": "FROD", "type": "item",   "name": "fishing_rod",               "id": 346, "data":  0 },
+    { "glyph": "FROD", "type": "item",   "name": "fishing_rod",               "id": 346, "data":  8 },
     { "glyph": "BUKT", "type": "item",   "name": "bucket",                    "id": 325, "data":  0 },
     { "glyph": "NAME", "type": "item",   "name": "name_tag",                  "id": 421, "data":  0 },
     { "glyph": "IAXE", "type": "item",   "name": "iron_axe",                  "id": 258, "data":  0 },
@@ -208,9 +208,9 @@
 
     { "glyph": "BOAT", "type": "item",   "name": "spruce_boat",               "id": 444, "data":  0 },
     { "glyph": "SADL", "type": "item",   "name": "saddle",                    "id": 329, "data":  0 },
-    { "glyph": "ELYT", "type": "item",   "name": "elytra",                    "id": 443, "data":  0 },
+    { "glyph": "ELYT", "type": "item",   "name": "elytra",                    "id": 443, "data": 96 },
     { "glyph": "TRCH", "type": "item",   "name": "torch",                     "id":  50, "data":  0 },
-    { "glyph": "FNST", "type": "item",   "name": "flint_and_steel",           "id": 259, "data":  0 },
+    { "glyph": "FNST", "type": "item",   "name": "flint_and_steel",           "id": 259, "data":  8 },
     { "glyph": "TNTB", "type": "item",   "name": "tnt",                       "id":  46, "data":  0 },
 
     { "glyph": "SSND", "type": "item",   "name": "soul_sand",                 "id":  88, "data":  0 },
@@ -235,6 +235,75 @@
     { "glyph": "FRMT", "type": "item",   "name": "fermented_spider_eye",      "id": 376, "data":  0 },
     { "glyph": "GLDA", "type": "item",   "name": "golden_apple",              "id": 322, "data":  0 },
     { "glyph": "ENCA", "type": "item",   "name": "golden_apple",              "id": 322, "data":  1 },
+
+    { "glyph": "ITMa", "type": "item",   "name": "pickaxe_silktouch",         "id":   0, "data":  0, "base": {
+        "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 5, "Data": [
+          { "Type": 8, "List": 0, "Name": "id", "Size": 25, "Data": "minecraft:diamond_pickaxe" },
+          { "Type": 1, "List": 0, "Name": "Slot", "Size": 0, "Data": 0 },
+          { "Type": 1, "List": 0, "Name": "Count", "Size": 0, "Data": 1 },
+          { "Type": 2, "List": 0, "Name": "Damage", "Size": 0, "Data": 8192 },
+          { "Type": 10, "List": 0, "Name": "tag", "Size": 1, "Data": [
+            { "Type": 9, "List": 10, "Name": "ench", "Size": 1, "Data": [
+              { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 2, "Data": [
+                { "Type": 2, "List": 0, "Name": "lvl", "Size": 0, "Data": 1 },
+                { "Type": 2, "List": 0, "Name": "id", "Size": 0, "Data": 33 } ] } ] } ] } ] } },
+
+    { "glyph": "ITMb", "type": "item",   "name": "bow_power_III",             "id":   0, "data":  0, "base": {
+        "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 5, "Data": [
+          { "Type": 8, "List": 0, "Name": "id", "Size": 13, "Data": "minecraft:bow" },
+          { "Type": 1, "List": 0, "Name": "Slot", "Size": 0, "Data": 0 },
+          { "Type": 1, "List": 0, "Name": "Count", "Size": 0, "Data": 1 },
+          { "Type": 2, "List": 0, "Name": "Damage", "Size": 0, "Data": 32 },
+          { "Type": 10, "List": 0, "Name": "tag", "Size": 1, "Data": [
+            { "Type": 9, "List": 10, "Name": "ench", "Size": 1, "Data": [
+              { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 2, "Data": [
+                { "Type": 2, "List": 0, "Name": "lvl", "Size": 0, "Data": 3 },
+                { "Type": 2, "List": 0, "Name": "id", "Size": 0, "Data": 48 } ] } ] } ] } ] } },
+
+    { "glyph": "PTNw", "type": "item",   "name": "potion_water_breathing",    "id":   0, "data":  0, "base": {
+        "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 5, "Data": [
+          { "Type": 8, "List": 0, "Name": "id", "Size": 16, "Data": "minecraft:potion" },
+          { "Type": 1, "List": 0, "Name": "Slot", "Size": 0, "Data": 0 },
+          { "Type": 1, "List": 0, "Name": "Count", "Size": 0, "Data": 1 },
+          { "Type": 2, "List": 0, "Name": "Damage", "Size": 0, "Data": 0 },
+          { "Type": 10, "List": 0, "Name": "tag", "Size": 1, "Data": [
+            { "Type": 8, "List": 0, "Name": "Potion", "Size": 30, "Data": "minecraft:long_water_breathing" } ] } ] } },
+
+    { "glyph": "PTNn", "type": "item",   "name": "potion_night_vision",       "id":   0, "data":  0, "base": {
+        "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 5, "Data": [
+          { "Type": 8, "List": 0, "Name": "id", "Size": 16, "Data": "minecraft:potion" },
+          { "Type": 1, "List": 0, "Name": "Slot", "Size": 0, "Data": 0 },
+          { "Type": 1, "List": 0, "Name": "Count", "Size": 0, "Data": 1 },
+          { "Type": 2, "List": 0, "Name": "Damage", "Size": 0, "Data": 0 },
+          { "Type": 10, "List": 0, "Name": "tag", "Size": 1, "Data": [
+            { "Type": 8, "List": 0, "Name": "Potion", "Size": 27, "Data": "minecraft:long_night_vision" } ] } ] } },
+
+    { "glyph": "PTNh", "type": "item",   "name": "potion_healing",            "id":   0, "data":  0, "base": {
+        "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 5, "Data": [
+          { "Type": 8, "List": 0, "Name": "id", "Size": 16, "Data": "minecraft:potion" },
+          { "Type": 1, "List": 0, "Name": "Slot", "Size": 0, "Data": 0 },
+          { "Type": 1, "List": 0, "Name": "Count", "Size": 0, "Data": 1 },
+          { "Type": 2, "List": 0, "Name": "Damage", "Size": 0, "Data": 0 },
+          { "Type": 10, "List": 0, "Name": "tag", "Size": 1, "Data": [
+            { "Type": 8, "List": 0, "Name": "Potion", "Size": 24, "Data": "minecraft:strong_healing" } ] } ] } },
+
+    { "glyph": "PTNf", "type": "item",   "name": "potion_fire_resistance",    "id":   0, "data":  0, "base": {
+        "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 5, "Data": [
+          { "Type": 8, "List": 0, "Name": "id", "Size": 16, "Data": "minecraft:potion" },
+          { "Type": 1, "List": 0, "Name": "Slot", "Size": 0, "Data": 0 },
+          { "Type": 1, "List": 0, "Name": "Count", "Size": 0, "Data": 1 },
+          { "Type": 2, "List": 0, "Name": "Damage", "Size": 0, "Data": 0 },
+          { "Type": 10, "List": 0, "Name": "tag", "Size": 1, "Data": [
+            { "Type": 8, "List": 0, "Name": "Potion", "Size": 30, "Data": "minecraft:long_fire_resistance" } ] } ] } },
+
+    { "glyph": "PTNi", "type": "item",   "name": "potion_invisibility",       "id":   0, "data":  0, "base": {
+        "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 5, "Data": [
+          { "Type": 8, "List": 0, "Name": "id", "Size": 16, "Data": "minecraft:potion" },
+          { "Type": 1, "List": 0, "Name": "Slot", "Size": 0, "Data": 0 },
+          { "Type": 1, "List": 0, "Name": "Count", "Size": 0, "Data": 1 },
+          { "Type": 2, "List": 0, "Name": "Damage", "Size": 0, "Data": 0 },
+          { "Type": 10, "List": 0, "Name": "tag", "Size": 1, "Data": [
+            { "Type": 8, "List": 0, "Name": "Potion", "Size": 27, "Data": "minecraft:long_invisibility" } ] } ] } },
 
 
     { "glyph": "s",    "type": "entity", "name": "sheep",                     "id":   0, "data":  0 },
