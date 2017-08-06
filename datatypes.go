@@ -553,22 +553,6 @@ func (c *MCChunk) BuildDataRefs() {
 				}
 			}
 		}
-
-		if elemLevl.Name == "LightPopulated" {
-			c.ChunkDataRefs["LightPopulated"] = &refLevl.Data.([]NBT)[indxA]
-		}
-
-		if elemLevl.Name == "HeightMap" {
-			c.ChunkDataRefs["HeightMap"] = &refLevl.Data.([]NBT)[indxA]
-		}
-
-		if elemLevl.Name == "Entities" {
-			c.ChunkDataRefs["Entities"] = &refLevl.Data.([]NBT)[indxA]
-		}
-
-		if elemLevl.Name == "TileEntities" {
-			c.ChunkDataRefs["TileEntities"] = &refLevl.Data.([]NBT)[indxA]
-		}
 	}
 }
 
