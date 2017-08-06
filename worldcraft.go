@@ -328,7 +328,9 @@ func main() {
 						os.Exit(7)
 					}
 
-					nbtentity = &glyphTags[glyphTagIndx[lineglyphtags[gi]]].Data
+					nbtentity, _ = glyphTags[glyphTagIndx[lineglyphtags[gi]]].Data.DeepCopy()
+					assignEntityUUID(nbtentity)
+
 					gi++
 				} else {
 					nbtentity = buildEntity(glyphs[indx].Name)
@@ -460,6 +462,13 @@ func buildEntity(top string) (rslt *NBT) {
 		}
 	}
 
+	assignEntityUUID(&molecule)
+
+	rslt = &molecule
+	return
+}
+
+func assignEntityUUID(dst *NBT) {
 	// calculate a v4 UUID
 	var uuid [16]byte
 	_, err := rand.Read(uuid[:])
@@ -470,11 +479,8 @@ func buildEntity(top string) (rslt *NBT) {
 	uuidlest := int64(binary.BigEndian.Uint64(uuid[8:16]))
 
 	// modify the entity to have its own UUID
-	molecule.Data.([]NBT)[1].Data = uuidmost
-	molecule.Data.([]NBT)[2].Data = uuidlest
-
-	rslt = &molecule
-	return
+	dst.Data.([]NBT)[1].Data = uuidmost
+	dst.Data.([]NBT)[2].Data = uuidlest
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

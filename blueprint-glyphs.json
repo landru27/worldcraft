@@ -58,7 +58,7 @@
           { "Type": 9, "List": 0, "Name": "Items", "Size": 0, "Data": [] },
           { "Type": 8, "List": 0, "Name": "Lock", "Size": 0, "Data": "" } ] } },
     { "glyph": "T",    "type": "block",  "name": "crafting_table",            "id":  58, "data":  0 },
-    { "glyph": "F",    "type": "block",  "name": "furnace",                   "id":  61, "data":  3, "base": {
+    { "glyph": "F",    "type": "block",  "name": "furnace",                   "id":  61, "data":  4, "base": {
         "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 9, "Data": [
           { "Type": 8, "List": 0, "Name": "id", "Size": 17, "Data": "minecraft:furnace" },
           { "Type": 3, "List": 0, "Name": "x", "Size": 0, "Data": 0 },
@@ -235,6 +235,8 @@
     { "glyph": "FRMT", "type": "item",   "name": "fermented_spider_eye",      "id": 376, "data":  0 },
     { "glyph": "GLDA", "type": "item",   "name": "golden_apple",              "id": 322, "data":  0 },
     { "glyph": "ENCA", "type": "item",   "name": "golden_apple",              "id": 322, "data":  1 },
+
+    { "glyph": "CRIM", "type": "item",   "name": "diamond_sword",             "id": 276, "data":  0 },
 
     { "glyph": "ITMa", "type": "item",   "name": "pickaxe_silktouch",         "id":   0, "data":  0, "base": {
         "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 5, "Data": [

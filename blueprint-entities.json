@@ -179,16 +179,26 @@
         { "Attr": "SheepColor", "Valu": 15 } ] },
 
 
-  { "Name": "hannah",
+  { "Name": "pickle",
+    "Base": "cat",
+    "Info": [
+        { "Attr": "CatType", "Valu": 1 },
+        { "Attr": "CustomName", "Valu": "Pickle" } ] },
+  { "Name": "sam",
     "Base": "cat",
     "Info": [
         { "Attr": "CatType", "Valu": 2 },
-        { "Attr": "CustomName", "Valu": "Hannah" } ] },
+        { "Attr": "CustomName", "Valu": "Sam The Cat" } ] },
 
-  { "Name": "rolf",
+  { "Name": "ruffus",
     "Base": "dog",
     "Info": [
-        { "Attr": "CustomName", "Valu": "Rolf" } ] },
+        { "Attr": "CustomName", "Valu": "Ruffus" } ] },
+  { "Name": "max",
+    "Base": "dog",
+    "Info": [
+        { "Attr": "CustomName", "Valu": "Max" } ] },
+
 
 
   { "Name": "armor_stand",
