@@ -117,48 +117,14 @@ func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err err
 	indxHeightMap := (hz * 16) + hx
 
 	hy := dataHeightMap.Data.([]int32)[indxHeightMap]
-	if int32(y) > hy {
-		dataHeightMap.Data.([]int32)[indxHeightMap] = int32(y)
+	if id != 0 {
+		if int32(y) > hy {
+			dataHeightMap.Data.([]int32)[indxHeightMap] = int32(y)
+		}
 	}
 
 	dataLightPopulated := rgn.Chunks[indxChunk].ChunkDataRefs["LightPopulated"]
 	dataLightPopulated.Data = byte(0)
-
-	if id == 98 {
-		if _, okay := rgn.Chunks[indxChunk].ChunkDataRefs["TileTicks"]; !okay {
-
-			nbtTicks := NBT{TAG_List, TAG_Compound, "TileTicks", 0, make([]NBT, 0)}
-
-			rgn.Chunks[indxChunk].ChunkData.Data.([]NBT)[0].Data = append(rgn.Chunks[indxChunk].ChunkData.Data.([]NBT)[0].Data.([]NBT), nbtTicks)
-			rgn.Chunks[indxChunk].ChunkData.Data.([]NBT)[0].Size++
-
-			refLevl := rgn.Chunks[indxChunk].ChunkData.Data.([]NBT)[0]
-			rgn.Chunks[indxChunk].ChunkDataRefs["TileTicks"] = &refLevl.Data.([]NBT)[refLevl.Size - 1]
-		}
-
-		var strid string
-		switch id {
-		case 98:
-			strid = "minecraft:stonebrick"
-		default:
-			strid = "minecraft:air"
-		}
-
-		nbtI := NBT{TAG_String, 0, "i", uint32(len(strid)), strid}
-		nbtT := NBT{TAG_Int, 0, "t", 0, int32(20)}
-		nbtP := NBT{TAG_Int, 0, "p", 0, int32(0)}
-		nbtX := NBT{TAG_Int, 0, "x", 0, int32(x)}
-		nbtY := NBT{TAG_Int, 0, "y", 0, int32(y)}
-		nbtZ := NBT{TAG_Int, 0, "z", 0, int32(z)}
-		nbts := []NBT{nbtI, nbtT, nbtP, nbtX, nbtY, nbtZ}
-
-		nbtTick := NBT{TAG_Compound, 0, "LISTELEM", 6, nbts}
-
-		dataTileTicks := rgn.Chunks[indxChunk].ChunkDataRefs["TileTicks"]
-		dataTileTicks.List = TAG_Compound
-		dataTileTicks.Size++;
-		dataTileTicks.Data = append(dataTileTicks.Data.([]NBT), nbtTick)
-	}
 
 	qtyBlockEdits++
 
