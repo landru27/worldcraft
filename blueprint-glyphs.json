@@ -311,6 +311,8 @@
     { "glyph": "k",    "type": "entity", "name": "chicken",                   "id":   0, "data":  0 },
     { "glyph": "p",    "type": "entity", "name": "pig",                       "id":   0, "data":  0 },
 
+    { "glyph": "I",    "type": "entity", "name": "armor_stand",               "id":   0, "data":  0 },
+
     { "glyph": "E",    "type": "entity", "name": "use_glyph_tag",             "id":   0, "data":  0 },
     { "glyph": "NTTY", "type": "entity", "name": "define_glyph_tag",          "id":   0, "data":  0 }
   ]

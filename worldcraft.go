@@ -180,7 +180,7 @@ func main() {
 		}
 
 		// == defines a glyph-tag
-		if match, matches = regexpParse(linein, `^ *== +([a-z]+) +:((?: +[-A-Za-z]{1,4}:[-a-z0-9]+){1,9})`); match {
+		if match, matches = regexpParse(linein, `^ *== +([a-z]+) +:((?: +[-A-Za-z]{1,4}:[-_a-z0-9]+){1,9})`); match {
 			var tagname string
 			var eleminfo string
 			var elemname string
@@ -192,7 +192,7 @@ func main() {
 			for {
 				if match = regexpMatch(eleminfo, `^\s*$`); match { break }
 
-				_, matches = regexpParse(eleminfo, `^ +([-A-Za-z]{1,4}):([-a-z0-9]+)`)
+				_, matches = regexpParse(eleminfo, `^ +([-A-Za-z]{1,4}):([-_a-z0-9]+)`)
 				elemname = matches[1]
 				elemdata = matches[2]
 
@@ -263,7 +263,7 @@ func main() {
 					glyphTagIndx[tagname] = len(glyphTags) - 1
 				}
 
-				_, eleminfo = regexpReplace(eleminfo, `^ +[-A-Za-z]{1,4}:[-a-z0-9]+`, ``)
+				_, eleminfo = regexpReplace(eleminfo, `^ +[-A-Za-z]{1,4}:[-_a-z0-9]+`, ``)
 			}
 			//fmt.Printf("... %v\n", glyphTags)
 
@@ -330,7 +330,7 @@ func main() {
 			// glyphs that represent entities
 			if glyphs[indx].Type == "entity" {
 
-				if glyphs[indx].Glyph == "E" {
+				if glyphs[indx].Glyph == "E" || glyphs[indx].Glyph == "I" {
 					if gi >= len(lineglyphtags) {
 						fmt.Printf("more glyphs requiring glyph-tags than glyph-tags listed [%s]\n", linein)
 						os.Exit(7)
@@ -440,10 +440,10 @@ func buildEntity(top string) (rslt *NBT) {
 					molecule.Data.([]NBT)[14].Data = float32(valu.(float64))
 
 				case "MaxHealth":
-					molecule.Data.([]NBT)[28].Data.([]NBT)[0].Data.([]NBT)[0].Data = valu.(float64)
+					molecule.Data.([]NBT)[20].Data.([]NBT)[0].Data.([]NBT)[0].Data = valu.(float64)
 
 				case "MoveSpeed":
-					molecule.Data.([]NBT)[28].Data.([]NBT)[1].Data.([]NBT)[0].Data = valu.(float64)
+					molecule.Data.([]NBT)[20].Data.([]NBT)[1].Data.([]NBT)[0].Data = valu.(float64)
 
 				case "SheepColor":
 					molecule.Data.([]NBT)[32].Data = byte(valu.(float64))
