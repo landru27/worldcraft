@@ -185,9 +185,18 @@ func main() {
 			var eleminfo string
 			var elemname string
 			var elemdata string
+			var indx int
 
 			tagname = matches[1]
 			eleminfo = matches[2]
+
+			if _, okay := glyphTagIndx[tagname]; !okay {
+				gt := GlyphTag{tagname, 0, NBT{TAG_List, TAG_Compound, "Items", 0, make([]NBT, 0)}}
+				glyphTags = append(glyphTags, gt)
+				glyphTagIndx[tagname] = len(glyphTags) - 1
+
+			}
+			indx = glyphTagIndx[tagname]
 
 			for {
 				if match = regexpMatch(eleminfo, `^\s*$`); match { break }
@@ -197,39 +206,21 @@ func main() {
 				elemdata = matches[2]
 
 				if elemname == `----` && elemdata == `--` {
-					glyphTags[glyphTagIndx[tagname]].Indx++
+					glyphTags[indx].Indx++
 				}
 
 				if glyphs[glyphIndx[elemname]].Type == "item" {
-					var indx int
 					var nbtI NBT
 					var nbtG NBT
 
-					item := glyphs[glyphIndx[elemname]]
 
 					if glyphs[glyphIndx[elemname]].Base != (NBT{}) {
-						indx = glyphTagIndx[tagname]
-
 						nbtP, _ := glyphs[glyphIndx[elemname]].Base.DeepCopy()
 
 						nbtI = *nbtP
 						nbtI.Data.([]NBT)[1].Data = byte(glyphTags[indx].Indx)
-
-						nbtG = glyphTags[indx].Data
 					} else {
-
-						if _, okay := glyphTagIndx[tagname]; okay {
-							indx = glyphTagIndx[tagname]
-
-							nbtG = glyphTags[indx].Data
-						} else {
-							nbtG = NBT{TAG_List, TAG_Compound, "Items", 0, make([]NBT, 0)}
-
-							gt := GlyphTag{tagname, 0, nbtG}
-							glyphTags = append(glyphTags, gt)
-							glyphTagIndx[tagname] = len(glyphTags) - 1
-							indx = glyphTagIndx[tagname]
-						}
+						item := glyphs[glyphIndx[elemname]]
 
 						slot := glyphTags[indx].Indx
 						idstr := "minecraft:" + item.Name
@@ -245,6 +236,7 @@ func main() {
 						nbtI = NBT{TAG_Compound, 0, "LISTELEM", 4, []NBT{nbtA, nbtB, nbtC, nbtD}}
 					}
 
+					nbtG = glyphTags[indx].Data
 					tmps := nbtG.Data.([]NBT)
 					tmps = append(tmps, nbtI)
 					nbtG.Data = tmps
