@@ -78,6 +78,7 @@ func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err err
 		}
 	}
 
+	// fetch references to the data structures we need to update; return early if they do not exist
 	fqsn = fmt.Sprintf("Sections/%d/Blocks", cy)
 	dataBlocks := rgn.Chunks[indxChunk].ChunkDataRefs[fqsn]
 
@@ -94,13 +95,24 @@ func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err err
 		return
 	}
 
+	// Minecraft block IDs historically have been less than 256, but the chunkdata format actually
+	// supports 12-bit values, with the second bit being stored in one of the nybbles of an additional
+	// array that is half the size of the regular block ID array ...  this is compactness at the price
+	// of simplicity; we keep it simple by dealing with just the legacy 8-bit portion and being content
+	// with blueprints that only make use of the legacy blocks
+	//
+	// but, we keep the commented-out line for valuAddtnl below, as future-looking placeholder
+	//
 	valuBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(valuBytes, id)
 //	valuAddtnl := valuBytes[0]
 	valuBlocks := valuBytes[1]
-
 	dataBlocks.Data.([]byte)[indxBlock] = valuBlocks
 
+	// more compactness at the price of simplicity :  Minecraft stores data that characterizes some
+	// blocks in another array, again as one nybble per block; a full byte-array would be both simpler
+	// and a bit more future proof, but iiwii
+	//
 	indxBlockData := int(indxBlock / 2)
 	currDataValue := dataBlockData.Data.([]byte)[indxBlockData]
 	var keepNybble, valuNybble byte
@@ -113,6 +125,9 @@ func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err err
 	}
 	dataBlockData.Data.([]byte)[indxBlockData] = keepNybble + valuNybble
 
+	// the HeightMap figures heavily into light-level calculations; we update it as we build, but we
+	// skip 'air' blocks, so that light can shine down to the highest solid block
+	//
 	dataHeightMap := rgn.Chunks[indxChunk].ChunkDataRefs["HeightMap"]
 	hx := x - (cx * 16)
 	hz := z - (cz * 16)
@@ -125,6 +140,8 @@ func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err err
 		}
 	}
 
+	// set this to zero, to instruct Minecraft to recalculate lighting for this chunk
+	//
 	dataLightPopulated := rgn.Chunks[indxChunk].ChunkDataRefs["LightPopulated"]
 	dataLightPopulated.Data = byte(0)
 
@@ -145,6 +162,7 @@ func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity *NBT) (err error) {
 	cz := int(math.Floor(float64(z) / 16.0))
 	indxChunk := ((cz - (rz * 32)) * 32) + (cx - (rx * 32))
 
+	// fetch references to the data structures we need to update; return early if they do not exist
 	dataEntities := rgn.Chunks[indxChunk].ChunkDataRefs["Entities"]
 
 	if dataEntities == nil {
@@ -163,6 +181,13 @@ func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity *NBT) (err error) {
 	//debug
 	//fmt.Printf("EditEntity : %v\n", nbtentity)
 
+	// add the entity to the collection of entities in this chunk's chunkdata
+	//
+	// the first line setting the List value to TAG_Compound is really only necessary for the
+	// 1st entity, since before that (when the 'Entities' list is empty), it is TAG_End, but
+	// just setting it each time is less work (fewer opcodes) than testing the current value,
+	// even though it seems pointless to us pesky humans in our concrete, analog existence
+	//
 	dataEntities.List = TAG_Compound
 	dataEntities.Size++
 	dataEntities.Data = append(dataEntities.Data.([]NBT), *nbtentity)
@@ -202,6 +227,13 @@ func (w *MCWorld) EditBlockEntity(x int, y int, z int, nbtentity *NBT) (err erro
 	//debug
 	//fmt.Printf("EditBlockEntity : %v\n", nbtentity)
 
+	// add the blockentity to the collection of blockentities in this chunk's chunkdata
+	//
+	// the first line setting the List value to TAG_Compound is really only necessary for the
+	// 1st entity, since before that (when the 'TileEntities' list is empty), it is TAG_End, but
+	// just setting it each time is less work (fewer opcodes) than testing the current value,
+	// even though it seems pointless to us pesky humans in our concrete, analog existence
+	//
 	dataBlockEntities.List = TAG_Compound
 	dataBlockEntities.Size++
 	dataBlockEntities.Data = append(dataBlockEntities.Data.([]NBT), *nbtentity)
@@ -235,7 +267,6 @@ func (w *MCWorld) LoadRegion(x int, y int, z int) (rgn *MCRegion, err error) {
 	// the fqfn and read the file in
 	filename := fmt.Sprintf("%s/r.%d.%d.mca", w.PathWorld, rx, rz)
 	fmt.Printf("LoadRegion filename is  : %s\n", filename)
-	//var bufFile []byte
 	bufFile, err := ioutil.ReadFile(filename)
 	if err != nil {
 		fmt.Printf("unable to open region file [%s] [%s]\n", filename, err)
@@ -298,7 +329,7 @@ func (w *MCWorld) LoadRegion(x int, y int, z int) (rgn *MCRegion, err error) {
 					// utility; until then, it's premature optimization
 					//
 					if cmpres != 2 {
-						panic(fmt.Errorf("\n\n\nnot ZLib compression!  chunk %d, %d\n\n\n", ix, iz))
+						panic(fmt.Errorf("not ZLib compression!  chunk %d, %d\n", ix, iz))
 					}
 
 					newchnk.Length = length
@@ -315,6 +346,7 @@ func (w *MCWorld) LoadRegion(x int, y int, z int) (rgn *MCRegion, err error) {
 					var bufTemp bytes.Buffer
 					io.Copy(&bufTemp, rChunkInfoZLib)
 
+					// a non-empty debug string is the signal to ReadNBTData to produce verbose output
 					strDebug := ""
 					if w.FlagDebug {
 						strDebug = fmt.Sprintf("chunk %d, %d", ix, iz)
@@ -393,10 +425,10 @@ func (w *MCWorld) SaveRegion(rx, rz int) (err error) {
 
 		// sanity check to make sure we are dealing with the correct chunk
 		if rgn.Chunks[indx].IX != indx % 32 {
-			panic(fmt.Errorf("\n\n\nunexpected IX coordinate; region %d, %d;  indx %d;  chunk %d, %d\n\n\n", rx, rz, indx, rgn.Chunks[indx].IX, rgn.Chunks[indx].IZ))
+			panic(fmt.Errorf("unexpected IX coordinate; region %d, %d;  indx %d;  chunk %d, %d\n", rx, rz, indx, rgn.Chunks[indx].IX, rgn.Chunks[indx].IZ))
 		}
 		if rgn.Chunks[indx].IZ != int(indx / 32) {
-			panic(fmt.Errorf("\n\n\nunexpected IZ coordinate; region %d, %d;  indx %d;  chunk %d, %d\n\n\n", rx, rz, indx, rgn.Chunks[indx].IX, rgn.Chunks[indx].IZ))
+			panic(fmt.Errorf("unexpected IZ coordinate; region %d, %d;  indx %d;  chunk %d, %d\n", rx, rz, indx, rgn.Chunks[indx].IX, rgn.Chunks[indx].IZ))
 		}
 
 		// optionally output the chunkdata to JSON, for various sorts of external analysis
@@ -530,6 +562,8 @@ func (cdl *MCChunkdatalocation) setOffset(value int) {
 	cdl.Offset[2] = arrval[3]
 }
 
+// MCChunk
+//
 type MCChunk struct {
 	IX              int
 	IZ              int
@@ -541,6 +575,9 @@ type MCChunk struct {
 	ChunkDataRefs   map[string]*NBT
 }
 
+// this builds a map of data objects for this chunk's chunkdata;  the chunkdata is in an unordered hierarchy, making it
+// cumbersome to go looking for a given data object every time, so we build up a mapping using a pathed name as the key
+//
 func (c *MCChunk) BuildDataRefs() {
 	if c.ChunkDataRefs != nil {
 		fmt.Printf("BuildDataRefs called again for the same chunk [%d, %d]\n", c.CX, c.CZ)
@@ -566,6 +603,24 @@ func (c *MCChunk) BuildDataRefs() {
 	}
 }
 
+// blueprint datatypes
+//
+// a glyph is a symbol on a blueprint, either a 1-character symbol denoting a block to be placed, or a 4-character abbreviated
+// name denoting an item to be added to an inventory list, or the 4-character 'NTTY' denoting an entity to be further specified
+// by a glyphtag
+//
+// a glyphtag is used to give a 1-character glyph more definition, by tying it to a set of other glyphs; current common cases:
+//     -  define the items inside of a chest, then designate which chest on the blueprint goes with which defined chest
+//        -  the same thing could be done for a furnace or a brewing stand, too
+//     -  select a given variety of a given entity, then designate which entity on the blueprint goes with which variation
+//        -  sheep of different colors, dogs and cats with specific names, and specific armor stands
+//
+// an atom is used to establish a hierarchy of entity composition, chiefly so that specific entities can be defined with a
+// minimum of information; this avoids the pitfalls of denormalized data, and is just plain easier to do and maintain
+//
+// an atominfo is used to define specific elements of an entity built from atoms that should be modified to make the generic
+// entity into a specifc entity; e.g., mob-specific values/settings of attributes/properties held in common among all entities
+//
 type Glyph struct {
 	Glyph string `json:"glyph"`
 	Type  string `json:"type"`

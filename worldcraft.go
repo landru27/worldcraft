@@ -83,6 +83,7 @@ func main() {
 	fmt.Printf("build starts at : %d, %d, %d\n", *anchorX, *anchorY, *anchorZ)
 	fmt.Printf("\n")
 
+	// the world object is at the root of the Minecraft data, and so is our interface to that data
 	world = MCWorld{FlagDebug: *flagDebug, FlagJSOND: *flagJSOND, PathWorld: *pathWorld}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -104,13 +105,8 @@ func main() {
 		glyphIndx[elem.Name] = indx
 	}
 
-	//debug
-	//fmt.Printf("glyphs array : %v\n", glyphs)
-	//fmt.Printf("glyphIndx array : %v\n", glyphIndx)
-
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// read in the definitions of Atoms, so that the associated blueprint symbols can be interpretted as the Minecraft
-	// objects that they are intended to represent
+	// read in the definitions of Atoms, so that the associated Minecraft objects can be composed as needed
 	var bufJsonA []byte
 	var mapJsonA map[string][]Atom
 
@@ -126,12 +122,8 @@ func main() {
 		entityAtomIndx[elem.Name] = indx
 	}
 
-	//debug
-	//fmt.Printf("entityAtoms array : %v\n", entityAtoms)
-	//fmt.Printf("entityAtomIndx array : %v\n", entityAtomIndx)
-
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// read in the blueprint from stdin
+	// workhorse variables
 	var linein string
 	var lineglyphtags []string
 	var match bool
@@ -151,6 +143,8 @@ func main() {
 	dy = 0
 	dz = 0
 
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// read in the blueprint from stdin
 	fh, err := os.Open(*fileBPrnt)
 	if err != nil {
 		fmt.Printf("unable to open blueprint file [%s] [%s]\n", *fileBPrnt, err)
@@ -190,6 +184,7 @@ func main() {
 			tagname = matches[1]
 			eleminfo = matches[2]
 
+			// if we have not seen this glyphtag before, define it as a glyphtag and in the glyphtag map
 			if _, okay := glyphTagIndx[tagname]; !okay {
 				gt := GlyphTag{tagname, 0, NBT{TAG_List, TAG_Compound, "Items", 0, make([]NBT, 0)}}
 				glyphTags = append(glyphTags, gt)
@@ -198,13 +193,16 @@ func main() {
 			}
 			indx = glyphTagIndx[tagname]
 
+			// digest the elements which make up the definition of this glyphtag
 			for {
+				// we are done when we've run out of elements
 				if match = regexpMatch(eleminfo, `^\s*$`); match { break }
 
 				_, matches = regexpParse(eleminfo, `^ +([-A-Za-z]{1,4}):([-_a-z0-9]+)`)
 				elemname = matches[1]
 				elemdata = matches[2]
 
+				// ----:-- is a placeholder, mainly used for empty slots in an item inventory list
 				if elemname == `----` && elemdata == `--` {
 					glyphTags[indx].Indx++
 				}
@@ -214,6 +212,10 @@ func main() {
 					var nbtG NBT
 
 
+					// if the glyph refers to an item with pre-defined NBT, use that and set its slot
+					// to be the current spot in the inventory list; otherwise construct the item NBT
+					// from the glyph definition
+					//
 					if glyphs[glyphIndx[elemname]].Base != (NBT{}) {
 						nbtP, _ := glyphs[glyphIndx[elemname]].Base.DeepCopy()
 
@@ -236,6 +238,7 @@ func main() {
 						nbtI = NBT{TAG_Compound, 0, "LISTELEM", 4, []NBT{nbtA, nbtB, nbtC, nbtD}}
 					}
 
+					// add the item to the glyphtag definition
 					nbtG = glyphTags[indx].Data
 					tmps := nbtG.Data.([]NBT)
 					tmps = append(tmps, nbtI)
@@ -255,9 +258,9 @@ func main() {
 					glyphTagIndx[tagname] = len(glyphTags) - 1
 				}
 
+				// consume the element we just processed
 				_, eleminfo = regexpReplace(eleminfo, `^ +[-A-Za-z]{1,4}:[-_a-z0-9]+`, ``)
 			}
-			//fmt.Printf("... %v\n", glyphTags)
 
 			continue
 		}
@@ -288,17 +291,28 @@ func main() {
 			// glyphs that represent blocks
 			if glyphs[indx].Type == "block" {
 
+				// this leaves whatever block is already at this spot in the Minecraft world intact
 				if glyphs[indx].Name == "none" { continue }
 
 				databyte = glyphs[indx].Data
 
+				// if the glyph refers to a block with pre-defined NBT, use that to also add a
+				// BlockEntity to go with this Block
+				//
 				if glyphs[indx].Base != (NBT{}) {
 					nbtentity, _ = glyphs[indx].Base.DeepCopy()
 
+					// if the block's NBT has an inventory list, look for a glyphtag and use the
+					// NBT from that glyphtag to fill out this block's blockentity's inventory
+					//
 					if len(nbtentity.Data.([]NBT)) > 4 {
 						if nbtentity.Data.([]NBT)[4].Name == "Items" {
 							if gi < len(lineglyphtags) {
 								lineglyphtag := lineglyphtags[gi]
+
+								// if the glyphtag also has a number suffix, use that number
+								// to set the block's data; e.g., the direction a chest faces
+								//
 								if match, matches = regexpParse(lineglyphtag, `^([a-z]+):([0-9]+)$`); match {
 									lineglyphtag = matches[1]
 									i, _ := strconv.ParseUint(matches[2], 10, 8)
@@ -322,6 +336,11 @@ func main() {
 			// glyphs that represent entities
 			if glyphs[indx].Type == "entity" {
 
+				// if the glyph is 'E' or 'I', there must be a corrsponding glyphtag; the expectation
+				// is that this glyphtag refers to an entity (built from atoms), and we want to use
+				// that for the NBT for this entity; otherwise, the glyph bears a name that can be used
+				// to build an entity from atoms
+				//
 				if glyphs[indx].Glyph == "E" || glyphs[indx].Glyph == "I" {
 					if gi >= len(lineglyphtags) {
 						fmt.Printf("more glyphs requiring glyph-tags than glyph-tags listed [%s]\n", linein)
@@ -361,20 +380,24 @@ func main() {
 // data handling functions
 //
 func buildEntity(top string) (rslt *NBT) {
-	molecule := NBT{TAG_Compound, 0, "", 0, make([]NBT, 0)}
-
 	var stack []string
 	var next string
 	var base string
 
+	// the input parameter names an atom at the top of an atom hierarchy; descend that hierarchy to find the
+	// constituent atoms that make up the entity we are building;  then run through that stack, appending
+	// NBT elements as we go;  at each point, also look for specific properties to set in order to make a
+	// specific entity out of a generic one
+
+	// (clever, eh?)
+	molecule := NBT{TAG_Compound, 0, "", 0, make([]NBT, 0)}
+
 	stack = make([]string, 0)
 	stack = append(stack, top)
-
 	next = top
 	for {
 		indx := entityAtomIndx[next]
 		base = entityAtoms[indx].Base
-		//fmt.Printf("buildEntity : trace : next, base : %s, %s\n", next, base)
 
 		if (base == "") { break }
 
@@ -391,11 +414,9 @@ func buildEntity(top string) (rslt *NBT) {
 		if len(stack) == 0 { break }
 
 		next, stack = stack[len(stack)-1], stack[:len(stack)-1]
-		//fmt.Printf("buildEntity : add Data and Info : next : %s\n", next)
 
 		indx := entityAtomIndx[next]
 		if entityAtoms[indx].Data.Type != TAG_End {
-			//fmt.Printf("buildEntity : add Data : next : %s\n", next)
 
 			for _, elem := range entityAtoms[indx].Data.Data.([]NBT) {
 				nbtc, _ = elem.DeepCopy()
@@ -407,7 +428,6 @@ func buildEntity(top string) (rslt *NBT) {
 		}
 
 		if entityAtoms[indx].Info != nil {
-			//fmt.Printf("buildEntity : add Info : next : %s\n", next)
 
 			for _, atom := range entityAtoms[indx].Info {
 				attr := atom.Attr
@@ -478,20 +498,22 @@ func assignEntityUUID(dst *NBT) {
 	uuidmost := int64(binary.BigEndian.Uint64(uuid[0:8]))
 	uuidlest := int64(binary.BigEndian.Uint64(uuid[8:16]))
 
-	// modify the entity to have its own UUID
+	// modify the entity to have its own UUID;  we know the array indexes, because we constructed the entity
 	dst.Data.([]NBT)[1].Data = uuidmost
 	dst.Data.([]NBT)[2].Data = uuidlest
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // utility functions
-//
+
 func panicOnErr(e error) {
 	if e != nil {
 		panic(e)
 	}
 }
 
+// these regexp functions are intended to make the most common regular-expression use cases easier to write, read, and maintain
+//
 func regexpMatch(subject string, pattern string) (rtrn bool) {
 	rtrn = false
 
