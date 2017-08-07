@@ -30,12 +30,14 @@ func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err err
 
 	rgn, err := w.LoadRegion(x, y, z)
 	panicOnErr(err)
+	rx := rgn.RX
+	rz := rgn.RZ
 
 	// calculate the in-region chunk coordinates and chunkdata index
 	cx := int(math.Floor(float64(x) / 16.0))
 	cy := int(                   y  / 16   )
 	cz := int(math.Floor(float64(z) / 16.0))
-	indxChunk := (cz * 32) + cx
+	indxChunk := ((cz - (rz * 32)) * 32) + (cx - (rx * 32))
 
 	// calculate the in-chunk block coordinates and blockdata index
 	ix := x - (cx * 16)
@@ -135,11 +137,13 @@ func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity *NBT) (err error) {
 
 	rgn, err := w.LoadRegion(x, y, z)
 	panicOnErr(err)
+	rx := rgn.RX
+	rz := rgn.RZ
 
 	// calculate the in-region chunk coordinates and chunkdata index
 	cx := int(math.Floor(float64(x) / 16.0))
 	cz := int(math.Floor(float64(z) / 16.0))
-	indxChunk := (cz * 32) + cx
+	indxChunk := ((cz - (rz * 32)) * 32) + (cx - (rx * 32))
 
 	dataEntities := rgn.Chunks[indxChunk].ChunkDataRefs["Entities"]
 
@@ -172,11 +176,13 @@ func (w *MCWorld) EditBlockEntity(x int, y int, z int, nbtentity *NBT) (err erro
 
 	rgn, err := w.LoadRegion(x, y, z)
 	panicOnErr(err)
+	rx := rgn.RX
+	rz := rgn.RZ
 
 	// calculate the in-region chunk coordinates and chunkdata index
 	cx := int(math.Floor(float64(x) / 16.0))
 	cz := int(math.Floor(float64(z) / 16.0))
-	indxChunk := (cz * 32) + cx
+	indxChunk := ((cz - (rz * 32)) * 32) + (cx - (rx * 32))
 
 	dataBlockEntities := rgn.Chunks[indxChunk].ChunkDataRefs["TileEntities"]
 
