@@ -6,6 +6,7 @@
     { "glyph": "#",    "type": "block",  "name": "stone bricks",              "id":  98, "data":  0 },
     { "glyph": "=",    "type": "block",  "name": "stone fence",               "id": 139, "data":  0 },
     { "glyph": "-",    "type": "block",  "name": "spruce fence",              "id": 188, "data":  0 },
+    { "glyph": "|",    "type": "block",  "name": "grass",                     "id":   2, "data":  0 },
     { "glyph": "*",    "type": "block",  "name": "dirt",                      "id":   3, "data":  0 },
     { "glyph": "+",    "type": "block",  "name": "tilled dirt",               "id":  60, "data":  0 },
     { "glyph": "~",    "type": "block",  "name": "water",                     "id":   9, "data":  0 },
