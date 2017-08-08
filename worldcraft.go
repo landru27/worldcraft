@@ -357,6 +357,10 @@ func main() {
 
 				world.EditEntity(bx, by, bz, nbtentity)
 
+				// also make this block an air block, otherwise, if the chunkdata already had a block
+				// in this spot, it will remain; worse, it will potentially suffocate the new entity
+				world.EditBlock(bx, by, bz, 0, 0)
+
 				continue
 			}
 		}
