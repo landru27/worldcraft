@@ -1,0 +1,254 @@
+##  define chest contents
+
+     ==  chestequipa       :  DIOR:32  DIOR:32  DIOR:32  DIOR:32  ----:--  CRIM:1   MTTN:16  ----:--  TRCH:32
+     ==  chestequipa       :  DIOp:32  DIOp:32  DIOp:32  DIOp:32  ----:--  SHLD:1   BEEF:16  ----:--  PKAX:1 
+     ==  chestequipa       :  OBSD:32  FNST:1   FNST:1   ----:--  ----:--  HELM:1   CHNK:16  ----:--  LBOW:1
+     ==  chestequipb       :  ----:--  ----:--  ----:--  ----:--  ----:--  CPLT:1   PORK:16  ----:--  ARRW:32
+     ==  chestequipb       :  GLAS:16  LADR:32  ----:--  ----:--  ----:--  LEGG:1   FISH:4   ----:--  ----:--
+     ==  chestequipb       :  GPAN:16  ----:--  ----:--  ----:--  ----:--  BOOT:1   BRED:32  ----:--  ELYT:1 
+
+
+##  foundation
+    X X X X X X X X X X X X
+    X X X X r r r r X X X X
+    X X r r r r r r r r X X
+    X X r r r r r r r r X X
+    X r r r r r r r r r r X
+    X r r r r r r r r r r X
+    X r r r r r r r r r r X
+    X r r r r r r r r r r X
+    X X r r r r r r r r X X
+    X X r r r r r r r r X X
+    X X X X r r r r X X X X
+    X X X X X X X X X X X X
+    --
+
+    X X X X X X X X X X X X
+    X X X X r r r r X X X X
+    X X r r r r r r r r X X
+    X X r r r r r r r r X X
+    X r r r r r r r r r r X
+    X r r r r r r r r r r X
+    X r r r r r r r r r r X
+    X r r r r r r r r r r X
+    X X r r r r r r r r X X
+    X X r r r r r r r r X X
+    X X X X r r r r X X X X
+    X X X X X X X X X X X X
+    --
+
+    X X X X X X X X X X X X
+    X X X X r r r r X X X X
+    X X r r r r r r r r X X
+    X X r r r r r r r r X X
+    X r r r r r r r r r r X
+    X r r r r r r r r r r X
+    X r r r r r r r r r r X
+    X r r r r r r r r r r X
+    X X r r r r r r r r X X
+    X X r r r r r r r r X X
+    X X * * r r r r * * X X
+    X X * * * r r r * * X X
+    --
+
+    X X X X X X X X X X X X
+    X X X X r r r r X X X X
+    X X r r r r r r r r X X
+    X X r r r r r r r r X X
+    X r r r r r r r r r r X
+    X r r r X X X X r r r X
+    X r r r r r r r r r r X
+    X r r r r r r r r r r X
+    X X r r r r r r r r X X
+    X X r r r r r r r r X X
+    X X . . r r r r . . X X
+    X X . . . 3 3 3 . . X X
+    --
+
+##  1st floor
+    . . . . . . . . . . . .
+    . . . . r r r r . . . .
+    . . r r r r r r r r . .
+    . . r r r r r r r r . .
+    . r r . . . . . . r r .
+    . r r . X X X X . r r .
+    . r r . . . . . . r r .
+    . r r r H . . . r r r .
+    . . r r r r . r r r . .
+    . . r r r r . r r r . .
+    . . . . r r D r . . . .
+    . . . . . . . . . . . .
+    --
+
+    . . . . . . . . . . . .
+    . . . . r r r r . . . .
+    . . r r r r r r r r . .
+    . . r r r r r r r r . .
+    . r r . . . . . . r r .
+    . r r . X X X X . r r .
+    . r r . . . . . . r r .
+    . r r r H . . . r r r .
+    . . r r r r . r r r . .
+    . . r r r r . r r r . .
+    . . . . r r d r . . . .
+    . . . . . . . . . . . .
+    --
+
+    . . . . . . . . . . . .
+    . . . . r r r r . . . .
+    . . r r r r r r r r . .
+    . . r Y r r r r Y r . .
+    . r r . . . . . . r r .
+    . r r . X X X X . r r .
+    . r r . . . . . . r r .
+    . r r Y H . . . Y r r .
+    . . r r r r . r r r . .
+    . . r r r r Y r r r . .
+    . . . . r r r r . . . .
+    . . . . . . . . . . . .
+    --
+
+    . . . . . . . . . . . .
+    . . . . r r r r . . . .
+    . . r r r r r r r r . .
+    . . r r r r r r r r . .
+    . r r r r r r r r r r .
+    . r r r X X X X r r r .
+    . r r r r r r r r r r .
+    . r r r H r r r r r r .
+    . . r r r r r r r r . .
+    . . r r r r r r r r . .
+    . . . . r r Y r . . . .
+    . . . . . . . . . . . .
+    --
+
+##  blast floor
+    . . . . . . . . . . . .
+    . . . . r r r r . . . .
+    . . r r r r r r r r . .
+    . . r r r r r r r r . .
+    . r r r r r r r r r r .
+    . r r r r r r r r r r .
+    . r r r r r r r r r r .
+    . r r r H r r r r r r .
+    . . r r r r r r r r . .
+    . . r r r r r r r r . .
+    . . . . r r r r . . . .
+    . . . . . . . . . . . .
+    --
+
+##  3rd floor
+    . . . . . . . . . . . .
+    . . . . r r r r . . . .
+    . . r r r r r r r r . .
+    . . r r . . . . r r . .
+    . r r C . . . . . r r .  ::  chestequipa:5
+    . r r C . . . . . r r .  ::  chestequipb:5
+    . r r . . . . . . r r .
+    . r r r H . . . . r r .
+    . . r r r . . . r r . .
+    . . r r r r r r r r . .
+    . . . . r r r r . . . .
+    . . . . . . . . . . . .
+    --
+
+    . . . . . . . . . . . .
+    . . . . r r r r . . . .
+    . . r r r r r r r r . .
+    . . r r . . . . r r . .
+    . r r . . . . . . r r .
+    . r r . . . . . . r r .
+    . r r . . . . . . r r .
+    . r r r H . . . . r r .
+    . . r r r . . . r r . .
+    . . r r r r r r r r . .
+    . . . . r r r r . . . .
+    . . . . . . . . . . . .
+    --
+
+    . . . . . . . . . . . .
+    . . . . r r r r . . . .
+    . . r r r r r r r r . .
+    . . r r . . . . r r . .
+    . r r . . . . . . r r .
+    . r r . . . . . . r r .
+    . r r . . . . . . r r .
+    . r r r H . . . . r r .
+    . . r r r . . . r r . .
+    . . r r r r r r r r . .
+    . . . . r r r r . . . .
+    . . . . . . . . . . . .
+    --
+
+    . . . . . . . . . . . .
+    . . . . r r r r . . . .
+    . . r r r r r r r r . .
+    . . r r r r r r r r . .
+    . r r r Y r r Y r r r .
+    . r r r r r r r r r r .
+    . r r r r r r r r r r .
+    . r r r H r r Y r r r .
+    . . r r r r r r r r . .
+    . . r r r r r r r r . .
+    . . . . r r r r . . . .
+    . . . . . . . . . . . .
+    --
+
+##  capstones
+    . . . . . . . . . . . .
+    . . . . r r r r . . . .
+    . . r r r r r r r r . .
+    . . r r r r r r r r . .
+    . r r r r r r r r r r .
+    . r r r r r r r r r r .
+    . r r r r r r r r r r .
+    . r r r H r r r r r r .
+    . . r r r r r r r r . .
+    . . r r r r r r r r . .
+    . . . . r r r r . . . .
+    . . . . . . . . . . . .
+    --
+
+    . . . . . . . . . . . .
+    . . . . r r r r . . . .
+    . . r r r r r r r r . .
+    . . r r r r r r r r . .
+    . r r r Y r r Y r r r .
+    . r r r r r r r r r r .
+    . r r r r r r r r r r .
+    . r r r H r r Y r r r .
+    . . r r r r r r r r . .
+    . . r r r r r r r r . .
+    . . . . r r r r . . . .
+    . . . . . . . . . . . .
+    --
+
+##  rampart
+    . . . . . . . . . . . .
+    . . . . = r r = . . . .
+    . . r r . . . . r r . .
+    . . r . . . . . . r . .
+    . = . . . . . . . . = .
+    . r . . . . . . . . r .
+    . r . . . . . . . . r .
+    . = . . . . . . . . = .
+    . . r . . . . . . r . .
+    . . r r . . . . r r . .
+    . . . . = r r = . . . .
+    . . . . . . . . . . . .
+    --
+
+    . . . . . . . . . . . .
+    . . . . . r r . . . . .
+    . . r r . . . . r r . .
+    . . r . . . . . . r . .
+    . . . . . . . . . . . .
+    . r . . . . . . . . r .
+    . r . . . . . . . . r .
+    . . . . . . . . . . . .
+    . . r . . . . . . r . .
+    . . r r . . . . r r . .
+    . . . . . r r . . . . .
+    . . . . . . . . . . . .
+    --
+
