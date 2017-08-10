@@ -154,6 +154,16 @@ func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err err
 
 func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity *NBT) (err error) {
 
+	// this flag causes all entity edits to be skipped; this is useful when redo'ing a blueprint after
+	// fixing the blocks on the blueprint; blocks always replace themselves, but entities are always
+	// new, so skipping entities can prevent ending up with too much livestock roaming around, superimposed
+	// armorstands, and duplicate named entities such as dogs and cats, which are intended (by naming them)
+	// to be unique
+	//
+	// blocks always replace themselves because the data structures holding blocks are of fixed size and
+	// have positional implications, whereas entities are stored in an open-ended list of elements and have
+	// their position encoded as explicit properties of those elements
+	//
 	if w.FlagSkipEntities {
 		qtyEntityEditsSkipped++
 		return
@@ -223,6 +233,21 @@ func (w *MCWorld) EditBlockEntity(x int, y int, z int, nbtentity *NBT) (err erro
 		return
 	}
 
+	// this flag resets the blockentities in the current chunk; this is useful when redo'ing a blueprint
+	// after fixing the blocks on the blueprint; blocks always replace themselves, but blockentities are
+	// always new, and this evidently causes a serious problem for Minecraft, as it typically crashes when
+	// loading a region with duplicate blockentities
+	//
+	// we use a property on the chunk itself to avoid resetting the blockentities more than once (which
+	// would of course lead to a blockentities list one item in length)
+	//
+	// presumably, the in-game-memory representation of, say, a chest's inventory cannot cope with more
+	// than one item stack assigned to the same inventory slot, or something like that
+	//
+	// blocks always replace themselves because the data structures holding blocks are of fixed size and
+	// have positional implications, whereas blockentities are stored in an open-ended list of elements
+	// and have their position encoded as explicit properties of those elements
+	//
 	if w.FlagResetBlockEntities {
 		if rgn.Chunks[indxChunk].ResetBENeeded {
 			dataBlockEntities.Size = 0
