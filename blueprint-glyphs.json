@@ -51,6 +51,7 @@
     { "glyph": "b",    "type": "block",  "name": "head of bed, head west",    "id":  26, "data":  9 },
     { "glyph": "H",    "type": "block",  "name": "ladder on south wall",      "id":  65, "data":  2 },
     { "glyph": "h",    "type": "block",  "name": "ladder on west wall",       "id":  65, "data":  5 },
+    { "glyph": "@",    "type": "block",  "name": "trapdoor on top, west",     "id":  96, "data": 11 },
     { "glyph": ":",    "type": "block",  "name": "glass pane",                "id": 102, "data":  0 },
 
     { "glyph": "C",    "type": "block",  "name": "chest",                     "id":  54, "data":  3, "base": {
