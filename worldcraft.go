@@ -296,7 +296,7 @@ func main() {
 			if glyphs[indx].Type == "block" {
 
 				// this leaves whatever block is already at this spot in the Minecraft world intact
-				if glyphs[indx].Name == "none" { continue }
+				if glyphs[indx].Name == "null" { continue }
 
 				databyte = glyphs[indx].Data
 

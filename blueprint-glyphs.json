@@ -1,6 +1,6 @@
 {
   "Glyphs": [
-    { "glyph": "X",    "type": "block",  "name": "none",                      "id":   0, "data":  0 },
+    { "glyph": "X",    "type": "block",  "name": "null",                      "id":   0, "data":  0 },
 
     { "glyph": ".",    "type": "block",  "name": "air",                       "id":   0, "data":  0 },
     { "glyph": "#",    "type": "block",  "name": "stone bricks",              "id":  98, "data":  0 },
