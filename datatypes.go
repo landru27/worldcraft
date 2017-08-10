@@ -21,6 +21,7 @@ import (
 type MCWorld struct {
 	FlagDebug bool
 	FlagJSOND bool
+	FlagXAirBlocks bool
 	FlagSkipEntities bool
 	FlagResetBlockEntities bool
 	PathWorld string
@@ -28,6 +29,24 @@ type MCWorld struct {
 }
 
 func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err error) {
+
+	// this flag causes 'air' blocks ('.' blueprint glyph) to be treated like 'null' blocks ('X' blueprint glyph);
+	// this is useful when redo'ing a blueprint after fixing the blocks on the blueprint; assuming the blueprint
+	// is reasonably complete to begin with, things that one has added to the gameworld will tend to be in the
+	// 'empty' spaces -- i.e., where there is only air;  with this flag, redo'ing a blueprint will preserve those
+	// sorts of in-game edits;  crops that have been planted will be preserved, too, if those planting areas do
+	// not have planted-crops defined on the blueprint
+	//
+	// this is not a 100% solution of course; places where the ground has been trimmed away, structures that have
+	// been tweaked, etc. will be reset according to the blueprint; but it should work well as a 96% solution
+	//
+	if w.FlagXAirBlocks {
+		if id == 0 {
+			qtyBlockEditsSkipped++
+			return
+		}
+	}
+
 	var fqsn string
 
 	rgn, err := w.LoadRegion(x, y, z)
