@@ -1,0 +1,18 @@
+     ==  blacksheep   :  NTTY:sheep_black
+     ==  darkgsheep   :  NTTY:sheep_darkgrey
+     ==  lightsheep   :  NTTY:sheep_lightgrey
+     ==  whitesheep   :  NTTY:sheep_white
+
+     ==  armorbasic   :  NTTY:armor_stand_basic
+
+     # . . . . . . . . . . . . . . . . . .
+     . . . . . . . . . . . . . . . . . . .
+     . . E . E . E . E . E . E . E . E . .  ::  blacksheep  darkgsheep  lightsheep  whitesheep  blacksheep  darkgsheep  lightsheep  whitesheep
+     . . . . . . . . . . . . . . . . . . .
+     . . c . c . c . c . c . c . c . c . .
+     . . . . . . . . . . . . . . . . . . .
+     . . k . k . k . k . p . p . p . p . .
+     . . . . . . . . . . . . . . . . . . .
+     . . I . . . . . . . . . . . . . . . .  ::  armorbasic
+     . . . . . . . . . . . . . . . . . . .
+--

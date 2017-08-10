@@ -1,0 +1,27 @@
+     ==  chestempty      :  ----:--  ----:--  ----:--  ----:--  ----:--  ----:--  ----:--  ----:--  ----:--
+
+     ==  chestgeoa       :  SAND:32  DIRT:32  GRVL:32  COBL:32  STON:32  DIOR:32  ANDI:32  GRNT:32  IRNo:32
+     ==  chestgeoa       :  SNDS:32  DIRT:32  GRVL:32  COBL:32  STON:32  DIOR:32  ANDI:32  GRNT:32  IRNn:16
+     ==  chestgeoa       :  GLAS:16  DIRT:32  GRVL:32  COBL:32  STNB:32  DIOp:32  ANDp:32  GRNp:4   IRNi:16
+     ==  chestgeob       :  GPAN:16  ----:--  ----:--  ----:--  STNB:32  DIOp:32  ANDp:32  GRNp:4   GLDo:32
+     ==  chestgeob       :  ----:--  COAL:32  CLAY:16  STPc:16  STPs:16  ----:--  ----:--  ----:--  GLDn:16
+     ==  chestgeob       :  ----:--  GPWD:16  FLNT:32  FNCc:16  SLBs:16  OBSD:32  EMRD:8   DMND:8   GLDi:16
+
+     ==  chestfarm       :  SEDw:64  SEDp:16  SEDm:16  REED:16  BNML:32  BRED:32  ----:--  MTTN:16  BEEF:16
+     ==  chestfarm       :  WHET:64  PMPK:4   MELN:4   REED:16  ----:--  ----:--  ----:--  CHNK:16  PORK:16
+     ==  chestfarm       :  CRRT:16  POTA:16  APPL:4   SUGR:16  WHET:1   SEDw:1   ----:--  FISH:4   SALM:4
+
+     ==  chestprovision  :  CRIM:1   CPLT:1   MTTN:16  BEEF:16  TRCH:32  IAXE:1   PKAX:1   FROD:1   TNTB:8
+     ==  chestprovision  :  SHLD:1   LEGG:1   CHNK:16  PORK:16  FNST:1   SHVL:1   LBOW:1   BOAT:1   ----:--
+     ==  chestprovision  :  HELM:1   BOOT:1   FISH:4   BRED:32  BUKT:1   HOEw:1   ARRW:32  ELYT:1   ----:--
+
+     # . . . . . . . . .
+     . C . . C . . C C .  ::  chestempty:2  chestfarm:3  chestgeoa:3  chestgeob:3
+     . . . . . . . . . .
+     . C . . . . . . . .  ::  chestgeoa:5
+     . C . . C . . . . .  ::  chestgeob:5   chestgeoa:5
+     . . . . C . . C . .  ::                chestgeob:5  chestgeoa:4
+     . . . . . . . C . .  ::                             chestgeob:4
+     . C . . C . . . . .  ::  chestprovision:5  chestempty:3
+     . . . . . . . . . #
+     --

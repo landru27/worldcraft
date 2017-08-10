@@ -21,6 +21,8 @@ import (
 type MCWorld struct {
 	FlagDebug bool
 	FlagJSOND bool
+	FlagSkipEntities bool
+	FlagResetBlockEntities bool
 	PathWorld string
 	Regions   []MCRegion
 }
@@ -152,6 +154,11 @@ func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err err
 
 func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity *NBT) (err error) {
 
+	if w.FlagSkipEntities {
+		qtyEntityEditsSkipped++
+		return
+	}
+
 	rgn, err := w.LoadRegion(x, y, z)
 	panicOnErr(err)
 	rx := rgn.RX
@@ -214,6 +221,15 @@ func (w *MCWorld) EditBlockEntity(x int, y int, z int, nbtentity *NBT) (err erro
 	if dataBlockEntities == nil {
 		qtyBlockEntityEditsSkipped++
 		return
+	}
+
+	if w.FlagResetBlockEntities {
+		if rgn.Chunks[indxChunk].ResetBENeeded {
+			dataBlockEntities.Size = 0
+			dataBlockEntities.Data = make([]NBT, 0)
+
+			rgn.Chunks[indxChunk].ResetBENeeded = false
+		}
 	}
 
 	// modify the blockentity to give it a position in the Minecraft world
@@ -298,7 +314,7 @@ func (w *MCWorld) LoadRegion(x int, y int, z int) (rgn *MCRegion, err error) {
 
 		// instantiate a new chunk object; we do this even if there will be no data to read, so that we stay in
 		// alignment with the serial chunk index when we later scan through chunks to write out to file
-		newchnk := MCChunk{IX: ix, IZ: iz, CX: cx, CZ: cz}
+		newchnk := MCChunk{IX: ix, IZ: iz, CX: cx, CZ: cz, ResetBENeeded: w.FlagResetBlockEntities}
 
 		// the Minecraft specs don't seem to indicate this, but we deduce that a chunk is only a defined chunk if
 		// it has a non-zero data offset, data-block count, and timestamp
@@ -573,6 +589,7 @@ type MCChunk struct {
 	CompressionType byte
 	ChunkData       NBT
 	ChunkDataRefs   map[string]*NBT
+	ResetBENeeded   bool
 }
 
 // this builds a map of data objects for this chunk's chunkdata;  the chunkdata is in an unordered hierarchy, making it
