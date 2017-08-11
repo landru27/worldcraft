@@ -398,6 +398,16 @@ func main() {
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// save the net effect of all edits to new region file(s)
 	world.SaveAllEdits()
+	fmt.Printf("\n")
+
+	// output stats on what was done
+	fmt.Printf("block edits                : %d\n", qtyBlockEdits)
+	fmt.Printf("block edits skipped        : %d\n", qtyBlockEditsSkipped)
+	fmt.Printf("entity edits               : %d\n", qtyEntityEdits)
+	fmt.Printf("entity edits skipped       : %d\n", qtyEntityEditsSkipped)
+	fmt.Printf("blockentity edits          : %d\n", qtyBlockEntityEdits)
+	fmt.Printf("blockentity edits skipped  : %d\n", qtyBlockEntityEditsSkipped)
+	fmt.Printf("\n")
 
 	os.Exit(0)
 }
