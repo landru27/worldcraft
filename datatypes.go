@@ -457,7 +457,7 @@ func (w *MCWorld) SaveRegion(rx, rz int) (err error) {
 	// filename to avoid overwriting the original file and any edited files already made
 	//filename = fmt.Sprintf("r.%d.%d.mca.%d", rx, rz, timeExec.Unix())
 
-        // open the original region file to overwrite it with our edits
+	// open the original region file to overwrite it with our edits
 	filename = fmt.Sprintf("%s/r.%d.%d.mca", w.PathWorld, rx, rz)
 	fmt.Printf("SaveRegion filename is  : %s\n", filename)
 
