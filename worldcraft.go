@@ -136,6 +136,7 @@ func main() {
 	var ax, ay, az int
 	var dx, dy, dz int
 	var bx, by, bz int
+	var mx, my, mz int
 
 	// coordinates for where to start building
 	ax = *anchorX
@@ -285,6 +286,10 @@ func main() {
 			by = ay + dy
 			bz = az + dz
 
+			mx = bx
+			my = by
+			mz = bz
+
 			dx++
 
 			indx := glyphIndx[g]
@@ -376,6 +381,12 @@ func main() {
 
 	err = scanner.Err()
 	panicOnErr(err)
+
+	for indxz := 0; indxz < mz; indxz++ {
+		for indxx := 0; indxx < mx; indxx++ {
+			world.FixHeightMaps(indxx, my, indxz)
+		}
+	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// save the net effect of all edits to new region file(s)

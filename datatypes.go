@@ -49,7 +49,7 @@ func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err err
 
 	var fqsn string
 
-	rgn, err := w.LoadRegion(x, y, z)
+	rgn, err := w.LoadRegion(x, z)
 	panicOnErr(err)
 	rx := rgn.RX
 	rz := rgn.RZ
@@ -156,9 +156,12 @@ func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err err
 
 	hy := dataHeightMap.Data.([]int32)[indxHeightMap]
 	if id != 0 {
-		if int32(y) > hy {
-			dataHeightMap.Data.([]int32)[indxHeightMap] = int32(y)
+		if (int32(y) + 1) > hy {
+			dataHeightMap.Data.([]int32)[indxHeightMap] = int32(y) + 1
 		}
+
+		// see FixHeightMaps
+		rgn.Chunks[indxChunk].EditHeightMap[indxHeightMap] = int32(y)
 	}
 
 	// set this to zero, to instruct Minecraft to recalculate lighting for this chunk
@@ -167,6 +170,43 @@ func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err err
 	dataLightPopulated.Data = byte(0)
 
 	qtyBlockEdits++
+
+	return
+}
+
+// the logic within the EditBlock function for maintaining the HeightMap can only make determinations
+// up to the height of the highest non-air block edit; this is correct behavior in general, because
+// there might be existing non-air blocks above the area being edited by the blueprint; however, if post-
+// editing all the blocks above the highest non-air block edit are air blocks, the HeightMap logic in the
+// EditBlock function will mistakenly preserve the old blocks as 'phantom' blocks obstructing the light
+// from the sky
+//
+// FixHeightMaps is a go-behind function for when all block edits are done, to look for such cases;
+// by tracking the highest non-air block edit during EditBlock (in []EditHeightMap), we can look for
+// HeightMap values above that but below the highest point of block editing (y)
+//
+func (w *MCWorld) FixHeightMaps(x int, y int, z int) (err error) {
+	rgn, err := w.LoadRegion(x, z)
+	panicOnErr(err)
+	rx := rgn.RX
+	rz := rgn.RZ
+
+	// calculate the in-region chunk coordinates and chunkdata index
+	cx := int(math.Floor(float64(x) / 16.0))
+	cz := int(math.Floor(float64(z) / 16.0))
+	indxChunk := ((cz - (rz * 32)) * 32) + (cx - (rx * 32))
+
+	dataHeightMap := rgn.Chunks[indxChunk].ChunkDataRefs["HeightMap"]
+	hx := x - (cx * 16)
+	hz := z - (cz * 16)
+	indxHeightMap := (hz * 16) + hx
+
+	hy := dataHeightMap.Data.([]int32)[indxHeightMap]
+	if hy <= (int32(y) + 1) {
+		if hy > (rgn.Chunks[indxChunk].EditHeightMap[indxHeightMap] + 1) {
+			dataHeightMap.Data.([]int32)[indxHeightMap] = rgn.Chunks[indxChunk].EditHeightMap[indxHeightMap] + 1
+		}
+	}
 
 	return
 }
@@ -188,7 +228,7 @@ func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity *NBT) (err error) {
 		return
 	}
 
-	rgn, err := w.LoadRegion(x, y, z)
+	rgn, err := w.LoadRegion(x, z)
 	panicOnErr(err)
 	rx := rgn.RX
 	rz := rgn.RZ
@@ -235,7 +275,7 @@ func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity *NBT) (err error) {
 
 func (w *MCWorld) EditBlockEntity(x int, y int, z int, nbtentity *NBT) (err error) {
 
-	rgn, err := w.LoadRegion(x, y, z)
+	rgn, err := w.LoadRegion(x, z)
 	panicOnErr(err)
 	rx := rgn.RX
 	rz := rgn.RZ
@@ -303,7 +343,7 @@ func (w *MCWorld) EditBlockEntity(x int, y int, z int, nbtentity *NBT) (err erro
 	return
 }
 
-func (w *MCWorld) LoadRegion(x int, y int, z int) (rgn *MCRegion, err error) {
+func (w *MCWorld) LoadRegion(x int, z int) (rgn *MCRegion, err error) {
 	rgn = nil
 	err = nil
 
@@ -358,7 +398,7 @@ func (w *MCWorld) LoadRegion(x int, y int, z int) (rgn *MCRegion, err error) {
 
 		// instantiate a new chunk object; we do this even if there will be no data to read, so that we stay in
 		// alignment with the serial chunk index when we later scan through chunks to write out to file
-		newchnk := MCChunk{IX: ix, IZ: iz, CX: cx, CZ: cz, ResetBENeeded: w.FlagResetBlockEntities}
+		newchnk := MCChunk{IX: ix, IZ: iz, CX: cx, CZ: cz, ResetBENeeded: w.FlagResetBlockEntities, EditHeightMap: make(map[int]int32, 1024)}
 
 		// the Minecraft specs don't seem to indicate this, but we deduce that a chunk is only a defined chunk if
 		// it has a non-zero data offset, data-block count, and timestamp
@@ -634,6 +674,7 @@ type MCChunk struct {
 	ChunkData       NBT
 	ChunkDataRefs   map[string]*NBT
 	ResetBENeeded   bool
+	EditHeightMap   map[int]int32
 }
 
 // this builds a map of data objects for this chunk's chunkdata;  the chunkdata is in an unordered hierarchy, making it
