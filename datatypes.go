@@ -23,6 +23,7 @@ type MCWorld struct {
 	FlagJSOND bool
 	FlagXAirBlocks bool
 	FlagSkipEntities bool
+	FlagSkipBlockEntities bool
 	FlagResetBlockEntities bool
 	PathWorld string
 	Regions   []MCRegion
@@ -275,6 +276,23 @@ func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity *NBT) (err error) {
 
 func (w *MCWorld) EditBlockEntity(x int, y int, z int, nbtentity *NBT) (err error) {
 
+	// this flag causes all blockentity edits to be skipped; this is useful when redo'ing a blueprint after
+	// fixing the blocks on the blueprint; blocks always replace themselves, but blockentities are always
+	// new, and this evidently causes a serious problem for Minecraft, as it typically crashes when
+	// loading a region with duplicate blockentities
+	//
+	// presumably, the in-game-memory representation of, say, a chest's inventory cannot cope with more
+	// than one item stack assigned to the same inventory slot, or something like that
+	//
+	// blocks always replace themselves because the data structures holding blocks are of fixed size and
+	// have positional implications, whereas blockentities are stored in an open-ended list of elements
+	// and have their position encoded as explicit properties of those elements
+	//
+	if w.FlagSkipBlockEntities {
+		qtyBlockEntityEditsSkipped++
+		return
+	}
+
 	rgn, err := w.LoadRegion(x, z)
 	panicOnErr(err)
 	rx := rgn.RX
@@ -299,13 +317,6 @@ func (w *MCWorld) EditBlockEntity(x int, y int, z int, nbtentity *NBT) (err erro
 	//
 	// we use a property on the chunk itself to avoid resetting the blockentities more than once (which
 	// would of course lead to a blockentities list one item in length)
-	//
-	// presumably, the in-game-memory representation of, say, a chest's inventory cannot cope with more
-	// than one item stack assigned to the same inventory slot, or something like that
-	//
-	// blocks always replace themselves because the data structures holding blocks are of fixed size and
-	// have positional implications, whereas blockentities are stored in an open-ended list of elements
-	// and have their position encoded as explicit properties of those elements
 	//
 	if w.FlagResetBlockEntities {
 		if rgn.Chunks[indxChunk].ResetBENeeded {

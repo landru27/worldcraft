@@ -76,19 +76,26 @@ func main() {
 	anchorZ := flag.Int("Z", 0, "the northernmost coordinate where the blueprint will be rendered in the gameworld")
 	flagXAirBlocks := flag.Bool("xairblocks", false, "a flag to treat 'air' blocks as 'X' glyphs, skipping over them")
 	flagSkipEntities := flag.Bool("skipentities", false, "a flag to suppress the inclusion of entities shown on a blueprint")
+	flagSkipBlockEntities := flag.Bool("skipblockentities", false, "a flag to suppress the inclusion of blockentities shown on the blueprint")
 	flagResetBlockEntities := flag.Bool("resetblockentities", false, "a flag to reset each affected chunk's blockentities prior to adding any from the blueprint")
 	flag.Parse()
 
 	// report to the user what values will be used
 	fmt.Printf("output flags    : debug:%t  JSON:%t\n", *flagDebug, *flagJSOND)
-	fmt.Printf("action flags    : XAirBlocks:%t  SkipEntities:%t  ResetBlockEntities:%t\n", *flagXAirBlocks, *flagSkipEntities, *flagResetBlockEntities)
+	fmt.Printf("action flags    : XAirBlocks:%t  SkipEntities:%t  SkipBlockEntities:%t  ResetBlockEntities:%t\n", *flagXAirBlocks, *flagSkipEntities, *flagSkipBlockEntities, *flagResetBlockEntities)
 	fmt.Printf("world directory : %s\n", *pathWorld)
 	fmt.Printf("blueprint file  : %s\n", *fileBPrnt)
 	fmt.Printf("build starts at : %d, %d, %d\n", *anchorX, *anchorY, *anchorZ)
 	fmt.Printf("\n")
 
 	// the world object is at the root of the Minecraft data, and so is our interface to that data
-	world = MCWorld{FlagDebug: *flagDebug, FlagJSOND: *flagJSOND, FlagXAirBlocks: *flagXAirBlocks, FlagSkipEntities: *flagSkipEntities, FlagResetBlockEntities: *flagResetBlockEntities, PathWorld: *pathWorld}
+	world = MCWorld{FlagDebug: *flagDebug,
+			FlagJSOND: *flagJSOND,
+			FlagXAirBlocks: *flagXAirBlocks,
+			FlagSkipEntities: *flagSkipEntities,
+			FlagSkipBlockEntities: *flagSkipBlockEntities,
+			FlagResetBlockEntities: *flagResetBlockEntities,
+			PathWorld: *pathWorld}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// read in the definitions of Glyphs, so that the associated blueprint symbols can be interpretted as the Minecraft
