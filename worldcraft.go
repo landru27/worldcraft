@@ -389,8 +389,8 @@ func main() {
 	err = scanner.Err()
 	panicOnErr(err)
 
-	for indxz := 0; indxz < mz; indxz++ {
-		for indxx := 0; indxx < mx; indxx++ {
+	for indxz := az; indxz < mz; indxz++ {
+		for indxx := ax; indxx < mx; indxx++ {
 			world.FixHeightMaps(indxx, my, indxz)
 		}
 	}
