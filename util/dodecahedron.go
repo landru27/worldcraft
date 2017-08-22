@@ -85,7 +85,7 @@ func main() {
 	vertices[18].Define(-phi,  phiinv,  0)
 	vertices[19].Define(-phi, -phiinv,  0)
 
-	for _, v := range(vertices) {
+	for _, v := range vertices {
 		fmt.Printf("vertex    : x, y, z : %v, %v, %v\n", v.X, v.Y, v.Z)
 	}
 	fmt.Printf("\n")
@@ -119,12 +119,12 @@ func main() {
 	var blocksRot []bool
 	blocksRot = make([]bool, (int(4 * int(scale)) * int(4 * int(scale)) * int(4 * int(scale))))
 
-	cosa := float32(math.Cos(*rotateY));
-	sina := float32(math.Sin(*rotateY));
-	cosb := float32(math.Cos(*rotateX));
-	sinb := float32(math.Sin(*rotateX));
-	cosc := float32(math.Cos(*rotateZ));
-	sinc := float32(math.Sin(*rotateZ));
+	cosa := float32(math.Cos(*rotateY))
+	sina := float32(math.Sin(*rotateY))
+	cosb := float32(math.Cos(*rotateX))
+	sinb := float32(math.Sin(*rotateX))
+	cosc := float32(math.Cos(*rotateZ))
+	sinc := float32(math.Sin(*rotateZ))
 
 	Axx :=  cosb * cosc
 	Axy :=  cosa * sinc + sina * sinb * cosc
@@ -146,7 +146,7 @@ func main() {
 		for indxY = -2; indxY <= 2; indxY += step {
 			for indxZ = -2; indxZ <= 2; indxZ += step {
 
-				for indxF, f := range(facets) {
+				for indxF, f := range facets {
 					vec := (indxX * f.X) + (indxY * f.Y) + (indxZ * f.Z) + f.D
 
 					if vec  > 0 { vectors[indxF] =  1 }
@@ -169,11 +169,11 @@ func main() {
 					indxB := ((int(indxX * scale) + max) * (rng * rng)) +
 						 ((int(indxY * scale) + max) *  rng       ) +
 						 ((int(indxZ * scale) + max)              )
-					blocksReg[indxB] = true;
+					blocksReg[indxB] = true
 
-					rotX = Axx * indxX + Axy * indxY + Axz * indxZ;
-					rotY = Ayx * indxX + Ayy * indxY + Ayz * indxZ;
-					rotZ = Azx * indxX + Azy * indxY + Azz * indxZ;
+					rotX = Axx * indxX + Axy * indxY + Axz * indxZ
+					rotY = Ayx * indxX + Ayy * indxY + Ayz * indxZ
+					rotZ = Azx * indxX + Azy * indxY + Azz * indxZ
 
 					indxR := ((int(rotX * scale) + max) * (rng * rng)) +
 						 ((int(rotY * scale) + max) *  rng       ) +
@@ -206,7 +206,7 @@ func main() {
 
 	for iZ = min; iZ < max; iZ += 1 {
 		for iY = min; iY < max; iY += 1 {
-			fmt.Printf("    ");
+			fmt.Printf("    ")
 			for iX = min; iX < max; iX += 1 {
 
 				iB = ((iX + max) * (rng * rng)) +
@@ -218,9 +218,9 @@ func main() {
 					fmt.Printf(". ")
 				}
 			}
-			fmt.Printf("\n");
+			fmt.Printf("\n")
 		}
-	fmt.Printf("    --\n");
+	fmt.Printf("    --\n")
 	}
 
 	os.Exit(0)
