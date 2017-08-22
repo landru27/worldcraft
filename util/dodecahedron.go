@@ -44,9 +44,16 @@ func main() {
 
 	step64 := flag.Float64("step", 1, "the step-size when examining points; acts like precision")
 	scale64 := flag.Float64("scale", 1, "the scale factor when extrapolating results; acts like amplitude")
+	rotateX := flag.Float64("rotateX", 0, "rotation in degrees around the X-axis")
+	rotateY := flag.Float64("rotateY", 0, "rotation in degrees around the Y-axis")
+	rotateZ := flag.Float64("rotateZ", 0, "rotation in degrees around the Z-axis")
 	flag.Parse()
+
 	step = float32(*step64)
 	scale = float32(*scale64)
+	*rotateX = *rotateX * (math.Pi / 180)
+	*rotateY = *rotateY * (math.Pi / 180)
+	*rotateZ = *rotateZ * (math.Pi / 180)
 
 	fmt.Printf("####  constants : ...\n")
 	var phi = float32(math.Phi)
@@ -109,8 +116,8 @@ func main() {
 	var max = int( 2 * scale)
 	var rng = int( 4 * scale)
 
-	var blocks []bool
-	blocks = make([]bool, (int(4 * int(scale)) * int(4 * int(scale)) * int(4 * int(scale))))
+	var blocksReg []bool
+	blocksReg = make([]bool, (int(4 * int(scale)) * int(4 * int(scale)) * int(4 * int(scale))))
 
 	for indxX = -2; indxX <= 2; indxX += step {
 		for indxY = -2; indxY <= 2; indxY += step {
@@ -144,7 +151,7 @@ func main() {
 					indxB := ((int(indxX * scale) + max) * (rng * rng)) +
 						 ((int(indxY * scale) + max) *  rng       ) +
 						 ((int(indxZ * scale) + max)              )
-					blocks[indxB] = true;
+					blocksReg[indxB] = true;
 				}
 			}
 		}
@@ -163,8 +170,58 @@ func main() {
 				iB = ((iX + max) * (rng * rng)) +
 				     ((iY + max) *  rng       ) +
 				     ((iZ + max)              )
-				if blocks[iB] == true {
+				if blocksReg[iB] == true {
 					fmt.Printf("point %v, %v, %v : inside the dodecahedron\n", iX, iY, iZ)
+				}
+			}
+		}
+	}
+	fmt.Printf("\n")
+
+	fmt.Printf("####  rotation  : ...\n")
+	var blocksRot []bool
+	var rX int
+	var rY int
+	var rZ int
+	var iR int
+
+	cosa := math.Cos(*rotateX);
+	sina := math.Sin(*rotateX);
+	cosb := math.Cos(*rotateY);
+	sinb := math.Sin(*rotateY);
+	cosc := math.Cos(*rotateZ);
+	sinc := math.Sin(*rotateZ);
+
+	Axx := cosa * cosb;
+	Axy := cosa * sinb * sinc - sina * cosc;
+	Axz := cosa * sinb * cosc + sina * sinc;
+
+	Ayx := sina * cosb;
+	Ayy := sina * sinb * sinc + cosa * cosc;
+	Ayz := sina * sinb * cosc - cosa * sinc;
+
+	Azx := -sinb;
+	Azy := cosb * sinc;
+	Azz := cosb * cosc;
+
+	blocksRot = make([]bool, (int(4 * int(scale)) * int(4 * int(scale)) * int(4 * int(scale))))
+
+	for iX = min; iX < max; iX += 1 {
+		for iY = min; iY < max; iY += 1 {
+			for iZ = min; iZ < max; iZ += 1 {
+
+				iB = ((iX + max) * (rng * rng)) +
+				     ((iY + max) *  rng       ) +
+				     ((iZ + max)              )
+				if blocksReg[iB] == true {
+					rX = int(round(Axx * float64(iX) + Axy * float64(iY) + Axz * float64(iZ), 0));
+					rY = int(round(Ayx * float64(iX) + Ayy * float64(iY) + Ayz * float64(iZ), 0));
+					rZ = int(round(Azx * float64(iX) + Azy * float64(iY) + Azz * float64(iZ), 0));
+
+					iR = ((rX + max) * (rng * rng)) +
+					     ((rY + max) *  rng       ) +
+					     ((rZ + max)              )
+					blocksRot[iR] = true
 				}
 			}
 		}
@@ -180,8 +237,11 @@ func main() {
 				iB = ((iX + max) * (rng * rng)) +
 				     ((iY + max) *  rng       ) +
 				     ((iZ + max)              )
-				if blocks[iB] == true { fmt.Printf("# ")
-                                } else                { fmt.Printf(". ") }
+				if blocksRot[iB] == true {
+					fmt.Printf("# ")
+				} else {
+					fmt.Printf(". ")
+				}
 			}
 			fmt.Printf("\n");
 		}
@@ -189,4 +249,21 @@ func main() {
 	}
 
 	os.Exit(0)
+}
+
+// from :  https://github.com/a-h/round
+//
+func round(v float64, decimals int) float64 {
+	if math.IsNaN(v) {
+		return math.NaN()
+	}
+
+	var pow float64 = 1
+	for i := 0; i < decimals; i++ {
+		pow *= 10
+	}
+	if v < 0 {
+		return float64(int((v * pow) - 0.5)) / pow
+	}
+	return float64(int((v * pow) + 0.5)) / pow
 }
