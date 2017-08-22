@@ -55,14 +55,12 @@ func main() {
 	*rotateY = *rotateY * (math.Pi / 180)
 	*rotateZ = *rotateZ * (math.Pi / 180)
 
-	fmt.Printf("####  constants : ...\n")
 	var phi = float32(math.Phi)
 	var phiinv = 1 / phi
 	var phisqr = phi * phi
-	fmt.Printf("phi, 1/phi, phi^2 : %v, %v, %v\n", phi, phiinv, phisqr)
+	fmt.Printf("constants : phi, 1/phi, phi^2 : %v, %v, %v\n", phi, phiinv, phisqr)
 	fmt.Printf("\n")
 
-	fmt.Printf("####  vertices  : ...\n")
 	var vertices [20]Vertex
 
 	vertices[0].Define( 1,  1,  1)
@@ -88,7 +86,7 @@ func main() {
 	vertices[19].Define(-phi, -phiinv,  0)
 
 	for _, v := range(vertices) {
-		fmt.Printf("x, y, z : %v, %v, %v\n", v.X, v.Y, v.Z)
+		fmt.Printf("vertex    : x, y, z : %v, %v, %v\n", v.X, v.Y, v.Z)
 	}
 	fmt.Printf("\n")
 
@@ -151,11 +149,6 @@ func main() {
 				for indxF, f := range(facets) {
 					vec := (indxX * f.X) + (indxY * f.Y) + (indxZ * f.Z) + f.D
 
-				//	fmt.Printf("\n... facet %2v : ", indxF)
-				//	if vec  > 0 { fmt.Printf("above") }
-				//	if vec == 0 { fmt.Printf("plane") }
-				//	if vec  < 0 { fmt.Printf("below") }
-
 					if vec  > 0 { vectors[indxF] =  1 }
 					if vec == 0 { vectors[indxF] =  0 }
 					if vec  < 0 { vectors[indxF] = -1 }
@@ -191,7 +184,6 @@ func main() {
 		}
 	}
 
-	fmt.Printf("####  blocks  : ...\n")
 	var iX int
 	var iY int
 	var iZ int
@@ -205,14 +197,13 @@ func main() {
 				     ((iY + max) *  rng       ) +
 				     ((iZ + max)              )
 				if blocksReg[iB] == true {
-					fmt.Printf("point %v, %v, %v : inside the dodecahedron\n", iX, iY, iZ)
+					fmt.Printf("block     : x, y, z : %v, %v, %v\n", iX, iY, iZ)
 				}
 			}
 		}
 	}
 	fmt.Printf("\n")
 
-	fmt.Printf("####  blueprint  : ...\n")
 	for iZ = min; iZ < max; iZ += 1 {
 		for iY = min; iY < max; iY += 1 {
 			fmt.Printf("    ");
