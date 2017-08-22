@@ -119,24 +119,24 @@ func main() {
 	var blocksRot []bool
 	blocksRot = make([]bool, (int(4 * int(scale)) * int(4 * int(scale)) * int(4 * int(scale))))
 
-	cosa := float32(math.Cos(*rotateX));
-	sina := float32(math.Sin(*rotateX));
-	cosb := float32(math.Cos(*rotateY));
-	sinb := float32(math.Sin(*rotateY));
+	cosa := float32(math.Cos(*rotateY));
+	sina := float32(math.Sin(*rotateY));
+	cosb := float32(math.Cos(*rotateX));
+	sinb := float32(math.Sin(*rotateX));
 	cosc := float32(math.Cos(*rotateZ));
 	sinc := float32(math.Sin(*rotateZ));
 
-	Axx := cosa * cosb;
-	Axy := cosa * sinb * sinc - sina * cosc;
-	Axz := cosa * sinb * cosc + sina * sinc;
+	Axx :=  cosb * cosc
+	Axy :=  cosa * sinc + sina * sinb * cosc
+	Axz :=  sina * sinc - cosa * sinb * cosc
 
-	Ayx := sina * cosb;
-	Ayy := sina * sinb * sinc + cosa * cosc;
-	Ayz := sina * sinb * cosc - cosa * sinc;
+	Ayx := -cosb * sinc
+	Ayy :=  cosa * cosc - sina * sinb * sinc
+	Ayz :=  sina * cosc + cosa * sinb * sinc
 
-	Azx := -sinb;
-	Azy := cosb * sinc;
-	Azz := cosb * cosc;
+	Azx :=  sinb
+	Azy := -sina * cosb
+	Azz :=  cosa * cosb
 
 	var rotX float32
 	var rotY float32
