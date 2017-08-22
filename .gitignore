@@ -5,6 +5,7 @@
 *.dylib
 worldcraft
 blueprint2edits
+dodecahedron
 
 # output files
 r.*.mca*
