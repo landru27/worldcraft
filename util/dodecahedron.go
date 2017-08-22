@@ -118,6 +118,31 @@ func main() {
 
 	var blocksReg []bool
 	blocksReg = make([]bool, (int(4 * int(scale)) * int(4 * int(scale)) * int(4 * int(scale))))
+	var blocksRot []bool
+	blocksRot = make([]bool, (int(4 * int(scale)) * int(4 * int(scale)) * int(4 * int(scale))))
+
+	cosa := float32(math.Cos(*rotateX));
+	sina := float32(math.Sin(*rotateX));
+	cosb := float32(math.Cos(*rotateY));
+	sinb := float32(math.Sin(*rotateY));
+	cosc := float32(math.Cos(*rotateZ));
+	sinc := float32(math.Sin(*rotateZ));
+
+	Axx := cosa * cosb;
+	Axy := cosa * sinb * sinc - sina * cosc;
+	Axz := cosa * sinb * cosc + sina * sinc;
+
+	Ayx := sina * cosb;
+	Ayy := sina * sinb * sinc + cosa * cosc;
+	Ayz := sina * sinb * cosc - cosa * sinc;
+
+	Azx := -sinb;
+	Azy := cosb * sinc;
+	Azz := cosb * cosc;
+
+	var rotX float32
+	var rotY float32
+	var rotZ float32
 
 	for indxX = -2; indxX <= 2; indxX += step {
 		for indxY = -2; indxY <= 2; indxY += step {
@@ -152,6 +177,15 @@ func main() {
 						 ((int(indxY * scale) + max) *  rng       ) +
 						 ((int(indxZ * scale) + max)              )
 					blocksReg[indxB] = true;
+
+					rotX = Axx * indxX + Axy * indxY + Axz * indxZ;
+					rotY = Ayx * indxX + Ayy * indxY + Ayz * indxZ;
+					rotZ = Azx * indxX + Azy * indxY + Azz * indxZ;
+
+					indxR := ((int(rotX * scale) + max) * (rng * rng)) +
+						 ((int(rotY * scale) + max) *  rng       ) +
+						 ((int(rotZ * scale) + max)              )
+					blocksRot[indxR] = true
 				}
 			}
 		}
@@ -172,56 +206,6 @@ func main() {
 				     ((iZ + max)              )
 				if blocksReg[iB] == true {
 					fmt.Printf("point %v, %v, %v : inside the dodecahedron\n", iX, iY, iZ)
-				}
-			}
-		}
-	}
-	fmt.Printf("\n")
-
-	fmt.Printf("####  rotation  : ...\n")
-	var blocksRot []bool
-	var rX int
-	var rY int
-	var rZ int
-	var iR int
-
-	cosa := math.Cos(*rotateX);
-	sina := math.Sin(*rotateX);
-	cosb := math.Cos(*rotateY);
-	sinb := math.Sin(*rotateY);
-	cosc := math.Cos(*rotateZ);
-	sinc := math.Sin(*rotateZ);
-
-	Axx := cosa * cosb;
-	Axy := cosa * sinb * sinc - sina * cosc;
-	Axz := cosa * sinb * cosc + sina * sinc;
-
-	Ayx := sina * cosb;
-	Ayy := sina * sinb * sinc + cosa * cosc;
-	Ayz := sina * sinb * cosc - cosa * sinc;
-
-	Azx := -sinb;
-	Azy := cosb * sinc;
-	Azz := cosb * cosc;
-
-	blocksRot = make([]bool, (int(4 * int(scale)) * int(4 * int(scale)) * int(4 * int(scale))))
-
-	for iX = min; iX < max; iX += 1 {
-		for iY = min; iY < max; iY += 1 {
-			for iZ = min; iZ < max; iZ += 1 {
-
-				iB = ((iX + max) * (rng * rng)) +
-				     ((iY + max) *  rng       ) +
-				     ((iZ + max)              )
-				if blocksReg[iB] == true {
-					rX = int(round(Axx * float64(iX) + Axy * float64(iY) + Axz * float64(iZ), 0));
-					rY = int(round(Ayx * float64(iX) + Ayy * float64(iY) + Ayz * float64(iZ), 0));
-					rZ = int(round(Azx * float64(iX) + Azy * float64(iY) + Azz * float64(iZ), 0));
-
-					iR = ((rX + max) * (rng * rng)) +
-					     ((rY + max) *  rng       ) +
-					     ((rZ + max)              )
-					blocksRot[iR] = true
 				}
 			}
 		}
