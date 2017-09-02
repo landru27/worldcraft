@@ -268,6 +268,72 @@
                 { "Type": 2, "List": 0, "Name": "lvl", "Size": 0, "Data": 3 },
                 { "Type": 2, "List": 0, "Name": "id", "Size": 0, "Data": 48 } ] } ] } ] } ] } },
 
+    { "glyph": "ITMc", "type": "item",   "name": "crimson_bow",               "id":   0, "data":  0, "base": {
+        "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 5, "Data": [
+          { "Type": 8, "List": 0, "Name": "id", "Size": 13, "Data": "minecraft:bow" },
+          { "Type": 1, "List": 0, "Name": "Slot", "Size": 0, "Data": 0 },
+          { "Type": 1, "List": 0, "Name": "Count", "Size": 0, "Data": 1 },
+          { "Type": 2, "List": 0, "Name": "Damage", "Size": 0, "Data": 32 },
+          { "Type": 10, "List": 0, "Name": "tag", "Size": 1, "Data": [
+            { "Type": 9, "List": 10, "Name": "ench", "Size": 3, "Data": [
+              { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 2, "Data": [
+                { "Type": 2, "List": 0, "Name": "lvl", "Size": 0, "Data": 5 },
+                { "Type": 2, "List": 0, "Name": "id", "Size": 0, "Data": 48 } ] },
+              { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 2, "Data": [
+                { "Type": 2, "List": 0, "Name": "lvl", "Size": 0, "Data": 1 },
+                { "Type": 2, "List": 0, "Name": "id", "Size": 0, "Data": 50 } ] },
+              { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 2, "Data": [
+                { "Type": 2, "List": 0, "Name": "lvl", "Size": 0, "Data": 1 },
+                { "Type": 2, "List": 0, "Name": "id", "Size": 0, "Data": 51 } ] } ] } ] } ] } },
+
+    { "glyph": "ITMm", "type": "item",   "name": "chestplate_protection",     "id":   0, "data":  0, "base": {
+        "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 5, "Data": [
+          { "Type": 8, "List": 0, "Name": "id", "Size": 25, "Data": "minecraft:iron_chestplate" },
+          { "Type": 1, "List": 0, "Name": "Slot", "Size": 0, "Data": 0 },
+          { "Type": 1, "List": 0, "Name": "Count", "Size": 0, "Data": 1 },
+          { "Type": 2, "List": 0, "Name": "Damage", "Size": 0, "Data": 0 },
+          { "Type": 10, "List": 0, "Name": "tag", "Size": 1, "Data": [
+            { "Type": 9, "List": 10, "Name": "ench", "Size": 1, "Data": [
+              { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 2, "Data": [
+                { "Type": 2, "List": 0, "Name": "lvl", "Size": 0, "Data": 4 },
+                { "Type": 2, "List": 0, "Name": "id", "Size": 0, "Data": 0 } ] } ] } ] } ] } },
+
+    { "glyph": "ITMn", "type": "item",   "name": "helmet_respiration",        "id":   0, "data":  0, "base": {
+        "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 5, "Data": [
+          { "Type": 8, "List": 0, "Name": "id", "Size": 21, "Data": "minecraft:iron_helmet" },
+          { "Type": 1, "List": 0, "Name": "Slot", "Size": 0, "Data": 0 },
+          { "Type": 1, "List": 0, "Name": "Count", "Size": 0, "Data": 1 },
+          { "Type": 2, "List": 0, "Name": "Damage", "Size": 0, "Data": 0 },
+          { "Type": 10, "List": 0, "Name": "tag", "Size": 1, "Data": [
+            { "Type": 9, "List": 10, "Name": "ench", "Size": 1, "Data": [
+              { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 2, "Data": [
+                { "Type": 2, "List": 0, "Name": "lvl", "Size": 0, "Data": 3 },
+                { "Type": 2, "List": 0, "Name": "id", "Size": 0, "Data": 5 } ] } ] } ] } ] } },
+
+    { "glyph": "ITMp", "type": "item",   "name": "boots_feather_fall",        "id":   0, "data":  0, "base": {
+        "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 5, "Data": [
+          { "Type": 8, "List": 0, "Name": "id", "Size": 23, "Data": "minecraft:leather_boots" },
+          { "Type": 1, "List": 0, "Name": "Slot", "Size": 0, "Data": 0 },
+          { "Type": 1, "List": 0, "Name": "Count", "Size": 0, "Data": 1 },
+          { "Type": 2, "List": 0, "Name": "Damage", "Size": 0, "Data": 0 },
+          { "Type": 10, "List": 0, "Name": "tag", "Size": 1, "Data": [
+            { "Type": 9, "List": 10, "Name": "ench", "Size": 1, "Data": [
+              { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 2, "Data": [
+                { "Type": 2, "List": 0, "Name": "lvl", "Size": 0, "Data": 3 },
+                { "Type": 2, "List": 0, "Name": "id", "Size": 0, "Data": 2 } ] } ] } ] } ] } },
+
+    { "glyph": "ITMq", "type": "item",   "name": "boots_depth_strider",       "id":   0, "data":  0, "base": {
+        "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 5, "Data": [
+          { "Type": 8, "List": 0, "Name": "id", "Size": 23, "Data": "minecraft:leather_boots" },
+          { "Type": 1, "List": 0, "Name": "Slot", "Size": 0, "Data": 0 },
+          { "Type": 1, "List": 0, "Name": "Count", "Size": 0, "Data": 1 },
+          { "Type": 2, "List": 0, "Name": "Damage", "Size": 0, "Data": 0 },
+          { "Type": 10, "List": 0, "Name": "tag", "Size": 1, "Data": [
+            { "Type": 9, "List": 10, "Name": "ench", "Size": 1, "Data": [
+              { "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 2, "Data": [
+                { "Type": 2, "List": 0, "Name": "lvl", "Size": 0, "Data": 3 },
+                { "Type": 2, "List": 0, "Name": "id", "Size": 0, "Data": 8 } ] } ] } ] } ] } },
+
     { "glyph": "PTNw", "type": "item",   "name": "potion_water_breathing",    "id":   0, "data":  0, "base": {
         "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 5, "Data": [
           { "Type": 8, "List": 0, "Name": "id", "Size": 16, "Data": "minecraft:potion" },
