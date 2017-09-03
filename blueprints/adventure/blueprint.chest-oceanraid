@@ -1,0 +1,10 @@
+##  the chest contents
+
+     ==  oceanraid       :  ITMn:1   PTNw:1   PTNw:1   PTNn:1   PTNn:1   CRFT:1   DIOp:64  COAL:64  GATs:32
+     ==  oceanraid       :  ITMm:1   PTNw:1   PTNw:1   PTNn:1   PTNn:1   CHST:2   IRNi:64  COAL:64  LADR:64
+     ==  oceanraid       :  ITMq:1   PTNw:1   PTNw:1   PTNn:1   PTNn:1   FURN:4   STIX:64  SPNG:32  TRCH:64
+
+##  the chest
+
+     C  ::  oceanraid
+     --

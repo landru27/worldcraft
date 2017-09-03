@@ -226,6 +226,8 @@
     { "glyph": "QRTZ", "type": "item",   "name": "quartz",                    "id": 406, "data":  0 },
     { "glyph": "RDST", "type": "item",   "name": "redstone",                  "id": 331, "data":  0 },
 
+    { "glyph": "SPNG", "type": "item",   "name": "sponge",                    "id":  19, "data":  0 },
+
     { "glyph": "BTTL", "type": "item",   "name": "glass_bottle",              "id": 374, "data":  0 },
     { "glyph": "LPIS", "type": "item",   "name": "dye",                       "id": 351, "data":  4 },
     { "glyph": "BLZR", "type": "item",   "name": "blaze_rod",                 "id": 369, "data":  0 },
