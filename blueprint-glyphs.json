@@ -44,6 +44,9 @@
     { "glyph": "G",    "type": "block",  "name": "granite",                   "id":   1, "data":  1 },
     { "glyph": "g",    "type": "block",  "name": "polished granite",          "id":   1, "data":  2 },
     { "glyph": "O",    "type": "block",  "name": "obsidian",                  "id":  49, "data":  0 },
+    { "glyph": "^",    "type": "block",  "name": "bedrock",                   "id":   7, "data":  0 },
+    { "glyph": "]",    "type": "block",  "name": "cobblestone",               "id":   4, "data":  0 },
+    { "glyph": "}",    "type": "block",  "name": "mossy cobblestone",         "id":  48, "data":  0 },
 
     { "glyph": "D",    "type": "block",  "name": "spruce door, bottom",       "id": 193, "data":  3 },
     { "glyph": "d",    "type": "block",  "name": "spruce door, top",          "id": 193, "data":  8 },
@@ -53,6 +56,7 @@
     { "glyph": "h",    "type": "block",  "name": "ladder on west wall",       "id":  65, "data":  5 },
     { "glyph": "@",    "type": "block",  "name": "trapdoor on top, west",     "id":  96, "data": 11 },
     { "glyph": ":",    "type": "block",  "name": "glass pane",                "id": 102, "data":  0 },
+    { "glyph": "!",    "type": "block",  "name": "iron bars",                 "id": 101, "data":  0 },
 
     { "glyph": "C",    "type": "block",  "name": "chest",                     "id":  54, "data":  3, "base": {
         "Type": 10, "List": 0, "Name": "LISTELEM", "Size": 6, "Data": [
@@ -226,6 +230,10 @@
     { "glyph": "QRTZ", "type": "item",   "name": "quartz",                    "id": 406, "data":  0 },
     { "glyph": "RDST", "type": "item",   "name": "redstone",                  "id": 331, "data":  0 },
 
+    { "glyph": "PRSM", "type": "item",   "name": "prismarine",                "id": 168, "data":  0 },
+    { "glyph": "PRSb", "type": "item",   "name": "prismarine",                "id": 168, "data":  1 },
+    { "glyph": "PRSd", "type": "item",   "name": "prismarine",                "id": 168, "data":  2 },
+    { "glyph": "LTRN", "type": "item",   "name": "sea_lantern",               "id": 169, "data":  0 },
     { "glyph": "SPNG", "type": "item",   "name": "sponge",                    "id":  19, "data":  0 },
 
     { "glyph": "BTTL", "type": "item",   "name": "glass_bottle",              "id": 374, "data":  0 },
