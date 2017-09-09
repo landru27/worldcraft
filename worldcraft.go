@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -103,7 +104,9 @@ func main() {
 	var bufJson []byte
 	var mapJson map[string][]Glyph
 
-	bufJson, err = ioutil.ReadFile("blueprint-glyphs.json")
+	fileGlyphs := filepath.Dir(os.Args[0])
+	fileGlyphs += `/blueprint-glyphs.json`
+	bufJson, err = ioutil.ReadFile(fileGlyphs)
 	panicOnErr(err)
 
 	err = json.Unmarshal(bufJson, &mapJson)
@@ -121,7 +124,9 @@ func main() {
 	var bufJsonA []byte
 	var mapJsonA map[string][]Atom
 
-	bufJsonA, err = ioutil.ReadFile("blueprint-entities.json")
+	fileEntities := filepath.Dir(os.Args[0])
+	fileEntities += `/blueprint-entities.json`
+	bufJsonA, err = ioutil.ReadFile(fileEntities)
 	panicOnErr(err)
 
 	err = json.Unmarshal(bufJsonA, &mapJsonA)
