@@ -10,6 +10,11 @@ dodecahedron
 # output files
 r.*.mca*
 
+# additional files
+blueprint-glyphs.json--mazecraft
+blueprint-glyphs.json--worldcraft
+
+
 # Test binary, build with `go test -c`
 *.test
 
