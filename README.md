@@ -27,12 +27,14 @@ Usage of worldcraft:
 
 ### example usage
 
+The `worldcraft` program looks for the blueprint legend files `blueprint-glyphs.json` and `blueprint-entities.json` in the same directory as the `worldcraft` executable.  So, for example, if you perform a typical `go install ./...`, you will need to cp these two `.json` files to `~/go/bin`.
+
 a typical edit; places a small keep with stocked chests and other furnishings into the world
 ```
 ./worldcraft -blueprint blueprints/adventure/blueprint.homestead -world [MINECRAFT_PATH]/saves/Hesperia/region -X 4 -Y 59 -Z 173
 ```
 
-the same edit, repeated; thus, we skip re-adding the livestock since they already exits, and we reset things like the chest contents, to avoid region file data problems
+the same edit, repeated; thus, we skip re-adding the livestock since they already exist, and we reset things like the chest contents, to avoid region file data problems
 ```
 ./worldcraft -blueprint blueprints/adventure/blueprint.homestead -world [MINECRAFT_PATH]/saves/Hesperia/region -X 4 -Y 59 -Z 173 -xairblocks -skipentities -resetblockentities
 ```
