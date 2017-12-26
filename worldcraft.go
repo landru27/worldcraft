@@ -17,6 +17,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/landru27/nbt"
 )
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,7 +205,7 @@ func main() {
 
 			// if we have not seen this glyphtag before, define it as a glyphtag and in the glyphtag map
 			if _, okay := glyphTagIndx[tagname]; !okay {
-				gt := GlyphTag{tagname, 0, NBT{TAG_List, TAG_Compound, "Items", 0, make([]NBT, 0)}}
+				gt := GlyphTag{tagname, 0, nbt.NBT{nbt.TAG_List, nbt.TAG_Compound, "Items", 0, make([]nbt.NBT, 0)}}
 				glyphTags = append(glyphTags, gt)
 				glyphTagIndx[tagname] = len(glyphTags) - 1
 
@@ -225,19 +227,19 @@ func main() {
 				}
 
 				if glyphs[glyphIndx[elemname]].Type == "item" {
-					var nbtI NBT
-					var nbtG NBT
+					var nbtI nbt.NBT
+					var nbtG nbt.NBT
 
 
 					// if the glyph refers to an item with pre-defined NBT, use that and set its slot
 					// to be the current spot in the inventory list; otherwise construct the item NBT
 					// from the glyph definition
 					//
-					if glyphs[glyphIndx[elemname]].Base != (NBT{}) {
+					if glyphs[glyphIndx[elemname]].Base != (nbt.NBT{}) {
 						nbtP, _ := glyphs[glyphIndx[elemname]].Base.DeepCopy()
 
 						nbtI = *nbtP
-						nbtI.Data.([]NBT)[1].Data = byte(glyphTags[indx].Indx)
+						nbtI.Data.([]nbt.NBT)[1].Data = byte(glyphTags[indx].Indx)
 					} else {
 						item := glyphs[glyphIndx[elemname]]
 
@@ -247,17 +249,17 @@ func main() {
 
 						qty, _ := strconv.Atoi(elemdata)
 
-						nbtA := NBT{TAG_String, 0, "id", lenstr, idstr}
-						nbtB := NBT{TAG_Byte, 0, "Slot", 0, byte(slot)}
-						nbtC := NBT{TAG_Byte, 0, "Count", 0, byte(qty)}
-						nbtD := NBT{TAG_Short, 0, "Damage", 0, int16(item.Data)}
+						nbtA := nbt.NBT{nbt.TAG_String, 0, "id", lenstr, idstr}
+						nbtB := nbt.NBT{nbt.TAG_Byte, 0, "Slot", 0, byte(slot)}
+						nbtC := nbt.NBT{nbt.TAG_Byte, 0, "Count", 0, byte(qty)}
+						nbtD := nbt.NBT{nbt.TAG_Short, 0, "Damage", 0, int16(item.Data)}
 
-						nbtI = NBT{TAG_Compound, 0, "LISTELEM", 4, []NBT{nbtA, nbtB, nbtC, nbtD}}
+						nbtI = nbt.NBT{nbt.TAG_Compound, 0, "LISTELEM", 4, []nbt.NBT{nbtA, nbtB, nbtC, nbtD}}
 					}
 
 					// add the item to the glyphtag definition
 					nbtG = glyphTags[indx].Data
-					tmps := nbtG.Data.([]NBT)
+					tmps := nbtG.Data.([]nbt.NBT)
 					tmps = append(tmps, nbtI)
 					nbtG.Data = tmps
 					nbtG.Size++
@@ -307,7 +309,7 @@ func main() {
 			indx := glyphIndx[g]
 
 			var databyte byte
-			var nbtentity *NBT
+			var nbtentity *nbt.NBT
 
 			// glyphs that represent blocks
 			if glyphs[indx].Type == "block" {
@@ -320,14 +322,14 @@ func main() {
 				// if the glyph refers to a block with pre-defined NBT, use that to also add a
 				// BlockEntity to go with this Block
 				//
-				if glyphs[indx].Base != (NBT{}) {
+				if glyphs[indx].Base != (nbt.NBT{}) {
 					nbtentity, _ = glyphs[indx].Base.DeepCopy()
 
 					// if the block's NBT has an inventory list, look for a glyphtag and use the
 					// NBT from that glyphtag to fill out this block's blockentity's inventory
 					//
-					if len(nbtentity.Data.([]NBT)) > 4 {
-						if nbtentity.Data.([]NBT)[4].Name == "Items" {
+					if len(nbtentity.Data.([]nbt.NBT)) > 4 {
+						if nbtentity.Data.([]nbt.NBT)[4].Name == "Items" {
 							if gi < len(lineglyphtags) {
 								lineglyphtag := lineglyphtags[gi]
 
@@ -340,7 +342,7 @@ func main() {
 									databyte = byte(i)
 								}
 
-								nbtentity.Data.([]NBT)[4] = glyphTags[glyphTagIndx[lineglyphtag]].Data
+								nbtentity.Data.([]nbt.NBT)[4] = glyphTags[glyphTagIndx[lineglyphtag]].Data
 								gi++
 							}
 						}
@@ -420,7 +422,7 @@ func main() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // data handling functions
 //
-func buildEntity(top string) (rslt *NBT) {
+func buildEntity(top string) (rslt *nbt.NBT) {
 	var stack []string
 	var next string
 	var base string
@@ -431,7 +433,7 @@ func buildEntity(top string) (rslt *NBT) {
 	// specific entity out of a generic one
 
 	// (clever, eh?)
-	molecule := NBT{TAG_Compound, 0, "", 0, make([]NBT, 0)}
+	molecule := nbt.NBT{nbt.TAG_Compound, 0, "", 0, make([]nbt.NBT, 0)}
 
 	stack = make([]string, 0)
 	stack = append(stack, top)
@@ -446,10 +448,10 @@ func buildEntity(top string) (rslt *NBT) {
 		next = base
 	}
 
-	var nbts []NBT
-	var nbtc *NBT
+	var nbts []nbt.NBT
+	var nbtc *nbt.NBT
 
-	nbts = make([]NBT, 0)
+	nbts = make([]nbt.NBT, 0)
 
 	for {
 		if len(stack) == 0 { break }
@@ -457,9 +459,9 @@ func buildEntity(top string) (rslt *NBT) {
 		next, stack = stack[len(stack)-1], stack[:len(stack)-1]
 
 		indx := entityAtomIndx[next]
-		if entityAtoms[indx].Data.Type != TAG_End {
+		if entityAtoms[indx].Data.Type != nbt.TAG_End {
 
-			for _, elem := range entityAtoms[indx].Data.Data.([]NBT) {
+			for _, elem := range entityAtoms[indx].Data.Data.([]nbt.NBT) {
 				nbtc, _ = elem.DeepCopy()
 				nbts = append(nbts, *nbtc)
 
@@ -488,30 +490,30 @@ func buildEntity(top string) (rslt *NBT) {
 				//
 				switch attr {
 				case "MCName":
-					molecule.Data.([]NBT)[0].Size = uint32(len(valu.(string)))
-					molecule.Data.([]NBT)[0].Data = valu.(string)
+					molecule.Data.([]nbt.NBT)[0].Size = uint32(len(valu.(string)))
+					molecule.Data.([]nbt.NBT)[0].Data = valu.(string)
 
 				case "Health":
-					molecule.Data.([]NBT)[14].Data = float32(valu.(float64))
+					molecule.Data.([]nbt.NBT)[14].Data = float32(valu.(float64))
 
 				case "MaxHealth":
-					molecule.Data.([]NBT)[20].Data.([]NBT)[0].Data.([]NBT)[0].Data = valu.(float64)
+					molecule.Data.([]nbt.NBT)[20].Data.([]nbt.NBT)[0].Data.([]nbt.NBT)[0].Data = valu.(float64)
 
 				case "MoveSpeed":
-					molecule.Data.([]NBT)[20].Data.([]NBT)[1].Data.([]NBT)[0].Data = valu.(float64)
+					molecule.Data.([]nbt.NBT)[20].Data.([]nbt.NBT)[1].Data.([]nbt.NBT)[0].Data = valu.(float64)
 
 				case "SheepColor":
-					molecule.Data.([]NBT)[32].Data = byte(valu.(float64))
+					molecule.Data.([]nbt.NBT)[32].Data = byte(valu.(float64))
 
 				case "CatType":
-					molecule.Data.([]NBT)[34].Data = int32(valu.(float64))
+					molecule.Data.([]nbt.NBT)[34].Data = int32(valu.(float64))
 
 				case "CollarColor":
-					molecule.Data.([]NBT)[34].Data = byte(valu.(float64))
+					molecule.Data.([]nbt.NBT)[34].Data = byte(valu.(float64))
 
 				case "CustomName":
-					customname := NBT{TAG_String, 0, "CustomName", uint32(len(valu.(string))), valu.(string)}
-					tmps := molecule.Data.([]NBT)
+					customname := nbt.NBT{nbt.TAG_String, 0, "CustomName", uint32(len(valu.(string))), valu.(string)}
+					tmps := molecule.Data.([]nbt.NBT)
 					tmps = append(tmps, customname)
 					molecule.Data = tmps
 
@@ -529,7 +531,7 @@ func buildEntity(top string) (rslt *NBT) {
 	return
 }
 
-func assignEntityUUID(dst *NBT) {
+func assignEntityUUID(dst *nbt.NBT) {
 	// calculate a v4 UUID
 	var uuid [16]byte
 	_, err := rand.Read(uuid[:])
@@ -540,8 +542,8 @@ func assignEntityUUID(dst *NBT) {
 	uuidlest := int64(binary.BigEndian.Uint64(uuid[8:16]))
 
 	// modify the entity to have its own UUID;  we know the array indexes, because we constructed the entity
-	dst.Data.([]NBT)[1].Data = uuidmost
-	dst.Data.([]NBT)[2].Data = uuidlest
+	dst.Data.([]nbt.NBT)[1].Data = uuidmost
+	dst.Data.([]nbt.NBT)[2].Data = uuidlest
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

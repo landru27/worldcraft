@@ -13,6 +13,8 @@ import (
 	"io/ioutil"
 	"math"
 	"os"
+
+	"github.com/landru27/nbt"
 )
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -76,27 +78,27 @@ func (w *MCWorld) EditBlock(x int, y int, z int, id uint16, data uint8) (err err
 	for indx := 0; indx <= cy; indx++ {
 		fqsn = fmt.Sprintf("Sections/%d/Y", indx)
 		if rgn.Chunks[indxChunk].ChunkDataRefs[fqsn] == nil {
-			sectiondataA := NBT{TAG_Byte, 0, "Y", 0, byte(indx)}
-			sectiondataB := NBT{TAG_Byte_Array, 0, "Blocks", 4096, make([]byte, 4096)}
-			sectiondataC := NBT{TAG_Byte_Array, 0, "Data", 2048, make([]byte, 2048)}
-			sectiondataD := NBT{TAG_Byte_Array, 0, "SkyLight", 2048, make([]byte, 2048)}
-			sectiondataE := NBT{TAG_Byte_Array, 0, "BlockLight", 2048, make([]byte, 2048)}
-			sectiondata := []NBT{sectiondataA, sectiondataB, sectiondataC, sectiondataD, sectiondataE}
-			section := NBT{TAG_Compound, 0, "LISTELEM", 5, sectiondata}
+			sectiondataA := nbt.NBT{nbt.TAG_Byte, 0, "Y", 0, byte(indx)}
+			sectiondataB := nbt.NBT{nbt.TAG_Byte_Array, 0, "Blocks", 4096, make([]byte, 4096)}
+			sectiondataC := nbt.NBT{nbt.TAG_Byte_Array, 0, "Data", 2048, make([]byte, 2048)}
+			sectiondataD := nbt.NBT{nbt.TAG_Byte_Array, 0, "SkyLight", 2048, make([]byte, 2048)}
+			sectiondataE := nbt.NBT{nbt.TAG_Byte_Array, 0, "BlockLight", 2048, make([]byte, 2048)}
+			sectiondata := []nbt.NBT{sectiondataA, sectiondataB, sectiondataC, sectiondataD, sectiondataE}
+			section := nbt.NBT{nbt.TAG_Compound, 0, "LISTELEM", 5, sectiondata}
 
 			fqsn = fmt.Sprintf("Sections")
 			dataSections := rgn.Chunks[indxChunk].ChunkDataRefs[fqsn]
 			dataSections.Size++
-			dataSections.Data = append(dataSections.Data.([]NBT), section)
+			dataSections.Data = append(dataSections.Data.([]nbt.NBT), section)
 
 			fqsn = fmt.Sprintf("Sections/%d/Y", indx)
-			rgn.Chunks[indxChunk].ChunkDataRefs[fqsn] = &dataSections.Data.([]NBT)[indx].Data.([]NBT)[0]
+			rgn.Chunks[indxChunk].ChunkDataRefs[fqsn] = &dataSections.Data.([]nbt.NBT)[indx].Data.([]nbt.NBT)[0]
 
 			fqsn = fmt.Sprintf("Sections/%d/Blocks", indx)
-			rgn.Chunks[indxChunk].ChunkDataRefs[fqsn] = &dataSections.Data.([]NBT)[indx].Data.([]NBT)[1]
+			rgn.Chunks[indxChunk].ChunkDataRefs[fqsn] = &dataSections.Data.([]nbt.NBT)[indx].Data.([]nbt.NBT)[1]
 
 			fqsn = fmt.Sprintf("Sections/%d/Data", indx)
-			rgn.Chunks[indxChunk].ChunkDataRefs[fqsn] = &dataSections.Data.([]NBT)[indx].Data.([]NBT)[2]
+			rgn.Chunks[indxChunk].ChunkDataRefs[fqsn] = &dataSections.Data.([]nbt.NBT)[indx].Data.([]nbt.NBT)[2]
 		}
 	}
 
@@ -212,7 +214,7 @@ func (w *MCWorld) FixHeightMaps(x int, y int, z int) (err error) {
 	return
 }
 
-func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity *NBT) (err error) {
+func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity *nbt.NBT) (err error) {
 
 	// this flag causes all entity edits to be skipped; this is useful when redo'ing a blueprint after
 	// fixing the blocks on the blueprint; blocks always replace themselves, but entities are always
@@ -248,9 +250,9 @@ func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity *NBT) (err error) {
 	}
 
 	// modify the entity to give it a position in the Minecraft world
-	nbtentity.Data.([]NBT)[3].Data.([]NBT)[0].Data = float64(x)
-	nbtentity.Data.([]NBT)[3].Data.([]NBT)[1].Data = float64(y)
-	nbtentity.Data.([]NBT)[3].Data.([]NBT)[2].Data = float64(z)
+	nbtentity.Data.([]nbt.NBT)[3].Data.([]nbt.NBT)[0].Data = float64(x)
+	nbtentity.Data.([]nbt.NBT)[3].Data.([]nbt.NBT)[1].Data = float64(y)
+	nbtentity.Data.([]nbt.NBT)[3].Data.([]nbt.NBT)[2].Data = float64(z)
 
 	// ensure that it is marked as a LISTELEM
 	nbtentity.Name = "LISTELEM"
@@ -265,16 +267,16 @@ func (w *MCWorld) EditEntity(x int, y int, z int, nbtentity *NBT) (err error) {
 	// just setting it each time is less work (fewer opcodes) than testing the current value,
 	// even though it seems pointless to us pesky humans in our concrete, analog existence
 	//
-	dataEntities.List = TAG_Compound
+	dataEntities.List = nbt.TAG_Compound
 	dataEntities.Size++
-	dataEntities.Data = append(dataEntities.Data.([]NBT), *nbtentity)
+	dataEntities.Data = append(dataEntities.Data.([]nbt.NBT), *nbtentity)
 
 	qtyEntityEdits++
 
 	return
 }
 
-func (w *MCWorld) EditBlockEntity(x int, y int, z int, nbtentity *NBT) (err error) {
+func (w *MCWorld) EditBlockEntity(x int, y int, z int, nbtentity *nbt.NBT) (err error) {
 
 	// this flag causes all blockentity edits to be skipped; this is useful when redo'ing a blueprint after
 	// fixing the blocks on the blueprint; blocks always replace themselves, but blockentities are always
@@ -321,16 +323,16 @@ func (w *MCWorld) EditBlockEntity(x int, y int, z int, nbtentity *NBT) (err erro
 	if w.FlagResetBlockEntities {
 		if rgn.Chunks[indxChunk].ResetBENeeded {
 			dataBlockEntities.Size = 0
-			dataBlockEntities.Data = make([]NBT, 0)
+			dataBlockEntities.Data = make([]nbt.NBT, 0)
 
 			rgn.Chunks[indxChunk].ResetBENeeded = false
 		}
 	}
 
 	// modify the blockentity to give it a position in the Minecraft world
-	nbtentity.Data.([]NBT)[1].Data = int32(x)
-	nbtentity.Data.([]NBT)[2].Data = int32(y)
-	nbtentity.Data.([]NBT)[3].Data = int32(z)
+	nbtentity.Data.([]nbt.NBT)[1].Data = int32(x)
+	nbtentity.Data.([]nbt.NBT)[2].Data = int32(y)
+	nbtentity.Data.([]nbt.NBT)[3].Data = int32(z)
 
 	// ensure that it is marked as a LISTELEM
 	nbtentity.Name = "LISTELEM"
@@ -345,9 +347,9 @@ func (w *MCWorld) EditBlockEntity(x int, y int, z int, nbtentity *NBT) (err erro
 	// just setting it each time is less work (fewer opcodes) than testing the current value,
 	// even though it seems pointless to us pesky humans in our concrete, analog existence
 	//
-	dataBlockEntities.List = TAG_Compound
+	dataBlockEntities.List = nbt.TAG_Compound
 	dataBlockEntities.Size++
-	dataBlockEntities.Data = append(dataBlockEntities.Data.([]NBT), *nbtentity)
+	dataBlockEntities.Data = append(dataBlockEntities.Data.([]nbt.NBT), *nbtentity)
 
 	qtyBlockEntityEdits++
 
@@ -466,7 +468,7 @@ func (w *MCWorld) LoadRegion(x int, z int) (rgn *MCRegion, err error) {
 					// parse the data out of Minecraft's NBT format into data structures we interact with
 					var rdrTemp *bytes.Reader
 					rdrTemp = bytes.NewReader(bufTemp.Bytes())
-					newchnk.ChunkData, err = ReadNBTData(rdrTemp, TAG_NULL, strDebug)
+					newchnk.ChunkData, err = nbt.ReadNBTData(rdrTemp, nbt.TAG_NULL, strDebug)
 					newchnk.BuildDataRefs()
 				}
 			}
@@ -557,7 +559,7 @@ func (w *MCWorld) SaveRegion(rx, rz int) (err error) {
 			if rgn.ChunkDataLocations[indx].Count != 0 {
 				if rgn.ChunkTimestamps[indx] != 0 {
 
-					err = WriteNBTData(&bufChunkData, &rgn.Chunks[indx].ChunkData)
+					err = nbt.WriteNBTData(&bufChunkData, &rgn.Chunks[indx].ChunkData)
 					panicOnErr(err)
 
 					wz := zlib.NewWriter(&bufZ)
@@ -682,8 +684,8 @@ type MCChunk struct {
 	CZ              int
 	Length          uint32
 	CompressionType byte
-	ChunkData       NBT
-	ChunkDataRefs   map[string]*NBT
+	ChunkData       nbt.NBT
+	ChunkDataRefs   map[string]*nbt.NBT
 	ResetBENeeded   bool
 	EditHeightMap   map[int]int32
 }
@@ -696,20 +698,20 @@ func (c *MCChunk) BuildDataRefs() {
 		fmt.Printf("BuildDataRefs called again for the same chunk [%d, %d]\n", c.CX, c.CZ)
 		os.Exit(5)
 	}
-	c.ChunkDataRefs = make(map[string]*NBT, 0)
+	c.ChunkDataRefs = make(map[string]*nbt.NBT, 0)
 
-	refLevl := c.ChunkData.Data.([]NBT)[0]
+	refLevl := c.ChunkData.Data.([]nbt.NBT)[0]
 
 	c.ChunkDataRefs["Level"] = &refLevl
 
-	for indxA, elemLevl := range refLevl.Data.([]NBT) {
-		c.ChunkDataRefs[elemLevl.Name] = &refLevl.Data.([]NBT)[indxA]
+	for indxA, elemLevl := range refLevl.Data.([]nbt.NBT) {
+		c.ChunkDataRefs[elemLevl.Name] = &refLevl.Data.([]nbt.NBT)[indxA]
 
 		if elemLevl.Name == "Sections" {
-			for indxB, arrySect := range elemLevl.Data.([]NBT) {
-				for indxC, elemSect := range arrySect.Data.([]NBT) {
+			for indxB, arrySect := range elemLevl.Data.([]nbt.NBT) {
+				for indxC, elemSect := range arrySect.Data.([]nbt.NBT) {
 					fqsn := fmt.Sprintf("Sections/%d/%s", indxB, elemSect.Name)
-					c.ChunkDataRefs[fqsn] = &refLevl.Data.([]NBT)[indxA].Data.([]NBT)[indxB].Data.([]NBT)[indxC]
+					c.ChunkDataRefs[fqsn] = &refLevl.Data.([]nbt.NBT)[indxA].Data.([]nbt.NBT)[indxB].Data.([]nbt.NBT)[indxC]
 				}
 			}
 		}
@@ -740,19 +742,19 @@ type Glyph struct {
 	Name  string `json:"name"`
 	ID    uint16 `json:"id"`
 	Data  uint8  `json:"data"`
-	Base  NBT    `json:"base"`
+	Base  nbt.NBT `json:"base"`
 }
 
 type GlyphTag struct {
 	Tag  string `json:"tag"`
 	Indx uint8  `json:"indx"`
-	Data NBT    `json:"data"`
+	Data nbt.NBT `json:"data"`
 }
 
 type Atom struct {
 	Name string     `json:"name"`
 	Base string     `json:"base"`
-	Data NBT        `json:"data"`
+	Data nbt.NBT    `json:"data"`
 	Info []AtomInfo `json:"info"`
 }
 
