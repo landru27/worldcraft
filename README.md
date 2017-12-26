@@ -28,14 +28,22 @@ Usage of worldcraft:
 ### example usage
 
 a typical edit; places a small keep with stocked chests and other furnishings into the world
-`    ./worldcraft -blueprint blueprints/adventure/blueprint.homestead -world [MINECRAFT_PATH]/saves/Hesperia/region -X 4 -Y 59 -Z 173`
+```
+./worldcraft -blueprint blueprints/adventure/blueprint.homestead -world [MINECRAFT_PATH]/saves/Hesperia/region -X 4 -Y 59 -Z 173
+```
 
 the same edit, repeated; thus, we skip re-adding the livestock since they already exits, and we reset things like the chest contents, to avoid region file data problems
-`    ./worldcraft -blueprint blueprints/adventure/blueprint.homestead -world [MINECRAFT_PATH]/saves/Hesperia/region -X 4 -Y 59 -Z 173 -xairblocks -skipentities -resetblockentities`
+```
+./worldcraft -blueprint blueprints/adventure/blueprint.homestead -world [MINECRAFT_PATH]/saves/Hesperia/region -X 4 -Y 59 -Z 173 -xairblocks -skipentities -resetblockentities
+```
 
 a different kind of structure, further afield
-`    ./worldcraft -blueprint blueprints/adventure/blueprint.outpost -world [MINECRAFT_PATH]/saves/Hesperia/region -X 147 -Y 63 -Z 3834`
+```
+./worldcraft -blueprint blueprints/adventure/blueprint.outpost -world [MINECRAFT_PATH]/saves/Hesperia/region -X 147 -Y 63 -Z 3834
+```
 
 an edit in the Nether; a protective structure around our portal
-`    ./worldcraft -blueprint blueprints/adventure/blueprint.netherbunker -world [MINECRAFT_PATH]/saves/Hesperia/DIM-1/region -X -2 -Y 73 -Z 6`
+```
+./worldcraft -blueprint blueprints/adventure/blueprint.netherbunker -world [MINECRAFT_PATH]/saves/Hesperia/DIM-1/region -X -2 -Y 73 -Z 6
+```
 
